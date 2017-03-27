@@ -47,7 +47,7 @@ exports.test = options => new Promise((resolve, reject) => {
  * @param {Function} callback
  */
 exports.init = options => new Promise((resolve, reject) => {
-  fs.writeFile(path.join(__dirname,'../config/database.config.json'), JSON.stringify(options, null, 2), function (error){
+  fs.writeFile(path.join(__dirname,'../../config/database.config.json'), JSON.stringify(options, null, 2), function (error){
     if (error) {
       error.type = 'system';
       return reject(error);
@@ -103,7 +103,7 @@ exports.init = options => new Promise((resolve, reject) => {
  * @return {[type]}     [description]
  */
 exports.connect = () => new Promise((resolve, reject) => {
-  fs.readFile(path.join(__dirname, '../config/database.config.json'), async (error, file) => {
+  fs.readFile(path.join(__dirname, '../../config/database.config.json'), async (error, file) => {
     if (error && error.code === 'ENOENT') {
       return reject({ type: 'system', error: 'database.config.json 文件不存在' })
     };

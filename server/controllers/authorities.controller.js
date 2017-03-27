@@ -1,4 +1,4 @@
-const config = require('../config/authorities.config');
+const config = require('../../config/authorities.config');
 
 /**
  * 查询权限

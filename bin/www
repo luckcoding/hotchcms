@@ -2,11 +2,11 @@
 
 const http = require('http');
 const path = require('path');
-const app = require('../app');
-const portlib = require('../lib/port.lib');
-const logger = require('../lib/logger.lib');
-const database = require('../lib/database.lib');
-const installService = require('../services/install.service');
+const app = require('../server/app');
+const portlib = require('../server/lib/port.lib');
+const logger = require('../server/lib/logger.lib');
+const database = require('../server/lib/database.lib');
+const installService = require('../server/services/install.service');
 
 const port = portlib();
 

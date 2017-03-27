@@ -1,3 +1,3 @@
 'use strict';
 
-require('./core/bin/www');
+require('./bin/www');

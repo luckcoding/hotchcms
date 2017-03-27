@@ -28,7 +28,7 @@
     "koa-session-mongoose": "^1.0.0",
     "koa-static": "^2.1.0",
     "koa-views": "^5.2.1",
-    "koa2-validator": "^1.0.0",
+    "koa2-validator": "^1.1.0",
     "lodash": "^4.17.4",
     "lru-cache": "^4.0.2",
     "mongoose": "^4.9.0",

@@ -1,5 +1,5 @@
 const log4js = require('koa-log4');
-const config = require('../config/log4js.config');
+const config = require('../../config/log4js.config');
 
 /**
  * 载入配置
