@@ -1,10 +1,11 @@
 const _ = require('lodash');
-const account = require('./account.router');
-const install = require('./install.router');
-const siteInfo = require('./site-info.router');
-const adminUsers = require('./admin-users.router');
 
-const routes = [account, install, siteInfo, adminUsers];
+const routes = [
+  require('./install.router'),
+  require('./site-info.router'),
+  require('./common.router'),
+  require('./admin-account.router')
+];
 
 module.exports = app => {
   _.forEach(routes, route => {

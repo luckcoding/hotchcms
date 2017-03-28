@@ -1,13 +1,12 @@
 const Router = require('koa-router');
-const adminUsers = require('../controllers/admin-users.controller');
+const common = require('../controllers/common.controller');
 const config = require('../../config/router.config');
 
 const router = new Router();
-const source = 'admin-users';
+const source = 'common';
 
 router.prefix(`/${config.API}/${source}`);
 
-// router.all('/', account.check); // 登录状态
-router.get('/:_id', adminUsers.one);
+router.get('/captcha', common.captcha);
 
 module.exports = router;

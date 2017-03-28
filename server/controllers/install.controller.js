@@ -88,46 +88,46 @@ exports.testDatabase = async ctx => {
 
 exports.install = async ctx => {
   ctx.checkBody({
-    'databaseHost': {
+    'dbHost': {
       notEmpty: {
         options: [true],
-        errorMessage: 'databaseHost 不能为空'
+        errorMessage: 'dbHost 不能为空'
       },
       matches: {
         options: [/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$|^localhost$/],
-        errorMessage: 'databaseHost 格式不正确'
+        errorMessage: 'dbHost 格式不正确'
       }
     },
-    'databasePort': {
+    'dbPort': {
       notEmpty: {
         options: [true],
-        errorMessage: 'databasePort 不能为空'
+        errorMessage: 'dbPort 不能为空'
       },
       isInt: {
         options: [{ min: 0, max: 65535 }],
-        errorMessage: 'databasePort 需为整数'
+        errorMessage: 'dbPort 需为整数'
       }
     },
-    'database': {
+    'db': {
       notEmpty: {
         options: [true],
-        errorMessage: 'database 不能为空'
+        errorMessage: 'db 不能为空'
       },
-      isString: { errorMessage: 'database 需为字符串' }
+      isString: { errorMessage: 'db 需为字符串' }
     },
-    // 'databaseUser': {
+    // 'dbUser': {
     //   notEmpty: {
     //     options: [true],
-    //     errorMessage: 'databaseUser 不能为空'
+    //     errorMessage: 'dbUser 不能为空'
     //   },
-    //   isString: { errorMessage: 'databaseUser 需为字符串' }
+    //   isString: { errorMessage: 'dbUser 需为字符串' }
     // },
-    // 'databasePassword': {
+    // 'dbPassword': {
     //   notEmpty: {
     //     options: [true],
-    //     errorMessage: 'databasePassword 不能为空'
+    //     errorMessage: 'dbPassword 不能为空'
     //   },
-    //   isString: { errorMessage: 'databasePassword 需为字符串' }
+    //   isString: { errorMessage: 'dbPassword 需为字符串' }
     // },
     'theme': {
       notEmpty: {
@@ -161,13 +161,6 @@ exports.install = async ctx => {
         errorMessage: 'email 格式不正确'
       }
     },
-    // 'nickname': {
-    //   notEmpty: {
-    //     options: [true],
-    //     errorMessage: 'nickname 不能为空'
-    //   },
-    //   isString: { errorMessage: 'nickname 需为字符串' }
-    // },
     'password': {
       notEmpty: {
         options: [true],
@@ -184,32 +177,31 @@ exports.install = async ctx => {
 
   const req = ctx.request.body;
 
-  var databaseDate = {
-    host: req.databaseHost,
-    port: req.databasePort,
-    db: req.database,
-    // user: req.databaseUser,
-    // pass: req.databasePassword
+  const databaseData = {
+    host: req.dbHost,
+    port: req.dbPort,
+    db: req.db,
+    // user: req.dbUser,
+    // pass: req.dbPassword
   };
 
-  var siteInfoDate = {
+  const siteInfoData = {
     title: req.title,
     theme: req.theme
   };
 
-  var userDate = {
+  const adminUserData = {
     email: req.email,
-    // nickname: req.nickname,
-    password: req.password
+    password: req.password,
   };
 
   try {
     const hasInstall = await installService.status();
     if (hasInstall) return ctx.pipeFail(500,'cms已经安装');
     const install = await installService.install({
-      databaseDate: databaseDate,
-      siteInfoDate: siteInfoDate,
-      userDate: userDate,
+      databaseData: databaseData,
+      siteInfoData: siteInfoData,
+      adminUserData: adminUserData,
     });
 
     if (install) {

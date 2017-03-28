@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const logger = require('../lib/logger.lib');
 const usersModel = require('../models/users.model');
-const rolesModel = require('../models/roles.model');
+// const rolesModel = require('../models/roles.model');
 
 /**
  * 用户列表
@@ -44,8 +44,7 @@ exports.one = options => new Promise(async (resolve, reject) => {
     const user = await usersModel.findOne(query)
       .select('type nickname email password role')
       .populate('role', 'name description authorities')
-      .lean()
-      .exec();
+      .lean();
     if (!user) return resolve();
     if (!selectPassword) delete user.password;
     resolve(user);
@@ -70,7 +69,8 @@ exports.save = options => new Promise(async (resolve, reject) => {
   var _id = options._id;
   var data = options.data;
   try {
-    const role = await rolesModel.findById(data.role).lean().exec();
+    // const role = await rolesModel.findById(data.role).lean().exec();
+    var role;
     if (!role) return reject({ type: 'system', error: '没有找到role' });
     if (_.find(role.authorities, authory => authory === 100000)) {
       return reject({ type: 'system', error: '不允许创建权限存在 100000 的用户' })

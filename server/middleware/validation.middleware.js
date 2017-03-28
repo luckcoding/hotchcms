@@ -14,8 +14,9 @@ module.exports = () => koaValidator({
     };
   },
   customValidators: {
-    isString: value => _.isString(value),
     isEmail: value => /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value),
+    isMobile: value => /^1[3|4|5|7|8]\d{9}$/.test(value),
+    isString: value => _.isString(value),
     isNumber: value => _.isNumber(value),
     isObject: value => _.isObject(value),
     isArray: value => _.isArray(value),
@@ -28,8 +29,9 @@ module.exports = () => koaValidator({
         validatorOptions.unshift(item);
 
         switch(validatorOptions[1]) {
-          case 'isString': return _.isString(item); break;
           case 'isEmail': return /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value); break;
+          case 'isMobile': return /^1[3|4|5|7|8]\d{9}$/.test(value); break;
+          case 'isString': return _.isString(item); break;
           case 'isNumber': return _.isNumber(item); break;
           case 'isObject': return _.isObject(item); break;
           case 'isArray': return _.isArray(item); break;

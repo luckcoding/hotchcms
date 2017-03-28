@@ -1,27 +1,14 @@
-const logger = require('../lib/logger.lib');
 const sha1 = require('../services/sha1.service');
-const usersService = require('../services/users.service');
-const captcha = require('../lib/captcha.lib');
+const adminUserService = require('../services/admin-user.service');
 
 /**
- * 检查是否登陆
+ * 校验
  * @param  {[type]}   ctx  [description]
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
 exports.check = async (ctx, next) => {
-  ctx.session.userId ? await next() : ctx.pipeFail(400,'用户未登录');
-};
-
-/**
- * 验证码
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
- */
-exports.captcha = ctx => {
-  const source = captcha();
-  ctx.session.captcha = source.code;
-  ctx.pipeDone(source.dataURL);
+  ctx.session.adminUserId ? await next() : ctx.pipeFail(400,'用户未登录');
 };
 
 /**
@@ -76,10 +63,10 @@ exports.signIn = async ctx => {
   };
 
   try {
-    const user = await usersService.one({ email: email, selectPassword: true });
-    if (user && sha1(password) === user.password) {
+    const adminUser = await adminUserService.one({ email: email, selectPassword: true });
+    if (adminUser && sha1(password) === adminUser.password) {
       delete ctx.session.captcha;
-      ctx.session.userId = user._id;
+      ctx.session.adminUserId = adminUser._id;
       if (autoSignIn) ctx.session.cookie.maxage = 1000 * 60 * 60 * 24;
       ctx.pipeDone();
     } else {
@@ -91,12 +78,12 @@ exports.signIn = async ctx => {
 };
 
 /**
- * 注销登陆
+ * 注销
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
 exports.signOut = async ctx => {
-  ctx.session = null;
+  ctx.session.adminUserId = null;
   ctx.pipeDone();
 };
 
@@ -107,8 +94,9 @@ exports.signOut = async ctx => {
  */
 exports.current = async ctx => {
   try {
-    if (ctx.session.userId) {
-      const user = await usersService.one({ _id: ctx.session.userId });
+    const _id = ctx.session.adminUserId;
+    if (_id) {
+      const user = await adminUserService.one({ _id: _id });
       ctx.pipeDone(user);
     }
   } catch (e) {
@@ -118,28 +106,23 @@ exports.current = async ctx => {
 };
 
 /**
- * 更新账号
- * @param {Object} req
- *        {String} req.body.email
- *        {String} req.body.nickname
- *        {String} req.body.password
- * @param {Function} res
+ * 更新当前账号
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
  */
 exports.update = async ctx => {
   ctx.checkBody({
-    'email': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'email 不能为空'
-      },
-      isEmail: { errorMessage: 'email 格式不正确' }
-    },
     'nickname': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'nickname 不能为空'
-      },
+      optional: true,
       isString: { errorMessage: 'nickname 需为字符串' }
+    },
+    'mobile': {
+      optional: true,
+      isString: { errorMessage: 'mobile 需为字符串' },
+      isLength: {
+        options: [11,11],
+        errorMessage: 'mobile 为11位'
+      }
     },
     'password': {
       optional: true,
@@ -149,27 +132,23 @@ exports.update = async ctx => {
         errorMessage: 'password 不能小于6位'
       }
     },
-    'role': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'email 不能为空'
-      },
+    'avatar': {
+      optional: true,
+      isString: { errorMessage: 'avatar 需为字符串' },
+    },
+    'group': {
+      optional: true,
       isMongoId: { errIorMessage: 'role 需为 mongoId' },
     }
   });
 
   if (ctx.validationErrors()) return null;
 
-  var data = {
-    nickname: ctx.request.body.nickname,
-    email: ctx.request.body.email,
-    role: ctx.request.body.role,
-  };
-
-  if (ctx.request.body.password) data.password = sha1(ctx.request.body.password);
+  let password = ctx.request.body.password;
+  if (password) password = sha1(password);
 
   try {
-    await usersService.save({ _id: ctx.session.userId, data: data })
+    await adminUserService.update(Object.assign(ctx.request.body, { password: password }))
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(500,'注册失败',e);

@@ -6,6 +6,7 @@ exports.get = async ctx => {
     const siteInfo = await siteInfoService.get();
     ctx.pipeDone(siteInfo);
   } catch (e) {
-
+    e.type = 'database';
+    ctx.pipeFail(500,'查询失败',e);
   };
 };

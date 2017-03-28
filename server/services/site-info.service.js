@@ -3,8 +3,9 @@ const cache = require('../lib/cache.lib');
 const optionsModel = require('../models/options.model');
 
 /**
- * 网站信息
- * @return {[type]} [description]
+ * 获取网站信息
+ * @param  {[type]} ) [description]
+ * @return {[type]}   [description]
  */
 exports.get = () => new Promise(async (resolve, reject) => {
   var siteInfoCache = cache.get('siteInfo');
@@ -12,8 +13,6 @@ exports.get = () => new Promise(async (resolve, reject) => {
 
   try {
     const siteInfo = await optionsModel.findOne({ name: 'siteInfo' });
-    // 缓存网站头部信息 30 天
-    // "codeFooter","codeHeader","description","keywords","title","theme"
     cache.set('siteInfo', siteInfo.value, 1000 * 60 * 60 * 24 * 30);
     resolve(siteInfo.value);
   } catch (e) {
@@ -24,7 +23,8 @@ exports.get = () => new Promise(async (resolve, reject) => {
 
 /**
  * 存储网站信息
- * @return {[type]} [description]
+ * @param  {[type]} ) [description]
+ * @return {[type]}   [description]
  */
 exports.save = () => new Promise(async (resolve, reject) => {
   try {

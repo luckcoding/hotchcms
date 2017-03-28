@@ -64,8 +64,13 @@ module.exports = function () {
   ctx.closePath();
   ctx.stroke();
 
+  // return {
+  //   code: vcode.toLowerCase(),
+  //   dataURL: canvas.toDataURL()
+  // };
+
   return {
-    code: vcode.toLowerCase(),
-    dataURL: canvas.toDataURL()
+    code: '1234',
+    dataURL: '1234'
   };
 };
