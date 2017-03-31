@@ -2,9 +2,12 @@
  * ======================
  * codes
  * ----------------------
- * 200: 成功
- * 4XX: 业务级别错误
- * 5XX: 系统级别错误
+ * 0000: 成功
+ * TK99: Token失效
+ * VD99: 验证错误
+ * AT99: 权限错误
+ * BN99: 业务出错
+ * 9999: 未知错误
  */
 const _ = require('lodash');
 const logger = require('../lib/logger.lib');
@@ -23,14 +26,14 @@ module.exports = options => {
       // 返回
       ctx.pipeDone = function (result) {
         ctx._pipeDoneData = _.isEmpty(result)
-        ? { code: 200 }
-        : { code: 200, result: result };
+        ? { code: '0000' }
+        : { code: '0000', result: result };
       };
-      ctx.pipeFail = function (code, msg, result) {
-        ctx._pipeFailData = { code, msg };
-        if (_.includes(categorys, _.get(result, 'type'))) {
-          logger[result.type]().error(__dirname, '失败原因: ', JSON.stringify(result));
-        }
+      ctx.pipeFail = function (code, msg) {
+        const errorMsg = _.get(msg, 'error') || msg;
+        const errorType = _.includes(categorys, _.get(msg, 'type')) ? msg.type : 'system';
+        ctx._pipeFailData = { code: code, msg: errorMsg };
+        logger[errorType]().error(__dirname, '失败原因: ', errorMsg);
       };
 
       await next();
@@ -38,7 +41,7 @@ module.exports = options => {
       // 拦截错误验证
       if (ctx.validationErrors()) {
         ctx.body = {
-          code: 400,
+          code: 'VD99',
           msg: '参数验证失败',
           result: ctx.validationErrors()
         }

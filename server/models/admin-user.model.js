@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const sha1 = require('../services/sha1.service');
+const unique = require('mongoose-unique-validator');
 
 /**
  * 管理员
@@ -16,7 +17,7 @@ const AdminUserSchema = new mongoose.Schema({
   password: { type: String, set: sha1, required: true },
 
   // 手机
-  mobile: Number,
+  mobile: { type: Number, unique: true },
 
   // 昵称
   nickname: { type: String, trim: true, minlength: 2, maxlength: 20 },
@@ -45,5 +46,7 @@ const AdminUserSchema = new mongoose.Schema({
   collection: 'adminUser',
   id: false
 });
+
+AdminUserSchema.plugin(unique);
 
 module.exports = mongoose.model('AdminUser', AdminUserSchema);

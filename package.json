@@ -32,6 +32,7 @@
     "lodash": "^4.17.4",
     "lru-cache": "^4.0.2",
     "mongoose": "^4.9.0",
+    "mongoose-unique-validator": "^1.0.5",
     "require-all": "^2.2.0"
   },
   "devDependencies": {

@@ -95,10 +95,8 @@ exports.signOut = async ctx => {
 exports.current = async ctx => {
   try {
     const _id = ctx.session.adminUserId;
-    if (_id) {
-      const user = await adminUserService.one({ _id: _id });
-      ctx.pipeDone(user);
-    }
+    const user = await adminUserService.one({ _id: _id });
+    ctx.pipeDone(user);
   } catch (e) {
     e.type = 'database';
     ctx.pipeFail(500,'查询失败',e);

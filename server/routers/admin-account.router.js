@@ -7,9 +7,9 @@ const source = 'admin-account';
 
 router.prefix(`/${config.API}/${source}`);
 
-router.all('/', adminAccount.check); //登录状态
-router.get('/', adminAccount.current); //查询
-router.put('/', adminAccount.update); // 更新
+router.all('/', adminAccount.check); // 检查登录
+router.get('/', adminAccount.current); // 查询账号
+router.put('/', adminAccount.update); // 更新账号
 
 router.put('/sign-in', adminAccount.signIn); //登录
 router.put('/sign-out', adminAccount.signOut); //退出

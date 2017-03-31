@@ -6,11 +6,14 @@ const schema = 'mobile email password nickname avatar create group';
 exports.create = options => new Promise(async (resolve, reject) => {
   try {
     const data = _.pick(options, schema.split(' '));
+    // const query = _.pick(options, ['_id', 'email']);
+    // const adminUser = await adminUserModel.findOne(query);
+    // console.log(adminUser)
+    // if (adminUser) throw '已存在用户';
     await new adminUserModel(data).save();
     resolve();
   } catch (e) {
-    console.log(e)
-    reject(e);
+    reject({ type: 'database', error: e });
   };
 });
 

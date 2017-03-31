@@ -7,17 +7,12 @@ const source = 'admin-user';
 
 router.prefix(`/${config.API}/${source}`);
 
-router.all('/', adminUser.check); // 登录状态
+router.all('/', adminUser.check); // 检查登录
 
-router.get('/', adminUser.current);
-router.put('/', adminUser.update);
-router.post('/', adminUser.create);
-
-// router.get('/:_id', adminUser.one);
-// router.get('/list', adminUser.list);
-
-router.put('/sign-in', adminUser.signIn);
-router.put('/sign-out', adminUser.signOut);
-
+router.post('/', adminUser.create); // 新增账号
+router.put('/', adminUser.update); // 更新账号
+// router.get('/', adminUser.list); // 查询所有账号
+// router.get('/:_id', adminUser.one); // 查询账号
+// router.delete('/:_id', adminUser.one); // 删除账号
 
 module.exports = router;
