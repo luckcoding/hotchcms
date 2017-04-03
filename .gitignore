@@ -8,7 +8,7 @@ config/database.config.js
 !.gitkeep
 
 node_modules
-logs/*
+logs/*/*
 !logs/*/*.gitkeep
 tmp/*
 !tmp/*.gitkeep
