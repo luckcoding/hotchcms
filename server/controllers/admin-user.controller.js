@@ -1,10 +1,21 @@
 const sha1 = require('../services/sha1.service');
 const adminUserService = require('../services/admin-user.service');
 
+/**
+ * 校验
+ * @param  {[type]}   ctx  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
 exports.check = async (ctx, next) => {
-  ctx.session.adminUserId ? await next() : ctx.pipeFail(400,'用户未登录');
+  ctx.session.adminUserId ? await next() : ctx.pipeFail('BN99', '用户未登录');
 };
 
+/**
+ * 创建用户
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.create = async ctx => {
   ctx.checkBody({
     'email': {
@@ -54,12 +65,24 @@ exports.create = async ctx => {
     await adminUserService.create(ctx.request.body)
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail(500,e);
+    ctx.pipeFail('9999', e);
   }
 };
 
+/**
+ * 更新用户
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.update = async ctx => {
   ctx.checkBody({
+    // '_id': {
+    //   notEmpty: {
+    //     options: [true],
+    //     errorMessage: '_id 不能为空'
+    //   },
+    //   isMongoId: { errorMessage: '_id  需为 mongoId' }
+    // },
     'nickname': {
       optional: true,
       isString: { errorMessage: 'nickname 需为字符串' }
@@ -92,13 +115,46 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  let password = ctx.request.body.password;
-  if (password) password = sha1(password);
+  if (ctx.request.body.password) {
+    ctx.request.body.password = sha1(ctx.request.body.password);
+  }
 
   try {
-    await adminUserService.update(Object.assign(ctx.request.body, { password: password }));
+    const adminUser = await adminUserService.one(ctx.request.body);
+    await adminUserService.update(Object.assign(ctx.request.body, { _id: adminUser._id }));
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail(500,'注册失败',e);
+    ctx.pipeFail('9999', e);
+  }
+};
+
+exports.one = async ctx => {
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+  console.log(ctx.params)
+  return null;
+  try {
+    const adminUser = await adminUserService.one(ctx.params);
+    ctx.pipeDone(adminUser);
+  } catch(e) {
+    ctx.pipeFail('9999', e);
+  }
+};
+
+exports.list = async ctx => {
+  try {
+    const adminUsers = await adminUserService.list();
+    ctx.pipeDone(adminUsers);
+  } catch(e) {
+    ctx.pipeFail('9999', e);
   }
 };

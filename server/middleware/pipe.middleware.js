@@ -7,7 +7,7 @@
  * VD99: 验证错误
  * AT99: 权限错误
  * BN99: 业务出错
- * 9999: 未知错误
+ * 9999: 其他错误
  */
 const _ = require('lodash');
 const logger = require('../lib/logger.lib');
@@ -56,13 +56,7 @@ module.exports = options => {
         return ctx.body = ctx._pipeDoneData;
       }
     } catch (err) {
-      // const status = err.status || 400
-      // if (status === 400) {
-      //   console.log('err======>',err)
-      // } else {
-      //   ctx.app.emit('error', err, ctx)
-      // }
-
+      ctx.app.emit('error', err, ctx);
     }
   };
 };

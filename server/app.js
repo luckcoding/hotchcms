@@ -71,7 +71,6 @@ routers(app);
 
 // 监听错误
 app.on('error', (err, ctx) => {
-  console.error(err)
   logger.app().error('服务错误: ', err, ctx)
 });
 

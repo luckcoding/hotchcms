@@ -15,23 +15,44 @@ module.exports = () => {
   });
   return KoaAuthority({
     models: authorities,
-    check: function (argument) {
-      // body...
+    check: function (models, ctx) {
+      const URL = _.trimEnd(ctx.request.url, '/');
+      const method = ctx.request.method;
+      let auth = false;
+      _.forEach(models, function (model, index) {
+        _.mapKeys(model, function(value, key) {
+          if (matchRouter(key, URL) && value.includes(method)) {
+            auth = true;
+          }
+        });
+      });
+      return auth;
     }
   })
 }
 
+function matchRouter(tmpRouter, ckRouter) {
+  tmpRouter = tmpRouter.split('/');
+  ckRouter = ckRouter.split('/');
+  if (tmpRouter.length != ckRouter.length) {
+    return false;
+  };
+  var equal = true;
+  for (var i = 0; i < tmpRouter.length; i++) {
+    if (tmpRouter[i].indexOf('\:') === -1 && tmpRouter[i] != ckRouter[i]) {
+      equal = false;
+      break;
+    }
+  }
+  return equal;
+}
+
+
 var KoaAuthority = function (options) {
   options = options || {};
-  this.models = options.models || {};
+  var models = options.models || {};
+  var check = options.check || function () {};
   return async function(ctx, next) {
-    var url = _.trimEnd(ctx.request.url, '/'); // 获取url
-    var method = ctx.request.method;
-    for (var i = 0; i < this.models.length; i++) {
-      var model = this.models[i];
-      if (model[url] && model[url].includes(method)) {
-        return await next();
-      }
-    }
+    check(models, ctx) ? await next() : ctx.app.emit('error', '权限校验失败', ctx);
   }
 };

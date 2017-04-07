@@ -8,7 +8,7 @@ const adminUserService = require('../services/admin-user.service');
  * @return {[type]}        [description]
  */
 exports.check = async (ctx, next) => {
-  ctx.session.adminUserId ? await next() : ctx.pipeFail(400,'用户未登录');
+  ctx.session.adminUserId ? await next() : ctx.pipeFail('BN99', '用户未登录');
 };
 
 /**
@@ -59,8 +59,8 @@ exports.signIn = async ctx => {
   const { email, password, captcha, autoSignIn } = ctx.request.body;
 
   if (captcha !== ctx.session.captcha) {
-    return ctx.pipeFail(400,'验证码错误')
-  };
+    return ctx.pipeFail('VD99', '验证码错误');
+  }
 
   try {
     const adminUser = await adminUserService.one({ email: email, selectPassword: true });
@@ -70,10 +70,10 @@ exports.signIn = async ctx => {
       if (autoSignIn) ctx.session.cookie.maxage = 1000 * 60 * 60 * 24;
       ctx.pipeDone();
     } else {
-      ctx.pipeFail(500,'用户名或密码错误');
+      ctx.pipeFail('BN99','用户名或密码错误');
     }
   } catch (e) {
-    ctx.pipeFail(500,'登陆失败',e);
+    ctx.pipeFail('9999', e);
   }
 };
 
@@ -99,7 +99,7 @@ exports.current = async ctx => {
     ctx.pipeDone(user);
   } catch (e) {
     e.type = 'database';
-    ctx.pipeFail(500,'查询失败',e);
+    ctx.pipeFail('9999', e);
   }
 };
 
@@ -142,13 +142,15 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  let password = ctx.request.body.password;
-  if (password) password = sha1(password);
+  const _id = ctx.session.adminUserId;
+  if (ctx.request.body.password) {
+    ctx.request.body.password = sha1(ctx.request.body.password);
+  }
 
   try {
-    await adminUserService.update(Object.assign(ctx.request.body, { password: password }))
+    await adminUserService.update(Object.assign(ctx.request.body, { _id: _id}));
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail(500,'注册失败',e);
+    ctx.pipeFail('9999', e);
   }
 };
