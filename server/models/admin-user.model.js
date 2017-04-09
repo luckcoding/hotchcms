@@ -17,7 +17,7 @@ const AdminUserSchema = new mongoose.Schema({
   password: { type: String, set: sha1, required: true },
 
   // 手机
-  mobile: { type: Number, unique: true },
+  mobile: { type: Number },
 
   // 昵称
   nickname: { type: String, trim: true, minlength: 2, maxlength: 20 },

@@ -4,6 +4,7 @@ const routes = [
   require('./install.router'),
   require('./site-info.router'),
   require('./common.router'),
+  require('./admin-group.router'),
   require('./admin-account.router'),
   require('./admin-user.router')
 ];

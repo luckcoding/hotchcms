@@ -2,16 +2,6 @@ const sha1 = require('../services/sha1.service');
 const adminUserService = require('../services/admin-user.service');
 
 /**
- * 校验
- * @param  {[type]}   ctx  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
- */
-exports.check = async (ctx, next) => {
-  ctx.session.adminUserId ? await next() : ctx.pipeFail('BN99', '用户未登录');
-};
-
-/**
  * 创建用户
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
@@ -75,14 +65,17 @@ exports.create = async ctx => {
  * @return {[type]}     [description]
  */
 exports.update = async ctx => {
+  console.log(ctx.request.body)
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    },
+  })
   ctx.checkBody({
-    // '_id': {
-    //   notEmpty: {
-    //     options: [true],
-    //     errorMessage: '_id 不能为空'
-    //   },
-    //   isMongoId: { errorMessage: '_id  需为 mongoId' }
-    // },
     'nickname': {
       optional: true,
       isString: { errorMessage: 'nickname 需为字符串' }
@@ -120,8 +113,9 @@ exports.update = async ctx => {
   }
 
   try {
-    const adminUser = await adminUserService.one(ctx.request.body);
-    await adminUserService.update(Object.assign(ctx.request.body, { _id: adminUser._id }));
+    const adminUser = await adminUserService.one(ctx.params);
+    const query = Object.assign(ctx.request.body, ctx.params);
+    await adminUserService.update(query);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail('9999', e);
@@ -140,8 +134,7 @@ exports.one = async ctx => {
   });
 
   if (ctx.validationErrors()) return null;
-  console.log(ctx.params)
-  return null;
+
   try {
     const adminUser = await adminUserService.one(ctx.params);
     ctx.pipeDone(adminUser);
@@ -154,6 +147,27 @@ exports.list = async ctx => {
   try {
     const adminUsers = await adminUserService.list();
     ctx.pipeDone(adminUsers);
+  } catch(e) {
+    ctx.pipeFail('9999', e);
+  }
+};
+
+exports.delete = async ctx => {
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    await adminUserService.remove(ctx.params);
+    ctx.pipeDone()
   } catch(e) {
     ctx.pipeFail('9999', e);
   }

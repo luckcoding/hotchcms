@@ -1,8 +1,32 @@
 const sha1 = require('../services/sha1.service');
 const adminGroupService = require('../services/admin-group.service');
 
-exports.check = async (ctx, next) => {
-  ctx.session.adminUserId ? await next() : ctx.pipeFail(400,'用户未登录');
+exports.create = async ctx => {
+  ctx.checkBody({
+    'name': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'name 不能为空'
+      },
+      isString: { errorMessage: 'name 需为字符串' }
+    },
+    'description': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'description 不能为空'
+      },
+      isString: { errorMessage: 'description 需为字符串' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    await adminGroupService.create(ctx.request.body);
+    ctx.pipeDone();
+  } catch(e) {
+    ctx.pipeFail('9999', e);
+  }
 };
 
 exports.one = async ctx => {
@@ -15,68 +39,79 @@ exports.one = async ctx => {
       isMongoId: { errorMessage: '_id  需为 mongoId' }
     }
   });
-  
-  try {
-    const _id = ctx.session.adminUserId;
-    if (_id) {
-      const user = await adminGroupService.one({ _id: _id });
-      ctx.pipeDone(user);
-    }
 
+  if (ctx.validationErrors()) return null;
+
+  try {
+    const adminGroup = await adminGroupService.one(ctx.params);
+    ctx.pipeDone(adminGroup);
   } catch (e) {
-    e.type = 'database';
-    ctx.pipeFail(500,'查询失败',e);
+    ctx.pipeFail('9999', e);
   }
 };
 
-
 exports.list = async ctx => {
+  try {
+    const adminGroups = await adminGroupService.list();
+    ctx.pipeDone(adminGroups);
+  } catch(e) {
+    ctx.pipeFail('9999', e);
+  }
+};
+
+exports.update = async ctx => {
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    },
+  })
   ctx.checkBody({
-    'email': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'email 不能为空'
-      },
-      isEmail: { errorMessage: 'email 格式不正确' }
-    },
-    'nickname': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'nickname 不能为空'
-      },
-      isString: { errorMessage: 'nickname 需为字符串' }
-    },
-    'password': {
+    'name': {
       optional: true,
-      isString: { errorMessage: 'password 需为字符串' },
-      isLength: {
-        options: [6],
-        errorMessage: 'password 不能小于6位'
-      }
+      isString: { errorMessage: 'name 需为字符串' }
     },
-    'role': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'email 不能为空'
-      },
-      isMongoId: { errIorMessage: 'role 需为 mongoId' },
+    'description': {
+      optional: true,
+      isString: { errorMessage: 'description 需为字符串' }
+    },
+    'authorities': {
+      optional: true,
+      isArray: { errorMessage: 'authorities 需为数组' }
     }
   });
 
   if (ctx.validationErrors()) return null;
 
-  var data = {
-    nickname: ctx.request.body.nickname,
-    email: ctx.request.body.email,
-    role: ctx.request.body.role,
-  };
-
-  if (ctx.request.body.password) data.password = sha1(ctx.request.body.password);
-
   try {
-    await usersService.save({ _id: ctx.session.userId, data: data })
+    const adminGroup = await adminGroupService.one(ctx.params);
+    await adminGroupService.update(Object.assign(ctx.request.body, { _id: ctx.params._id }));
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail(500,'注册失败',e);
+    ctx.pipeFail('9999', e);
+  }
+};
+
+exports.delete = async ctx => {
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    await adminGroupService.remove(ctx.params);
+    ctx.pipeDone()
+  } catch(e) {
+    ctx.pipeFail('9999', e);
   }
 };

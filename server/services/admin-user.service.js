@@ -49,7 +49,7 @@ exports.remove = options => new Promise(async (resolve, reject) => {
     const _id = options._id;
     if (!_id) throw Error('缺少_id');
     const adminUser = await adminUserModel.findById(_id);
-    await adminUser.remove();
+    adminUser ? await adminUser.remove() : reject('无此用户');
     resolve();
   } catch (e) {
     reject(e);
@@ -70,8 +70,7 @@ exports.one = options => new Promise(async (resolve, reject) => {
       .select(userSchema)
       .populate('group', groupSchema)
       .lean();
-
-    resolve(adminUser);
+    adminUser ? resolve(adminUser) : reject('用户不存在');
   } catch (e) {
     reject(e);
   };
