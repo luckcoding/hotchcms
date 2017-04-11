@@ -1,14 +1,16 @@
 {
-  "name": "www.caixie.net",
+  "name": "hotchcms",
   "version": "0.0.1",
-  "description": "www.caixie.net",
+  "description": "使用koa2、mongoose开发一套一键安装式的内容管理系统。",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "keywords": [
-    "caixie.net"
+    "CMS",
+    "koa",
+    "mongoose"
   ],
   "author": "luckcoding",
   "license": "ISC",
