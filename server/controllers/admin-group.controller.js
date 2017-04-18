@@ -60,7 +60,7 @@ exports.list = async ctx => {
 };
 
 exports.update = async ctx => {
-  ctx.checkParams({
+  ctx.checkBody({
     '_id': {
       notEmpty: {
         options: [true],
@@ -68,8 +68,6 @@ exports.update = async ctx => {
       },
       isMongoId: { errorMessage: '_id  需为 mongoId' }
     },
-  })
-  ctx.checkBody({
     'name': {
       optional: true,
       isString: { errorMessage: 'name 需为字符串' }
@@ -85,10 +83,10 @@ exports.update = async ctx => {
   });
 
   if (ctx.validationErrors()) return null;
-
+  const query = ctx.request.body;
   try {
-    const adminGroup = await adminGroupService.one(ctx.params);
-    await adminGroupService.update(Object.assign(ctx.request.body, { _id: ctx.params._id }));
+    await adminGroupService.one(query);
+    await adminGroupService.update(query);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail('9999', e);

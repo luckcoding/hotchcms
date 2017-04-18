@@ -65,8 +65,7 @@ exports.create = async ctx => {
  * @return {[type]}     [description]
  */
 exports.update = async ctx => {
-  console.log(ctx.request.body)
-  ctx.checkParams({
+  ctx.checkBody({
     '_id': {
       notEmpty: {
         options: [true],
@@ -74,8 +73,6 @@ exports.update = async ctx => {
       },
       isMongoId: { errorMessage: '_id  需为 mongoId' }
     },
-  })
-  ctx.checkBody({
     'nickname': {
       optional: true,
       isString: { errorMessage: 'nickname 需为字符串' }
@@ -111,10 +108,9 @@ exports.update = async ctx => {
   if (ctx.request.body.password) {
     ctx.request.body.password = sha1(ctx.request.body.password);
   }
-
+  const query = ctx.request.body;
   try {
-    const adminUser = await adminUserService.one(ctx.params);
-    const query = Object.assign(ctx.request.body, ctx.params);
+    await adminUserService.one(query);
     await adminUserService.update(query);
     ctx.pipeDone();
   } catch(e) {
