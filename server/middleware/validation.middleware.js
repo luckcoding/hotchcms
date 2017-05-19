@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const validator = require('validator');
-const koaValidator = require('koa2-validator');
+const koaValidator = require('koa-middle-validator');
 
 /**
  * 自定义验证
