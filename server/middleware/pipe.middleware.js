@@ -24,12 +24,12 @@ module.exports = options => {
       ctx._pipeFailData = {};
 
       // 返回
-      ctx.pipeDone = function (result) {
+      ctx.pipeDone = result => {
         ctx._pipeDoneData = _.isEmpty(result)
         ? { code: '0000' }
         : { code: '0000', result: result };
       };
-      ctx.pipeFail = function (code, msg) {
+      ctx.pipeFail = (code, msg) => {
         const errorMsg = _.get(msg, 'error') || msg;
         const errorType = _.includes(categorys, _.get(msg, 'type')) ? msg.type : 'system';
         ctx._pipeFailData = { code: code, msg: errorMsg };

@@ -6,7 +6,7 @@ const crypto = require('crypto');
  * @return {String} SHA1 值
  */
 module.exports = value => {
-  var sha1 = crypto.createHash('sha1');
+  let sha1 = crypto.createHash('sha1');
   sha1.update(value);
   return sha1.digest('hex');
 };

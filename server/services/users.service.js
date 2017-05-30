@@ -9,7 +9,7 @@ const usersModel = require('../models/users.model');
  * @return {[type]}         [description]
  */
 exports.list = options => new Promise(async (resolve, reject) => {
-  var query = {};
+  let query = {};
   if (options.type) query.type = options.type;
   try {
     const users = await usersModel
@@ -34,9 +34,9 @@ exports.list = options => new Promise(async (resolve, reject) => {
  * @param callback
  */
 exports.one = options => new Promise(async (resolve, reject) => {
-  var selectPassword = options.selectPassword || false;
+  let selectPassword = options.selectPassword || false;
 
-  var query = {};
+  let query = {};
 
   if (options.email) query.email = options.email;
   if (options._id) query._id = options._id;
@@ -66,11 +66,11 @@ exports.save = options => new Promise(async (resolve, reject) => {
     return callback({ type: 'system', error: '没有传入 data 或 role' });
   };
 
-  var _id = options._id;
-  var data = options.data;
+  let _id = options._id;
+  let data = options.data;
   try {
     // const role = await rolesModel.findById(data.role).lean().exec();
-    var role;
+    let role;
     if (!role) return reject({ type: 'system', error: '没有找到role' });
     if (_.find(role.authorities, authory => authory === 100000)) {
       return reject({ type: 'system', error: '不允许创建权限存在 100000 的用户' })

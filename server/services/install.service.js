@@ -19,22 +19,19 @@ exports.status = () => new Promise((resolve,reject) => {
 
   // 读取锁文件
   fs.stat(path.join(__dirname, '../../install.lock'), (err, stat) => {
-    if (err && err.code == 'ENOENT') {
-      return resolve(false);
-    } else if (err) {
-      err.type = 'system';
-      return reject(err);
-    }
+
+    if (err && err.code == 'ENOENT') return resolve(false);
+
+    if (err) return ({ type: 'system', error: err.error });
 
     if (stat.isFile()) {
       hasInstall = true;
       return resolve(true);
     } else {
-      var err = {
+      reject({
         type: 'system',
         error: 'install.lock 非文件，请检查'
-      };
-      return reject(err);
+      });
     }
   });
 });
@@ -69,7 +66,7 @@ exports.install = options => new Promise(async (resolve,reject) => {
       new adminGroupModel({
         name: '管理员', description: '系统内置', root: true
       }).save()
-    ])
+    ]);
 
     // 建立root管理员用户
     const adminUser = await new adminUserModel({

@@ -7,7 +7,7 @@ const source = 'authority';
 
 router.prefix(`/${config.API}/${source}`);
 
-router.get('/', authority.one); // 查询权限列表
+router.get('/', authority.list); // 查询权限列表
 
 
 module.exports = router;

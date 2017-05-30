@@ -1,11 +1,11 @@
-var _ = require('lodash');
-var pathToRegexp = require('path-to-regexp');
+const _ = require('lodash');
+const pathToRegexp = require('path-to-regexp');
 
 function KoaAuthority(routes) {
-  var models = [];
+  let models = [];
 
   (function mixins(input) {
-    if (_.isArray(input)) return _.forEach(input, function (each) { mixins(each); });
+    if (_.isArray(input)) return _.forEach(input, each => { mixins(each); });
     if (_.has(input, 'stack')) {
       _.has(input, 'path')
       ? models.push({[input.path]: input.methods || []})
@@ -13,11 +13,12 @@ function KoaAuthority(routes) {
     }
   })(routes);
 
-  return async function(ctx, next) {
-    var check = false;
-    _.forEach(models, function (model, index) {
-      _.mapKeys(model, function(value, key) {
-        var regexp = pathToRegexp(key, []);
+  return async (ctx, next) => {
+    ctx.authorityModel = models;
+    let check = false;
+    _.forEach(models, (model, index) => {
+      _.mapKeys(model, (value, key) => {
+        const regexp = pathToRegexp(key, []);
         if (regexp.test(ctx.request.url)) check = true;
       });
     });

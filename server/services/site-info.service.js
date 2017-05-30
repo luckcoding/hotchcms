@@ -8,7 +8,7 @@ const optionsModel = require('../models/options.model');
  * @return {[type]}   [description]
  */
 exports.get = () => new Promise(async (resolve, reject) => {
-  var siteInfoCache = cache.get('siteInfo');
+  const siteInfoCache = cache.get('siteInfo');
   if (siteInfoCache) return resolve(siteInfoCache);
 
   try {
