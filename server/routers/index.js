@@ -19,4 +19,5 @@ module.exports = app => {
       }));
   });
 };
+
 module.exports.routes = routes;

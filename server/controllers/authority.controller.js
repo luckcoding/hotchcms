@@ -1,4 +1,5 @@
 
 exports.list = async ctx => {
-  ctx.pipeDone(ctx.authorityModel);
+  const authorities = ctx.authorityModels || [];
+  ctx.pipeDone(authorities);
 };

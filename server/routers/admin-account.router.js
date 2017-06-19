@@ -14,5 +14,4 @@ router.put('/', adminAccount.update); // 更新账号
 router.put('/sign-in', adminAccount.signIn); //登录
 router.put('/sign-out', adminAccount.signOut); //退出
 
-
 module.exports = router;

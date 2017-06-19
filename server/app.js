@@ -15,8 +15,7 @@ const routers = require('./routers');
 
 const validation = require('./middleware/validation.middleware');
 const pipe = require('./middleware/pipe.middleware');
-// const authority = require('./middleware/authority.middleware');
-const koaAuthority = require('./middleware/koa-authority');
+const authority = require('./middleware/authority.middleware');
 
 global.Promise = require('bluebird');
 
@@ -40,12 +39,9 @@ app.use(convert.compose(
   session.init()
 ));
 
-app.use(koaAuthority(routers.routes))
-
-// app.use(authority());
-
 // middleware
 app.use(convert.compose(
+  authority(), // 权限验证
   validation(), // 验证参数
   pipe() // pipe通讯
 ));
