@@ -1,4 +1,4 @@
-const koaAuthority = require('../middleware/koa-authority');
+const koaAuthority = require('koa-authority');
 const adminUserService = require('../services/admin-user.service');
 const routers = require('../routers');
 
@@ -6,7 +6,8 @@ module.exports = () => koaAuthority({
   routes: routers.routes,
   authorities: [
     { '/api/admin-account/sign-in': [ 'PUT' ] },
-    { '/api/common/captcha': [ 'HEAD', 'GET' ] }
+    { '/api/common/captcha': [ 'HEAD', 'GET' ] },
+    { '/api/admin-account/sign-out': [ 'PUT' ] }
   ],
   middleware: async ctx => {
     if (ctx.session && ctx.session.adminUserId) {

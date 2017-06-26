@@ -5,6 +5,7 @@ const json = require('koa-json');
 const convert = require('koa-convert');
 const favicon = require('koa-favicon');
 const koaStatic = require('koa-static');
+const cors = require('kcors');
 // const views = require('koa-views');
 
 const logger = require('./lib/logger.lib');
@@ -25,6 +26,9 @@ app.keys = ['key'];
 
 // favicon
 app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(cors({
+  credentials: true
+}));
 
 // request parse
 app.use(convert(bodyParser()));
