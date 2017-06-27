@@ -11,7 +11,7 @@ router.prefix(`/${config.API}/${source}`);
 router.all('*', adminAccount.check); // 检查登录
 
 router.post('/', adminUser.create); // 新增账号
-router.put('/', adminUser.update); // 更新账号
+router.put('/:_id', adminUser.update); // 更新账号
 router.get('/', adminUser.list); // 查询所有账号
 router.get('/:_id', adminUser.one); // 查询账号
 router.delete('/:_id', adminUser.delete); // 删除账号

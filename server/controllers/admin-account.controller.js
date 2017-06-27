@@ -143,6 +143,7 @@ exports.update = async ctx => {
   if (ctx.validationErrors()) return null;
 
   const _id = ctx.session.adminUserId;
+
   if (ctx.request.body.password) {
     ctx.request.body.password = sha1(ctx.request.body.password);
   }

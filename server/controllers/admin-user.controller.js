@@ -66,13 +66,6 @@ exports.create = async ctx => {
  */
 exports.update = async ctx => {
   ctx.checkBody({
-    '_id': {
-      notEmpty: {
-        options: [true],
-        errorMessage: '_id 不能为空'
-      },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
-    },
     'nickname': {
       optional: true,
       isString: { errorMessage: 'nickname 需为字符串' }
@@ -103,12 +96,22 @@ exports.update = async ctx => {
     }
   });
 
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
   if (ctx.validationErrors()) return null;
 
   if (ctx.request.body.password) {
     ctx.request.body.password = sha1(ctx.request.body.password);
   }
-  const query = ctx.request.body;
+  const query = Object.assign(ctx.request.body, ctx.params);
   try {
     await adminUserService.one(query);
     await adminUserService.update(query);
