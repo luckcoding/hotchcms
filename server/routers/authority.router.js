@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const authority = require('../controllers/authority.controller');
-const config = require('../../config/router.config');
+const config = require('../config/router.config');
 
 const router = new Router();
 const source = 'authority';

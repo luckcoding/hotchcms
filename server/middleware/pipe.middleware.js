@@ -11,7 +11,7 @@
  */
 const _ = require('lodash');
 const logger = require('../lib/logger.lib');
-const categorys = require('../../config/log4js.config').categorys;
+const categorys = require('../config/log4js.config').categorys;
 
 module.exports = options => {
   

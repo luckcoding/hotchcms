@@ -2,7 +2,7 @@
 .DS_Store
 .idea
 Thumbs.db
-npm-debug.log
+npm-debug.log*
 install.lock
 config/database.config.js
 !.gitkeep
@@ -12,7 +12,12 @@ logs/*/*
 !logs/*/*.gitkeep
 tmp/*
 !tmp/*.gitkeep
-public/media/*
+publish/admin/*
+!public/admin/.gitkeep
+publish/media/*
 !public/media/.gitkeep
-public/themes/*
-!public/themes/default
+publish/plugins/*
+!public/plugins/.gitkeep
+publish/themes/*
+!public/themes/.gitkeep
+/dist
