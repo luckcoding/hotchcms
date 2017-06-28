@@ -12,12 +12,6 @@ logs/*/*
 !logs/*/*.gitkeep
 tmp/*
 !tmp/*.gitkeep
-publish/admin/*
-!public/admin/.gitkeep
-publish/media/*
-!public/media/.gitkeep
-publish/plugins/*
-!public/plugins/.gitkeep
-publish/themes/*
-!public/themes/.gitkeep
-/dist
+publish/*/*
+!publish/*/*.gitkeep
+dist
