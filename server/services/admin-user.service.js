@@ -2,7 +2,8 @@ const _ = require('lodash');
 const adminUserModel = require('../models/admin-user.model');
 
 const userSchema = 'mobile email password nickname avatar create group';
-const groupSchema = 'name description authorities';
+const groupSchema = 'name description root authorities';
+
 /**
  * 创建
  * @param  {[type]} options [description]
@@ -11,10 +12,6 @@ const groupSchema = 'name description authorities';
 exports.create = options => new Promise(async (resolve, reject) => {
   try {
     const data = _.pick(options, userSchema.split(' '));
-    // const query = _.pick(options, ['_id', 'email']);
-    // const adminUser = await adminUserModel.findOne(query);
-    // console.log(adminUser)
-    // if (adminUser) throw '已存在用户';
     await new adminUserModel(data).save();
     resolve();
   } catch (e) {

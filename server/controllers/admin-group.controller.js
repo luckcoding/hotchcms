@@ -61,13 +61,6 @@ exports.list = async ctx => {
 
 exports.update = async ctx => {
   ctx.checkBody({
-    '_id': {
-      notEmpty: {
-        options: [true],
-        errorMessage: '_id 不能为空'
-      },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
-    },
     'name': {
       optional: true,
       isString: { errorMessage: 'name 需为字符串' }
@@ -82,8 +75,19 @@ exports.update = async ctx => {
     }
   });
 
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
   if (ctx.validationErrors()) return null;
-  const query = ctx.request.body;
+
+  const query = Object.assign(ctx.request.body, ctx.params);
   try {
     await adminGroupService.one(query);
     await adminGroupService.update(query);

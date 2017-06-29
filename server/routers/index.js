@@ -7,7 +7,9 @@ const routes = [
   require('./admin-group.router'),
   require('./admin-account.router'),
   require('./authority.router'),
-  require('./admin-user.router')
+  require('./admin-user.router'),
+  require('./content-category.router'),
+  require('./content.router')
 ];
 
 module.exports = app => {

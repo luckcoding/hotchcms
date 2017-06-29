@@ -1,22 +1,26 @@
+const _ = require('lodash');
 const koaAuthority = require('koa-authority');
 const adminUserService = require('../services/admin-user.service');
 const routers = require('../routers');
 
 module.exports = () => koaAuthority({
   routes: routers.routes,
-  authorities: [
-    { '/api/admin-account/sign-in': [ 'PUT' ] },
+  filter: [
     { '/api/common/captcha': [ 'HEAD', 'GET' ] },
-    { '/api/admin-account/sign-out': [ 'PUT' ] }
+    { '/api/admin-account/sign-in': [ 'PUT' ] },
+    { '/api/admin-account/sign-out': [ 'PUT' ] },
+    { '/api/admin-account': [ 'HEAD', 'GET' ] },
+    { '/api/admin-account': [ 'PUT' ] }
   ],
   middleware: async ctx => {
     if (ctx.session && ctx.session.adminUserId) {
       const _id = ctx.session.adminUserId;
       const user = await adminUserService.one({ _id: _id });
-      if (user.group.name === '管理员') {
+      if (user.group && user.group.root) {
         ctx.authorities = ctx.authorityModels;
       } else {
-        ctx.authorities = user.group.authorities;
+        const authorities = user.group && user.group.authorities;
+        ctx.authorities = authorities;
       }
     }
     return Promise.resolve();

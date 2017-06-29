@@ -49,8 +49,6 @@ exports.create = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  ctx.request.body.password = sha1(ctx.request.body.password);
-
   try {
     await adminUserService.create(ctx.request.body)
     ctx.pipeDone();
@@ -108,9 +106,6 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  if (ctx.request.body.password) {
-    ctx.request.body.password = sha1(ctx.request.body.password);
-  }
   const query = Object.assign(ctx.request.body, ctx.params);
   try {
     await adminUserService.one(query);

@@ -17,7 +17,7 @@ module.exports = () => koaValidator({
     isEmail: value => /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value),
     isMobile: value => /^1[3|4|5|7|8]\d{9}$/.test(value),
     isString: value => _.isString(value),
-    isNumber: value => _.isNumber(value),
+    isNumber: value => _.isNumber(Number(value)),
     isObject: value => _.isObject(value),
     isArray: value => _.isArray(value),
     inArray: param => {
