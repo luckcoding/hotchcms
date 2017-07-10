@@ -9,8 +9,13 @@ const adminUserService = require('../services/admin-user.service');
  * @return {[type]}        [description]
  */
 exports.check = async (ctx, next) => {
-  await next()
-  // ctx.session.adminUserId ? await next() : ctx.pipeFail('BN99', '用户未登录');
+  try {
+    const _id = ctx.state.user.data;
+    const reply = await ctx.redis.get(_id);
+    reply ? await next() : ctx.pipeFail('BN99', '用户未登录');
+  } catch(e) {
+    ctx.pipeFail('9999', e);
+  }
 };
 
 /**
@@ -68,17 +73,19 @@ exports.signIn = async ctx => {
     const adminUser = await adminUserService.one({ email: email, selectPassword: true });
     if (adminUser && sha1(password) === adminUser.password) {
       let expiresIn = 24 * 60 * 60; // 一天
-      if (autoSignIn) expiresIn = expiresIn * 7;
+      if (autoSignIn) expiresIn = expiresIn * 7; // 一周
 
+      const _id = adminUser._id.toString();
       const token = jwt.sign({
-        data: adminUser._id.toString()
+        data: _id
       }, 'caixie', {
         expiresIn: expiresIn
       });
+      ctx.redis.set(_id, token, 'EX', expiresIn);
 
       ctx.pipeDone({ token });
     } else {
-      ctx.pipeFail('BN99','用户名或密码错误');
+      ctx.pipeFail('BN99', '用户名或密码错误');
     }
   } catch (e) {
     ctx.pipeFail('9999', e);
@@ -91,8 +98,13 @@ exports.signIn = async ctx => {
  * @return {[type]}     [description]
  */
 exports.signOut = async ctx => {
-  ctx.session.adminUserId = null;
-  ctx.pipeDone();
+  try {
+    const _id = ctx.state.user.data;
+    await ctx.redis.del(_id);
+    ctx.pipeDone();
+  } catch (e) {
+    ctx.pipeFail('9999', e);
+  }
 };
 
 /**
@@ -150,7 +162,7 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  const _id = ctx.session.adminUserId;
+  const _id = ctx.state.user.data;
 
   if (ctx.request.body.password) {
     ctx.request.body.password = sha1(ctx.request.body.password);

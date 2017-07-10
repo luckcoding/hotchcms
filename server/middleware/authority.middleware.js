@@ -13,8 +13,11 @@ module.exports = () => koaAuthority({
     { '/api/admin-account': [ 'PUT' ] }
   ],
   middleware: async ctx => {
-    if (ctx.session && ctx.session.adminUserId) {
-      const _id = ctx.session.adminUserId;
+    let _id = null;
+    try {
+      _id = ctx.state.user.data;
+    } catch (e) {}
+    if (_id) {
       const user = await adminUserService.one({ _id: _id });
       if (user.group && user.group.root) {
         ctx.authorities = ctx.authorityModels;
