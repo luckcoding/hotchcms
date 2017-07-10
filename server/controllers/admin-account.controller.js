@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const sha1 = require('../services/sha1.service');
 const adminUserService = require('../services/admin-user.service');
 
@@ -8,7 +9,8 @@ const adminUserService = require('../services/admin-user.service');
  * @return {[type]}        [description]
  */
 exports.check = async (ctx, next) => {
-  ctx.session.adminUserId ? await next() : ctx.pipeFail('BN99', '用户未登录');
+  await next()
+  // ctx.session.adminUserId ? await next() : ctx.pipeFail('BN99', '用户未登录');
 };
 
 /**
@@ -25,16 +27,16 @@ exports.signIn = async ctx => {
       },
       isEmail: { errorMessage: 'email 格式不正确' }
     },
-    'captcha': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'captcha 不能为空'
-      },
-      isLength: {
-        options: [1, 4],
-        errorMessage: '验证码长度需为 1 到 4 位'
-      }
-    },
+    // 'captcha': {
+    //   notEmpty: {
+    //     options: [true],
+    //     errorMessage: 'captcha 不能为空'
+    //   },
+    //   isLength: {
+    //     options: [1, 4],
+    //     errorMessage: '验证码长度需为 1 到 4 位'
+    //   }
+    // },
     'password': {
       notEmpty: {
         options: [true],
@@ -56,19 +58,25 @@ exports.signIn = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  const { email, password, captcha, autoSignIn } = ctx.request.body;
+  const { email, password, autoSignIn } = ctx.request.body;
 
-  if (captcha !== ctx.session.captcha) {
-    return ctx.pipeFail('VD99', '验证码错误');
-  }
+  // if (captcha !== ctx.session.captcha) {
+  //   return ctx.pipeFail('VD99', '验证码错误');
+  // }
 
   try {
     const adminUser = await adminUserService.one({ email: email, selectPassword: true });
     if (adminUser && sha1(password) === adminUser.password) {
-      delete ctx.session.captcha;
-      ctx.session.adminUserId = adminUser._id;
-      if (autoSignIn) ctx.session.cookie.maxage = 1000 * 60 * 60 * 24;
-      ctx.pipeDone();
+      let expiresIn = 24 * 60 * 60; // 一天
+      if (autoSignIn) expiresIn = expiresIn * 7;
+
+      const token = jwt.sign({
+        data: adminUser._id.toString()
+      }, 'caixie', {
+        expiresIn: expiresIn
+      });
+
+      ctx.pipeDone({ token });
     } else {
       ctx.pipeFail('BN99','用户名或密码错误');
     }
@@ -94,7 +102,7 @@ exports.signOut = async ctx => {
  */
 exports.current = async ctx => {
   try {
-    const _id = ctx.session.adminUserId;
+    const _id = ctx.state.user.data;
     const user = await adminUserService.one({ _id: _id });
     ctx.pipeDone(user);
   } catch (e) {

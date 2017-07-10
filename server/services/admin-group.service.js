@@ -12,7 +12,7 @@ const groupSchema = 'name description root authorities';
 exports.create = options => new Promise(async (resolve, reject) => {
   try {
     const data = _.pick(options, groupSchema.split(' '));
-    if (data.root) return reject('不允许创建系统管理员');
+    if (data.root) return reject('不允许创建系统组');
     const adminGroup = await new adminGroupModel(data).save();
     resolve(adminGroup);
   } catch (e) {
@@ -30,7 +30,7 @@ exports.update = options => new Promise(async (resolve, reject) => {
     const _id = options._id;
     if (!_id) throw Error('缺少_id');
     const data = _.pick(options, groupSchema.split(' '));
-    if (data.root) return reject('不允许更新成系统管理员');
+    if (data.root) return reject('不允许更新系统组');
     await adminGroupModel.update({ _id: _id }, data, { runValidators: true });
     resolve();
   } catch (e) {
@@ -49,7 +49,7 @@ exports.remove = options => new Promise(async (resolve, reject) => {
     if (!_id) throw Error('缺少_id');
     const adminGroup = await adminGroupModel.findById(_id);
     if (_.isEmpty(adminGroup)) return reject('无此用户组');
-    if (adminGroup.root) return reject('不允许删除系统管理员')
+    if (adminGroup.root) return reject('不允许删除系统组')
     await adminGroup.remove();
     await adminUserModel.update({ group: adminGroup._id }, { $unset: { group: true } });
     resolve();

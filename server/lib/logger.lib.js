@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const log4js = require('koa-log4');
 const config = require('../config/log4js.config');
 

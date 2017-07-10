@@ -1,8 +1,30 @@
 const _ = require('lodash');
 const adminUserModel = require('../models/admin-user.model');
+const adminGroupModel = require('../models/admin-group.model');
 
 const userSchema = 'mobile email password nickname avatar create group';
 const groupSchema = 'name description root authorities';
+
+/**
+ * userSchema options
+ * @param  {[type]} options [description]
+ * @return {[type]}         [description]
+ */
+const pick = options => {
+  return _.pick(options, userSchema.split(' '));
+};
+
+/**
+ * 判断是否是系统用户组
+ * @param  {[type]} groupId [description]
+ * @param  {[type]} message [description]
+ * @return {[type]}         [description]
+ */
+const isRoot = async groupId => {
+  if (!groupId) return Promise.resolve(false);
+  const adminGroup = await adminGroupModel.findById({ _id: groupId }).select('root').lean();
+  return adminGroup.root ? Promise.resolve(true) : Promise.reject(false);
+};
 
 /**
  * 创建
@@ -11,11 +33,13 @@ const groupSchema = 'name description root authorities';
  */
 exports.create = options => new Promise(async (resolve, reject) => {
   try {
-    const data = _.pick(options, userSchema.split(' '));
+    const data = pick(options);
+    const _root = await isRoot(data.group);
+    if (_root) return reject({ type: 'system', error: '不能创建系统组用户' });
     await new adminUserModel(data).save();
     resolve();
   } catch (e) {
-    reject({ type: 'database', error: e });
+    reject({ type: 'database', error: e.message });
   };
 });
 
@@ -26,13 +50,14 @@ exports.create = options => new Promise(async (resolve, reject) => {
  */
 exports.update = options => new Promise(async (resolve, reject) => {
   try {
-    const _id = options._id;
-    if (!_id) throw Error('缺少_id');
-    const data = _.pick(options, userSchema.split(' '));
-    await adminUserModel.update({ _id: _id }, data, { runValidators: true });
+    if (!options._id) return reject({ type: 'system', error: e });
+    const data = pick(options);
+    const _root = await isRoot(data.group);
+    if (_root) return reject({ type: 'system', error: '不能更新系统组用户' });
+    await adminUserModel.update({ _id: options._id }, data, { runValidators: true });
     resolve();
   } catch (e) {
-    reject(e);
+    reject({ type: 'database', error: e.message });
   };
 });
 
@@ -43,13 +68,15 @@ exports.update = options => new Promise(async (resolve, reject) => {
  */
 exports.remove = options => new Promise(async (resolve, reject) => {
   try {
-    const _id = options._id;
-    if (!_id) throw Error('缺少_id');
-    const adminUser = await adminUserModel.findById(_id);
-    adminUser ? await adminUser.remove() : reject('无此用户');
+    if (!options._id) throw Error('缺少_id');
+    const adminUser = await adminUserModel.findById(options._id);
+    if (!adminUser) return Error('无此用户');
+    const _root = await isRoot(data.group);
+    if (_root) return reject({ type: 'system', error: '不能删除系统组用户' });
+    await adminUser.remove();
     resolve();
   } catch (e) {
-    reject(e);
+    reject({ type: 'database', error: e.message });
   };
 });
 
@@ -69,7 +96,7 @@ exports.one = options => new Promise(async (resolve, reject) => {
       .lean();
     adminUser ? resolve(adminUser) : reject('用户不存在');
   } catch (e) {
-    reject(e);
+    reject({ type: 'database', error: e.message });
   };
 });
 
@@ -83,6 +110,6 @@ exports.list = options => new Promise(async (resolve, reject) => {
 
     resolve(adminUser);
   } catch (e) {
-    reject(e);
+    reject({ type: 'database', error: e.message });
   };
 });

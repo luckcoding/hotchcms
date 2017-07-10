@@ -39,7 +39,7 @@ const logDir = path.join(appDir, 'logs');
     // 检查安装锁
     const hasInstall = await installService.status();
     if (hasInstall) {
-      // 连接数据库
+      // 连接 mongodb
       await database.connect();
     }
 

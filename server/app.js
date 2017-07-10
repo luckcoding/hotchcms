@@ -6,11 +6,13 @@ const convert = require('koa-convert');
 const favicon = require('koa-favicon');
 const koaStatic = require('koa-static');
 const cors = require('kcors');
+const jwt = require('koa-jwt');
 // const views = require('koa-views');
+const token = require('./middleware/token.middleware');
 
 const logger = require('./lib/logger.lib');
 // const router = require('./lib/routers');
-const session = require('./lib/session.lib');
+// const session = require('./lib/session.lib');
 
 const routers = require('./routers');
 
@@ -38,10 +40,14 @@ app.use(convert(json()));
 app.use(logger.http());
 
 // session
-app.use(convert.compose(
-  session.check(),
-  session.init()
-));
+// app.use(convert.compose(
+//   session.check(),
+//   session.init()
+// ));
+
+app.use(token())
+
+app.use(jwt({ secret: 'caixie' }).unless({ path: [/\/captcha/, /\/sign-in/]}));
 
 // middleware
 app.use(convert.compose(

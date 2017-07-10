@@ -7,6 +7,7 @@ const captcha = require('../lib/captcha.lib');
  */
 exports.captcha = ctx => {
   const source = captcha();
-  ctx.session.captcha = source.code;
+  ctx.redis.set('captcha', source.code, 'EX', 10)
+  // ctx.captcha = source.code;
   ctx.pipeDone(source.dataURL);
 };
