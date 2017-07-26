@@ -8,14 +8,12 @@ const koaStatic = require('koa-static');
 const cors = require('kcors');
 const jwt = require('koa-jwt');
 // const views = require('koa-views');
-const token = require('./middleware/token.middleware');
 
 const logger = require('./lib/logger.lib');
-// const router = require('./lib/routers');
-// const session = require('./lib/session.lib');
 
 const routers = require('./routers');
 
+const redis = require('./middleware/redis.middleware');
 const validation = require('./middleware/validation.middleware');
 const pipe = require('./middleware/pipe.middleware');
 const authority = require('./middleware/authority.middleware');
@@ -45,7 +43,7 @@ app.use(logger.http());
 //   session.init()
 // ));
 
-app.use(token())
+app.use(redis())
 
 app.use(jwt({ secret: 'caixie' }).unless({ path: [/\/captcha/, /\/sign-in/]}));
 
