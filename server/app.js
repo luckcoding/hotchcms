@@ -1,6 +1,6 @@
 const Koa = require('koa');
 const path = require('path');
-const bodyParser = require('koa-bodyparser');
+const koaBody = require('koa-body');
 const json = require('koa-json');
 const convert = require('koa-convert');
 const favicon = require('koa-favicon');
@@ -18,6 +18,8 @@ const validation = require('./middleware/validation.middleware');
 const pipe = require('./middleware/pipe.middleware');
 const authority = require('./middleware/authority.middleware');
 
+const config = require('./config/system.config');
+
 global.Promise = require('bluebird');
 
 const app = new Koa();
@@ -31,7 +33,9 @@ app.use(cors({
 }));
 
 // request parse
-app.use(convert(bodyParser()));
+app.use(convert(koaBody({
+  multipart: true
+})));
 app.use(convert(json()));
 
 // http 日志
@@ -45,7 +49,7 @@ app.use(logger.http());
 
 app.use(redis())
 
-app.use(jwt({ secret: 'caixie' }).unless({ path: [/\/captcha/, /\/sign-in/]}));
+app.use(jwt({ secret: config.secret }).unless({ path: [/\/captcha/, /\/sign-in/]}));
 
 // middleware
 app.use(convert.compose(
@@ -81,5 +85,4 @@ app.on('error', (err, ctx) => {
   logger.app().error('服务错误: ', err, ctx)
 });
 
-// export default app;
 module.exports = app;
