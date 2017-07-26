@@ -14,6 +14,7 @@ export default {
     darkTheme: localStorage.getItem(`${prefix}darkTheme`) === 'true',
     isNavbar: document.body.clientWidth < 769,
     navOpenKeys: JSON.parse(localStorage.getItem(`${prefix}navOpenKeys`)) || [],
+    token: localStorage.getItem(`${prefix}token`),
   },
   subscriptions: {
     setup ({ dispatch }) {
@@ -104,6 +105,14 @@ export default {
       return {
         ...state,
         ...navOpenKeys,
+      }
+    },
+
+    setToken (state, { payload: { token } }) {
+      localStorage.setItem(`${prefix}token`, token)
+      return {
+        ...state,
+        token,
       }
     },
   },

@@ -24,6 +24,7 @@ export default {
       const data = yield call(login, payload)
       yield put({ type: 'hideLoginLoading' })
       if (data.code === '0000') {
+        yield put({ type: 'app/setToken', payload: { token: data.result } })
         yield put({ type: 'app/query' })
         yield put(routerRedux.push('/dashboard'))
       } else {

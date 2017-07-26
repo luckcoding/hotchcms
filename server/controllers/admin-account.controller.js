@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const sha1 = require('../services/sha1.service');
 const adminUserService = require('../services/admin-user.service');
+const config = require('../config/system.config');
 
 /**
  * 校验
@@ -78,12 +79,12 @@ exports.signIn = async ctx => {
       const _id = adminUser._id.toString();
       const token = jwt.sign({
         data: _id
-      }, 'caixie', {
+      }, config.secret, {
         expiresIn: expiresIn
       });
       ctx.redis.set(_id, token, 'EX', expiresIn);
 
-      ctx.pipeDone({ token });
+      ctx.pipeDone(token);
     } else {
       ctx.pipeFail('BN99', '用户名或密码错误');
     }

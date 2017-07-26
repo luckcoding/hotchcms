@@ -4,7 +4,7 @@ import jsonp from 'jsonp'
 import lodash from 'lodash'
 import pathToRegexp from 'path-to-regexp'
 import { message } from 'antd'
-import { YQL, CORS } from './config'
+import { YQL, CORS, prefix } from './config'
 
 const fetch = (options) => {
   let { data, url } = options
@@ -47,28 +47,35 @@ const fetch = (options) => {
     data = null
   }
 
+  const config = {
+    withCredentials: true,
+    headers: {
+      authorization: `Bearer ${localStorage.getItem(`${prefix}token`)}`,
+    },
+  }
+
   switch (method) {
     case 'get':
       return axios.get(url, {
         params: cloneData,
-        withCredentials: true,
+        ...config,
       })
     case 'delete':
       return axios.delete(url, {
         data: cloneData,
-        withCredentials: true,
+        ...config,
       })
     case 'post':
       return axios.post(url, cloneData, {
-        withCredentials: true,
+        ...config,
       })
     case 'put':
       return axios.put(url, cloneData, {
-        withCredentials: true,
+        ...config,
       })
     case 'patch':
       return axios.patch(url, cloneData, {
-        withCredentials: true,
+        ...config,
       })
     default:
       return axios(options)
