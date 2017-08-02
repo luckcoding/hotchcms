@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 const contentCategory = require('../controllers/content-category.controller');
 const adminAccount = require('../controllers/admin-account.controller');
-const config = require('../config/router.config');
+const config = require('../config/system.config');
 
 const router = new Router();
 const source = 'content-category';

@@ -31,7 +31,7 @@ module.exports = options => {
         ctx._pipeDoneData = { code: '0000', result };
       };
       ctx.pipeFail = (code, msg) => {
-        const errorMsg = _.get(msg, 'error') || msg;
+        const errorMsg = _.get(msg, 'message') || msg;
         ctx._pipeFailData = { code, msg: errorMsg };
 
         const errorType = _.includes(categorys, _.get(msg, 'type')) ? msg.type : 'system';

@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 const adminGroup = require('../controllers/admin-group.controller');
 const adminAccount = require('../controllers/admin-account.controller');
-const config = require('../config/router.config');
+const config = require('../config/system.config');
 
 const router = new Router();
 const source = 'admin-group';

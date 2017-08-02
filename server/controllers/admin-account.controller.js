@@ -12,10 +12,12 @@ const config = require('../config/system.config');
 exports.check = async (ctx, next) => {
   try {
     const _id = ctx.state.user.data;
-    const reply = await ctx.redis.get(_id);
-    reply ? await next() : ctx.pipeFail('BN99', '用户未登录');
+    console.log(_id)
+    const auth = ctx.request.headers.authorization.split(' ')[1];
+    const reply = await ctx.redis.get(auth);
+    reply === _id ? await next() : ctx.pipeFail('BN99', '用户未登录');
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail('9999', e.message);
   }
 };
 
@@ -73,23 +75,19 @@ exports.signIn = async ctx => {
   try {
     const adminUser = await adminUserService.one({ email: email, selectPassword: true });
     if (adminUser && sha1(password) === adminUser.password) {
-      let expiresIn = 24 * 60 * 60; // 一天
-      if (autoSignIn) expiresIn = expiresIn * 7; // 一周
+
+      let expiresIn = autoSignIn ? config.expiresInLong : config.expiresIn; // token 时间
 
       const _id = adminUser._id.toString();
-      const token = jwt.sign({
-        data: _id
-      }, config.secret, {
-        expiresIn: expiresIn
-      });
-      ctx.redis.set(_id, token, 'EX', expiresIn);
+      const token = jwt.sign({ data: _id }, config.secret, { expiresIn });
+      ctx.redis.set(token, _id, 'EX', expiresIn); // 以 token 为key
 
       ctx.pipeDone(token);
     } else {
       ctx.pipeFail('BN99', '用户名或密码错误');
     }
   } catch (e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail('9999', e.message);
   }
 };
 
@@ -100,11 +98,11 @@ exports.signIn = async ctx => {
  */
 exports.signOut = async ctx => {
   try {
-    const _id = ctx.state.user.data;
-    await ctx.redis.del(_id);
+    const auth = ctx.request.headers.authorization.split(' ')[1];
+    await ctx.redis.del(auth);
     ctx.pipeDone();
   } catch (e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail('9999', e.message);
   }
 };
 
@@ -116,11 +114,10 @@ exports.signOut = async ctx => {
 exports.current = async ctx => {
   try {
     const _id = ctx.state.user.data;
-    const user = await adminUserService.one({ _id: _id });
+    const user = await adminUserService.one({ _id });
     ctx.pipeDone(user);
   } catch (e) {
-    e.type = 'database';
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail('9999', e.message);
   }
 };
 
@@ -170,9 +167,9 @@ exports.update = async ctx => {
   }
 
   try {
-    await adminUserService.update(Object.assign(ctx.request.body, { _id: _id}));
+    await adminUserService.update({ ...ctx.request.body, _id });
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail('9999', e.message);
   }
 };
