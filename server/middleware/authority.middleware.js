@@ -1,10 +1,9 @@
 const _ = require('lodash');
 const koaAuthority = require('koa-authority');
 const adminUserService = require('../services/admin-user.service');
-const routers = require('../routers');
 
-module.exports = () => koaAuthority({
-  routes: routers.routes,
+module.exports = routers => koaAuthority({
+  routes: routers,
   filter: [
     { '/api/common/captcha': [ 'HEAD', 'GET' ] },
     { '/api/admin-account/sign-in': [ 'PUT' ] },

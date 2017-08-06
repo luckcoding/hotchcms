@@ -12,7 +12,6 @@ const config = require('../config/system.config');
 exports.check = async (ctx, next) => {
   try {
     const _id = ctx.state.user.data;
-    console.log(_id)
     const auth = ctx.request.headers.authorization.split(' ')[1];
     const reply = await ctx.redis.get(auth);
     reply === _id ? await next() : ctx.pipeFail('BN99', '用户未登录');
