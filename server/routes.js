@@ -23,7 +23,7 @@ module.exports = {
       }
     },
 
-    'admin-group': {
+    '/admin-group': {
       post: ['admin-group.create'], // 新增用户组
       put: ['admin-group.update'], // 更新用户组
       get: ['admin-group.list'], // 查询所有用户组
@@ -34,7 +34,7 @@ module.exports = {
       }
     },
 
-    'admin-user': {
+    '/admin-user': {
       post: ['admin-user.create'], // 新增账号
       put: ['admin-user.update'], // 更新账号
       get: ['admin-user.list'], // 查询所有账号
@@ -45,7 +45,7 @@ module.exports = {
       }
     },
 
-    'content-category': {
+    '/content-category': {
       post: ['admin-user.create'], // 新增分类
       put: ['admin-user.update'], // 更新分类
       get: ['admin-user.list'], // 查询所有分类

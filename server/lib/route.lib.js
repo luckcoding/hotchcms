@@ -5,6 +5,7 @@ const requireAll = require('require-all');
 const routes = require('../routes');
 
 const router = new Router();
+const filter = new Router();
 
 /**
  * 读取控制器
@@ -34,6 +35,12 @@ const controllers = requireAll({
         // 'controller.action'
         controller = value.split('.')[0];
         action = value.split('.')[1];
+        // filter
+        if (action) {
+          filter[key](route, controllers[controller][action]);
+        } else if (controller) {
+          filter[key](route, controllers[controller]);
+        }
       } else if (_.isArray(value)) {
         // ['controller.action']
         if (!_.isEmpty(value)) {
@@ -52,3 +59,4 @@ const controllers = requireAll({
 })(routes);
 
 module.exports = router;
+module.exports.filter = filter;

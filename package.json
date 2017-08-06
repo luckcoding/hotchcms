@@ -36,7 +36,7 @@
     "jsonwebtoken": "^7.4.1",
     "kcors": "^2.2.1",
     "koa": "^2.3.0",
-    "koa-authority": "^0.1.6",
+    "koa-authority": "^0.1.7",
     "koa-body": "^2.3.0",
     "koa-convert": "^1.2.0",
     "koa-favicon": "^2.0.0",
