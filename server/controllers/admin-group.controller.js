@@ -1,5 +1,6 @@
 const sha1 = require('../services/sha1.service');
 const adminGroupService = require('../services/admin-group.service');
+const AdminGroup = require('../models/admin-group.model');
 
 exports.create = async ctx => {
   ctx.checkBody({
@@ -43,7 +44,8 @@ exports.one = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const adminGroup = await adminGroupService.one(ctx.params);
+    // const adminGroup = await adminGroupService.one(ctx.params);
+    const adminGroup = await AdminGroup._one(ctx.params._id);
     ctx.pipeDone(adminGroup);
   } catch (e) {
     ctx.pipeFail('9999', e);
@@ -51,9 +53,11 @@ exports.one = async ctx => {
 };
 
 exports.list = async ctx => {
+  ctx.sanitizeQuery('page').toInt();
+  ctx.sanitizeQuery('size').toInt();
   try {
-    const adminGroups = await adminGroupService.list();
-    ctx.pipeDone(adminGroups);
+    const call = await AdminGroup._list(ctx.query);
+    ctx.pipeDone(call);
   } catch(e) {
     ctx.pipeFail('9999', e);
   }

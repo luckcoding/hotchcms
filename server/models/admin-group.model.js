@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const unique = require('mongoose-unique-validator');
 
 /**
  * 管理员用户组
@@ -21,6 +20,23 @@ const AdminGroupSchema = new mongoose.Schema({
   id: false
 });
 
-AdminGroupSchema.plugin(unique);
+const select = 'name description root authorities';
+
+AdminGroupSchema.statics = {
+  _one(_id) {
+    return this.findById(_id).select(select);
+  },
+
+  async _list({ page = 1, size = 20, ...query }) {
+    if (query.name) query.name = new RegExp(query.name, 'i');
+    const count = await this.count(query);
+    const list = await this.find(query).skip((page - 1) * size).limit(size).select(select).lean();
+    return { count, page, size, list };
+  },
+
+  _count() {
+    return this.count({});
+  }
+};
 
 module.exports = mongoose.model('AdminGroup', AdminGroupSchema);

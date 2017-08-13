@@ -12,7 +12,7 @@
 
 1. `$ git clone https://github.com/luckcoding/hotchcms.git`
 2. `$ npm install`
-3. `npm run dev`
+3. `$ npm run dev`
 
 ## 设计
 

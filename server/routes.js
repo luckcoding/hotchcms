@@ -10,16 +10,15 @@ module.exports = {
     },
 
     '/admin-account': {
-      // all: 'admin-account.check', // 检查登录
-      get: 'admin-account.current', // 查询账号
-      put: 'admin-account.update', // 更新账号
+      get: ['admin-account.current'], // 查询当前账号
+      put: ['admin-account.update'], // 更新当前账号
 
       '/sign-in': {
         put: 'admin-account.signIn' // 登录
       },
 
       '/sign-out': {
-        put: 'admin-account.signOut' // 退出
+        put: ['admin-account.signOut'] // 退出
       }
     },
 
@@ -34,7 +33,7 @@ module.exports = {
       }
     },
 
-    '/admin-user': {
+    '/admin-user*': {
       post: ['admin-user.create'], // 新增账号
       put: ['admin-user.update'], // 更新账号
       get: ['admin-user.list'], // 查询所有账号
@@ -54,10 +53,6 @@ module.exports = {
         get: ['admin-user.one'], // 查询分类
         delete: ['admin-user.delete'] // 删除分类
       }
-    },
-
-    '/*': {
-      all: 'admin-account.check'
     },
 
     '/authorities': {

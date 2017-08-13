@@ -58,32 +58,24 @@ exports.testDatabase = async ctx => {
       },
       isString: { errorMessage: 'database 需为字符串' }
     },
-    // 'user': {
-    //   isString: { errorMessage: 'user 需为字符串' }
-    // },
-    // 'pass': {
-    //   isString: { errorMessage: 'password 需为字符串' }
-    // }
+    'user': {
+      optional: true,
+      isString: { errorMessage: 'user 需为字符串' }
+    },
+    'pass': {
+      optional: true,
+      isString: { errorMessage: 'password 需为字符串' }
+    }
   });
 
   if (ctx.validationErrors()) return null;
 
-  const req = ctx.request.body;
-
-  const opts = {
-    host: req.host,
-    port: req.port,
-    db: req.db,
-    // user: req.user,
-    // pass: req.pass
-  };
   try {
-    const status = await database.test(opts);
+    const status = await database.test(ctx.request.body);
     if (status) ctx.pipeDone();
   } catch (e) {
-    ctx.pipeFail(500,'验证失败',e);
+    ctx.pipeFail(e);
   }
-
 };
 
 exports.install = async ctx => {
@@ -115,25 +107,16 @@ exports.install = async ctx => {
       },
       isString: { errorMessage: 'db 需为字符串' }
     },
-    // 'dbUser': {
-    //   notEmpty: {
-    //     options: [true],
-    //     errorMessage: 'dbUser 不能为空'
-    //   },
-    //   isString: { errorMessage: 'dbUser 需为字符串' }
-    // },
-    // 'dbPassword': {
-    //   notEmpty: {
-    //     options: [true],
-    //     errorMessage: 'dbPassword 不能为空'
-    //   },
-    //   isString: { errorMessage: 'dbPassword 需为字符串' }
-    // },
+    'dbUser': {
+      optional: true,
+      isString: { errorMessage: 'dbUser 需为字符串' }
+    },
+    'dbPassword': {
+      optional: true,
+      isString: { errorMessage: 'dbPassword 需为字符串' }
+    },
     'theme': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'theme 不能为空'
-      },
+      optional: true,
       isString: { errorMessage: 'theme 需为字符串' }
     },
     // 导入示例数据，下一版本
@@ -177,27 +160,27 @@ exports.install = async ctx => {
 
   const req = ctx.request.body;
 
+  const {
+    dbHost, dbPort, db, dbUser, dbPassword,
+    title, theme,
+    email, password
+  } = ctx.request.body;
+
   const databaseData = {
-    host: req.dbHost,
-    port: req.dbPort,
-    db: req.db,
-    // user: req.dbUser,
-    // pass: req.dbPassword
+    host: dbHost,
+    port: dbPort,
+    db: db,
+    // user: dbUser,
+    // pass: dbPassword
   };
 
-  const siteInfoData = {
-    title: req.title,
-    theme: req.theme
-  };
+  const siteInfoData = { title, theme };
 
-  const adminUserData = {
-    email: req.email,
-    password: req.password,
-  };
+  const adminUserData = { email, password };
 
   try {
     const hasInstall = await installService.status();
-    if (hasInstall) return ctx.pipeFail(500,'cms已经安装');
+    if (hasInstall) return ctx.pipeFail(500, 'cms已经安装');
     const install = await installService.install({
       databaseData: databaseData,
       siteInfoData: siteInfoData,
@@ -208,7 +191,7 @@ exports.install = async ctx => {
       ctx.pipeDone();
     }
   } catch (e) {
-    ctx.pipeFail(500,'安装失败',e);
+    ctx.pipeFail(500, e);
   }
 
 }

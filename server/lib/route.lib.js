@@ -17,7 +17,9 @@ const controllers = requireAll({
 
 /**
  * 递归绑定控制器
- * @param  {Object} Router JSON
+ * @param  {[type]} map   [description]
+ * @param  {[type]} route [description]
+ * @return {[type]}       [description]
  */
 (function loop (map, route) {
   route = route || '';
@@ -35,24 +37,28 @@ const controllers = requireAll({
         // 'controller.action'
         controller = value.split('.')[0];
         action = value.split('.')[1];
-        // filter
-        if (action) {
-          filter[key](route, controllers[controller][action]);
-        } else if (controller) {
-          filter[key](route, controllers[controller]);
-        }
+        mixin(filter);
+        mixin(router);
       } else if (_.isArray(value)) {
         // ['controller.action']
         if (!_.isEmpty(value)) {
           controller = value[0].split('.')[0];
           action = value[0].split('.')[1];
+          mixin(router);
+
+          key = 'all';
+          controller = 'admin-account';
+          action = 'check';
+          mixin(router);
         }
       }
 
-      if (action) {
-        router[key](route, controllers[controller][action]);
-      } else if (controller) {
-        router[key](route, controllers[controller]);
+      function mixin(todo) {
+        if (action) {
+          todo[key](route, controllers[controller][action]);
+        } else if (controller) {
+          todo[key](route, controllers[controller]);
+        }
       }
     }
   });

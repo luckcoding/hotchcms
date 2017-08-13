@@ -10,26 +10,19 @@ mongoose.Promise = global.Promise;
 
 /**
  * 测试数据库连接
- * @param {Object} options
- *        {String} options.host
- *        {String} options.database
- *        {Number} options.port
- *        {String} options.user
- *        {String} options.pass
- * @param {Function} callback
+ * @param  {[type]} options [description]
+ * @return {[type]}         [description]
  */
 exports.test = options => new Promise((resolve, reject) => {
-  const db = mongoose.createConnection();
-  db.open(options.host, options.db, options.port, {
-    // user: options.user,
-    // pass: options.pass
-  }, error => {
+  const DB = mongoose.createConnection();
+  const { host, port, db, user, pass } = options;
+  DB.open(host, db, port, { user, pass }, error => {
     if (error) {
       error.type = 'system';
       reject(error);
     } else {
       // 关闭成功再返回
-      db.close();
+      DB.close();
       resolve(true);
     };
   });
@@ -38,64 +31,19 @@ exports.test = options => new Promise((resolve, reject) => {
 
 /**
  * 初始化数据库配置
- * @param {Object} options
- *        {String} options.host
- *        {String} options.database
- *        {Number} options.port
- *        {String} options.user
- *        {String} options.pass
- * @param {Function} callback
+ * @param  {[type]} options [description]
+ * @return {[type]}         [description]
  */
 exports.init = options => new Promise((resolve, reject) => {
-  fs.writeFile(path.join(__dirname,'../config/database.config.json'), JSON.stringify(options, null, 2), function (error){
+  fs.writeFile(path.join(__dirname,'../config/database.config.json'), JSON.stringify(options, null, 2), error => {
     if (error) {
       error.type = 'system';
-      return reject(error);
+      reject(error);
+    } else {
+      resolve(true);
     }
-    resolve(true);
   });
 });
-
-// /**
-//  * 获取数据库配置
-//  * @return {[type]} [description]
-//  */
-// function getConfig() {
-//   return new Promise((resolve, reject) => {
-//     fs.readFile(path.join(__dirname, '../config/database.config.json'), (error, file) => {
-//       if (error && error.code === 'ENOENT') {
-//         return reject({ type: 'system', error: 'database.config.json 文件不存在' })
-//       };
-//       if (error) {
-//         error.type = 'system';
-//         return reject(error);
-//       };
-//       resolve(JSON.parse(file));
-//     })
-//   });
-// };
-
-// /**
-//  * 连接数据库
-//  * @param  {[type]} options [description]
-//  * @return {[type]}         [description]
-//  */
-// exports.connect = function (options) {
-//   return new Promise(async (resolve, reject) => {
-//     try {
-//       const config = options || await getConfig();
-//       mongoose.Promise = global.Promise;
-//       await mongoose.connect(`mongodb://${config.host}:${config.port}/${config.db}`, {
-//         user: config.user,
-//         pass: config.pass
-//       });
-//       resolve()
-//     } catch (e) {
-//       e.type = 'database';
-//       return reject(e);
-//     }
-//   });
-// };
 
 /**
  * 链接数据库
@@ -104,18 +52,19 @@ exports.init = options => new Promise((resolve, reject) => {
  */
 exports.connect = () => new Promise((resolve, reject) => {
   fs.readFile(path.join(__dirname, '../config/database.config.json'), async (error, file) => {
-    if (error && error.code === 'ENOENT') {
-      return reject({ type: 'system', error: 'database.config.json 文件不存在' })
-    };
     if (error) {
       error.type = 'system';
+      if (error.code === 'ENOENT') {
+        error.message = 'database.config.json 文件不存在';
+      }
       return reject(error);
     };
-    const config = JSON.parse(file);
+
     try {
+      const config = JSON.parse(file);
       await mongoose.connect(`mongodb://${config.host}:${config.port}/${config.db}`, {
-        // user: config.user,
-        // pass: config.pass
+        user: config.user,
+        pass: config.pass
       });
       resolve()
     } catch (e) {

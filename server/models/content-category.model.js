@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const unique = require('mongoose-unique-validator');
 
 /**
  * 文章分类
@@ -35,7 +34,5 @@ const ContentCategorySchema = new mongoose.Schema({
   collection: 'contentCategory',
   id: false
 });
-
-ContentCategorySchema.plugin(unique);
 
 module.exports = mongoose.model('ContentCategory', ContentCategorySchema);

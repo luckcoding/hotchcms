@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const unique = require('mongoose-unique-validator');
 
 /**
  * 文章内容
@@ -41,7 +40,5 @@ const ContentSchema = new mongoose.Schema({
   collection: 'content',
   id: false
 });
-
-ContentSchema.plugin(unique);
 
 module.exports = mongoose.model('Content', ContentSchema);

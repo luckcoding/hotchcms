@@ -21,7 +21,7 @@ exports.status = () => new Promise((resolve,reject) => {
   fs.stat(path.join(__dirname, '../../install.lock'), (err, stat) => {
 
     if (err && err.code == 'ENOENT') return resolve(false);
-
+    
     if (err) return ({ type: 'system', error: err.error });
 
     if (stat.isFile()) {

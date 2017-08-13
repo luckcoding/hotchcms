@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const path = require('path');
 const koaBody = require('koa-body');
-const json = require('koa-json');
+// const json = require('koa-json');
 const convert = require('koa-convert');
 const favicon = require('koa-favicon');
 const koaStatic = require('koa-static');
@@ -10,8 +10,6 @@ const jwt = require('koa-jwt');
 // const views = require('koa-views');
 
 const logger = require('./lib/logger.lib');
-
-// const routers = require('./routers');
 
 const redis = require('./middleware/redis.middleware');
 const validation = require('./middleware/validation.middleware');
@@ -22,11 +20,13 @@ const config = require('./config/system.config');
 
 
 const route = require('./lib/route.lib');
+const Throw = require('./lib/error.lib');
 
 global.Promise = require('bluebird');
+global.Throw = Throw;
 
 const app = new Koa();
-app.jsonSpaces = 0 // 压缩json返回中的空格
+app.jsonSpaces = 0; // 压缩json返回中的空格
 app.keys = ['key'];
 
 // favicon
@@ -35,33 +35,30 @@ app.use(cors({
   credentials: true
 }));
 
-// request parse
+// 请求解析
 app.use(convert(koaBody({
   multipart: true
 })));
-app.use(convert(json()));
+// app.use(convert(json()));
 
-// http 日志
+// 日志
 app.use(logger.http());
 
-// session
-// app.use(convert.compose(
-//   session.check(),
-//   session.init()
-// ));
+// redis 链接
+app.use(redis());
 
-app.use(redis())
-
-app.use(jwt({ secret: config.secret }).unless({ path: [/\/captcha/, /\/sign-in/]}));
+app.use(jwt({ secret: config.secret }).unless({
+  path: [ /\/install/, /\/captcha/, /\/sign-in/]
+}));
 
 // middleware
 app.use(convert.compose(
   authority(route), // 权限验证
   validation(), // 验证参数
-  pipe() // pipe通讯
+  pipe() // 通讯
 ));
 
-// static
+// 静态文件
 app.use(convert(koaStatic(path.join(__dirname, 'public'))));
 
 // app.use(views(path.join(__dirname, 'public/themes'), {
@@ -76,12 +73,7 @@ app.use(async (ctx, next) => {
   logger.app().info(`${ctx.method} ${ctx.url} - ${ms}ms`)
 });
 
-// // 转给 Roter 处理路由
-// app.use(router.routes())
-// app.use(router.allowedMethods({
-//   throw: true
-// }))
-// routers(app);
+// 路由
 app.use(route.routes())
 app.use(route.allowedMethods({
   throw: true
