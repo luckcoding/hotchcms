@@ -37,28 +37,25 @@ const controllers = requireAll({
         // 'controller.action'
         controller = value.split('.')[0];
         action = value.split('.')[1];
-        mixin(filter);
-        mixin(router);
+        if (action) {
+          router[key](route, controllers[controller][action]);
+          filter[key](route, controllers[controller][action]);
+        } else if (controller) {
+          router[key](route, controllers[controller]);
+          filter[key](route, controllers[controller]);
+        }
       } else if (_.isArray(value)) {
         // ['controller.action']
-        if (!_.isEmpty(value)) {
-          controller = value[0].split('.')[0];
-          action = value[0].split('.')[1];
-          mixin(router);
+        controller = value[0].split('.')[0];
+        action = value[0].split('.')[1];
 
-          key = 'all';
-          controller = 'admin-account';
-          action = 'check';
-          mixin(router);
-        }
-      }
+        router[key](route, controllers.check());
 
-      function mixin(todo) {
         if (action) {
-          todo[key](route, controllers[controller][action]);
+          router[key](route, controllers[controller][action]);
         } else if (controller) {
-          todo[key](route, controllers[controller]);
-        }
+          router[key](route, controllers[controller]);
+        };
       }
     }
   });

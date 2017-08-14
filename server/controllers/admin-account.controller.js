@@ -9,16 +9,17 @@ const config = require('../config/system.config');
  * @param  {Function} next [description]
  * @return {[type]}        [description]
  */
-exports.check = async (ctx, next) => {
-  try {
-    const _id = ctx.state.user.data;
-    const auth = ctx.request.headers.authorization.split(' ')[1];
-    const reply = await ctx.redis.get(auth);
-    reply === _id ? await next() : ctx.pipeFail('BN99', '用户未登录');
-  } catch(e) {
-    ctx.pipeFail('9999', e.message);
-  }
-};
+// exports.check = async (ctx, next) => {
+//   try {
+//     const _id = ctx.state.user.data;
+//     const auth = ctx.request.headers.authorization.split(' ')[1];
+//     console.log('====>', auth)
+//     const reply = await ctx.redis.get(auth);
+//     reply === _id ? await next() : ctx.pipeFail('用户未登录', 'BN99');
+//   } catch(e) {
+//     ctx.pipeFail(e);
+//   }
+// };
 
 /**
  * 登陆

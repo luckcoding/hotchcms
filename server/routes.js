@@ -10,6 +10,7 @@ module.exports = {
     },
 
     '/admin-account': {
+      // all: 'admin-account.check',
       get: ['admin-account.current'], // 查询当前账号
       put: ['admin-account.update'], // 更新当前账号
 
@@ -33,7 +34,7 @@ module.exports = {
       }
     },
 
-    '/admin-user*': {
+    '/admin-user': {
       post: ['admin-user.create'], // 新增账号
       put: ['admin-user.update'], // 更新账号
       get: ['admin-user.list'], // 查询所有账号

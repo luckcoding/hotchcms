@@ -16,16 +16,21 @@ exports.access = async ctx => {
   }
 }
 
+/**
+ * 安装状态
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.status = async ctx => {
   try {
     const hasInstall = await installService.status();
     if (hasInstall) {
-       ctx.pipeFail(404);
+      ctx.pipeFail('已安装');
     } else {
-      ctx.pipeDone();
+      ctx.pipeDone('可安装');
     }
   } catch (e) {
-    ctx.pipeFail(500);
+    ctx.pipeFail(e);
   }
 }
 
@@ -83,6 +88,11 @@ exports.testDatabase = async ctx => {
   }
 };
 
+/**
+ * 安装
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.install = async ctx => {
   ctx.checkBody({
     'dbHost': {
