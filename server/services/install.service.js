@@ -21,17 +21,17 @@ exports.status = () => new Promise((resolve,reject) => {
   fs.stat(path.join(__dirname, '../../install.lock'), (err, stat) => {
 
     if (err && err.code == 'ENOENT') return resolve(false);
-    
-    if (err) return ({ type: 'system', error: err.error });
+
+    if (err) {
+      err.type = 'system';
+      return reject(err);
+    }
 
     if (stat.isFile()) {
       hasInstall = true;
       return resolve(true);
     } else {
-      reject({
-        type: 'system',
-        error: 'install.lock 非文件，请检查'
-      });
+      reject(Throw('install.lock 非文件，请检查'));
     }
   });
 });
@@ -41,14 +41,12 @@ exports.status = () => new Promise((resolve,reject) => {
  * @param  {[type]} options [description]
  * @return {[type]}         [description]
  */
-exports.install = options => new Promise(async (resolve,reject) => {
-  if (!options.databaseData || !options.siteInfoData || !options.adminUserData) {
-    return reject({ type: 'system', error: '没有 data 传入' });
+exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise(async (resolve,reject) => {
+  if (!databaseData || !siteInfoData || !adminUserData) {
+    return reject(Throw('缺少参数'));
   };
 
-  if (hasInstall) return reject({ type: 'system', error: '非法调用,cms已安装' });
-
-  const { databaseData, siteInfoData, adminUserData } = options;
+  if (hasInstall) return reject(Throw('非法调用,cms已安装'));
 
   try {
     // 初始化配置
@@ -69,21 +67,22 @@ exports.install = options => new Promise(async (resolve,reject) => {
     ]);
 
     // 建立root管理员用户
-    const adminUser = await new adminUserModel({
-      email: adminUserData.email,
-      password: adminUserData.password,
+    const { email, password } = adminUserData;
+    await new adminUserModel({
+      email,
+      password,
       group: adminGroup._id
     }).save();
     // 建表成功后写入lock
-    fs.writeFile('install.lock', true, function (err) {
+    fs.writeFile('install.lock', true, err => {
       if (err) {
         err.type = 'system';
         return reject(err);
       }
     });
-    resolve(true);
+    resolve();
   } catch (e) {
     e.type = 'database';
-    reject(e)
+    reject(e);
   }
 })

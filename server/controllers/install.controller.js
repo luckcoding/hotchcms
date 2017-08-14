@@ -29,6 +29,11 @@ exports.status = async ctx => {
   }
 }
 
+/**
+ * 检测数据库
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.testDatabase = async ctx => {
   ctx.checkBody({
     'host': {
@@ -71,8 +76,8 @@ exports.testDatabase = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const status = await database.test(ctx.request.body);
-    if (status) ctx.pipeDone();
+    await database.test(ctx.request.body);
+    ctx.pipeDone();
   } catch (e) {
     ctx.pipeFail(e);
   }
@@ -166,32 +171,23 @@ exports.install = async ctx => {
     email, password
   } = ctx.request.body;
 
-  const databaseData = {
-    host: dbHost,
-    port: dbPort,
-    db: db,
-    // user: dbUser,
-    // pass: dbPassword
-  };
-
-  const siteInfoData = { title, theme };
-
-  const adminUserData = { email, password };
-
   try {
     const hasInstall = await installService.status();
-    if (hasInstall) return ctx.pipeFail(500, 'cms已经安装');
-    const install = await installService.install({
-      databaseData: databaseData,
-      siteInfoData: siteInfoData,
-      adminUserData: adminUserData,
+    if (hasInstall) return ctx.pipeFail('cms已经安装');
+    await installService.install({
+      databaseData: {
+        host: dbHost,
+        port: dbPort,
+        db: db,
+        user: dbUser,
+        pass: dbPassword
+      },
+      siteInfoData: { title, theme },
+      adminUserData: { email, password },
     });
 
-    if (install) {
-      ctx.pipeDone();
-    }
+    ctx.pipeDone();
   } catch (e) {
-    ctx.pipeFail(500, e);
+    ctx.pipeFail(e);
   }
-
 }

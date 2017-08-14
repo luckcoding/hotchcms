@@ -12,4 +12,4 @@ function Throw(message, type) {
 Throw.prototype = Object.create(Error.prototype);
 Throw.prototype.constructor = Throw;
 
-module.exports = Throw;
+module.exports = (message, type) => new Throw(message, type);
