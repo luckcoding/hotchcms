@@ -36,10 +36,10 @@ module.exports = {
 
     '/admin-user': {
       post: ['admin-user.create'], // 新增账号
-      put: ['admin-user.update'], // 更新账号
       get: ['admin-user.list'], // 查询所有账号
 
       '/:_id': {
+        put: ['admin-user.update'], // 更新账号
         get: ['admin-user.one'], // 查询账号
         delete: ['admin-user.delete'] // 删除账号
       }
@@ -47,10 +47,10 @@ module.exports = {
 
     '/content-category': {
       post: ['admin-user.create'], // 新增分类
-      put: ['admin-user.update'], // 更新分类
       get: ['admin-user.list'], // 查询所有分类
 
       '/:_id': {
+        put: ['admin-user.update'], // 更新分类
         get: ['admin-user.one'], // 查询分类
         delete: ['admin-user.delete'] // 删除分类
       }

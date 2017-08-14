@@ -53,7 +53,7 @@ exports.create = async ctx => {
     await adminUserService.create(ctx.request.body)
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
@@ -106,13 +106,12 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  const query = Object.assign(ctx.request.body, ctx.params);
   try {
-    await adminUserService.one(query);
+    const query = { ...ctx.request.body, ...ctx.params };
     await adminUserService.update(query);
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
@@ -133,7 +132,7 @@ exports.one = async ctx => {
     const adminUser = await adminUserService.one(ctx.params);
     ctx.pipeDone(adminUser);
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
@@ -142,7 +141,7 @@ exports.list = async ctx => {
     const adminUsers = await adminUserService.list();
     ctx.pipeDone(adminUsers);
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
@@ -163,6 +162,6 @@ exports.delete = async ctx => {
     await adminUserService.remove(ctx.params);
     ctx.pipeDone()
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };

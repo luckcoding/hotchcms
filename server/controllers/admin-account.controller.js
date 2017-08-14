@@ -4,24 +4,6 @@ const adminUserService = require('../services/admin-user.service');
 const config = require('../config/system.config');
 
 /**
- * 校验
- * @param  {[type]}   ctx  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
- */
-// exports.check = async (ctx, next) => {
-//   try {
-//     const _id = ctx.state.user.data;
-//     const auth = ctx.request.headers.authorization.split(' ')[1];
-//     console.log('====>', auth)
-//     const reply = await ctx.redis.get(auth);
-//     reply === _id ? await next() : ctx.pipeFail('用户未登录', 'BN99');
-//   } catch(e) {
-//     ctx.pipeFail(e);
-//   }
-// };
-
-/**
  * 登陆
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
@@ -35,16 +17,6 @@ exports.signIn = async ctx => {
       },
       isEmail: { errorMessage: 'email 格式不正确' }
     },
-    // 'captcha': {
-    //   notEmpty: {
-    //     options: [true],
-    //     errorMessage: 'captcha 不能为空'
-    //   },
-    //   isLength: {
-    //     options: [1, 4],
-    //     errorMessage: '验证码长度需为 1 到 4 位'
-    //   }
-    // },
     'password': {
       notEmpty: {
         options: [true],
@@ -56,23 +28,16 @@ exports.signIn = async ctx => {
       }
     },
     'autoSignIn': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'autoSignIn 不能为空'
-      },
+      optional: true,
       isBoolean: { errorMessage: 'autoSignIn 需为布尔值' }
     }
   });
 
   if (ctx.validationErrors()) return null;
 
-  const { email, password, autoSignIn } = ctx.request.body;
-
-  // if (captcha !== ctx.session.captcha) {
-  //   return ctx.pipeFail('VD99', '验证码错误');
-  // }
-
   try {
+    const { email, password, autoSignIn } = ctx.request.body;
+
     const adminUser = await adminUserService.one({ email: email, selectPassword: true });
     if (adminUser && sha1(password) === adminUser.password) {
 
@@ -87,7 +52,7 @@ exports.signIn = async ctx => {
       ctx.pipeFail('BN99', '用户名或密码错误');
     }
   } catch (e) {
-    ctx.pipeFail('9999', e.message);
+    ctx.pipeFail(e);
   }
 };
 
@@ -102,7 +67,7 @@ exports.signOut = async ctx => {
     await ctx.redis.del(auth);
     ctx.pipeDone();
   } catch (e) {
-    ctx.pipeFail('9999', e.message);
+    ctx.pipeFail(e);
   }
 };
 
@@ -117,7 +82,7 @@ exports.current = async ctx => {
     const user = await adminUserService.one({ _id });
     ctx.pipeDone(user);
   } catch (e) {
-    ctx.pipeFail('9999', e.message);
+    ctx.pipeFail(e);
   }
 };
 
@@ -170,6 +135,6 @@ exports.update = async ctx => {
     await adminUserService.update({ ...ctx.request.body, _id });
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e.message);
+    ctx.pipeFail(e);
   }
 };
