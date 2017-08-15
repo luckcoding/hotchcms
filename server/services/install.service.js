@@ -1,10 +1,9 @@
 const path = require('path');
 const fs = require('fs');
-
 const database = require('../lib/database.lib');
-const optionsModel = require('../models/options.model');
-const adminGroupModel = require('../models/admin-group.model');
-const adminUserModel = require('../models/admin-user.model');
+const Options = require('../models/options.model');
+const AdminGroup = require('../models/admin-group.model');
+const AdminUser = require('../models/admin-user.model');
 
 // 缓存安装状态
 let hasInstall = false;
@@ -59,16 +58,16 @@ exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise
      */
     let [siteInfo, adminGroup] = await Promise.all([
       // 存储cms信息
-      new optionsModel({ name: 'siteInfo', value: siteInfoData }).save(),
+      new Options({ name: 'siteInfo', value: siteInfoData }).save(),
       // 建立root管理员用户组权限
-      new adminGroupModel({
-        name: '管理员', description: '系统内置', root: true
+      new AdminGroup({
+        name: '管理员[系统]', description: '系统内置', root: true
       }).save()
     ]);
 
     // 建立root管理员用户
     const { email, password } = adminUserData;
-    await new adminUserModel({
+    await new AdminUser({
       email,
       password,
       group: adminGroup._id

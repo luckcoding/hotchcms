@@ -54,7 +54,7 @@ exports.one = async ctx => {
 
 exports.list = async ctx => {
   ctx.sanitizeQuery('page').toInt();
-  ctx.sanitizeQuery('size').toInt();
+  ctx.sanitizeQuery('pageSize').toInt();
   try {
     const call = await AdminGroup._list(ctx.query);
     ctx.pipeDone(call);

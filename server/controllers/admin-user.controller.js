@@ -1,8 +1,8 @@
 const sha1 = require('../services/sha1.service');
-const adminUserService = require('../services/admin-user.service');
+const AdminUser = require('../models/admin-user.model');
 
 /**
- * 创建用户
+ * 创建管理员
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
@@ -50,7 +50,7 @@ exports.create = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await adminUserService.create(ctx.request.body)
+    await AdminUser.create(ctx.request.body)
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
@@ -58,7 +58,7 @@ exports.create = async ctx => {
 };
 
 /**
- * 更新用户
+ * 更新管理员
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
@@ -107,14 +107,18 @@ exports.update = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const query = { ...ctx.request.body, ...ctx.params };
-    await adminUserService.update(query);
+    await AdminUser.findOneAndUpdate(ctx.params._id, ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
   }
 };
 
+/**
+ * 查询单个管理员
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.one = async ctx => {
   ctx.checkParams({
     '_id': {
@@ -129,22 +133,78 @@ exports.one = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const adminUser = await adminUserService.one(ctx.params);
-    ctx.pipeDone(adminUser);
+    const call = await AdminUser.findById(ctx.params._id)
+      .select('email mobile nickname create group')
+      .populate('group', 'name description authorities root')
+      .lean();
+    call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99');
   } catch(e) {
     ctx.pipeFail(e);
   }
 };
 
+/**
+ * 管理员列表查询
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.list = async ctx => {
+  ctx.sanitizeQuery('page').toInt();
+  ctx.sanitizeQuery('pageSize').toInt();
+    ctx.checkQuery({
+    'page': {
+      optional: true,
+      isNumber: { errorMessage: 'page  需为 Number' }
+    },
+    'pageSize': {
+      optional: true,
+      isNumber: { errorMessage: 'pageSize  需为 Number' }
+    },
+    'email': {
+      optional: true,
+      isEmail: { errorMessage: 'email 格式不正确' }
+    },
+    'mobile': {
+      optional: true,
+      isMobile: { errorMessage: 'mobile 格式不正确' }
+    },
+    'nickname': {
+      optional: true,
+      isString: { errorMessage: 'nickname  需为 String' }
+    },
+    'group': {
+      optional: true,
+      isMongoId: { errorMessage: 'group  需为 mongoId' }
+    },
+  });
   try {
-    const adminUsers = await adminUserService.list();
-    ctx.pipeDone(adminUsers);
+    const {
+      page = 1, pageSize = 10,
+      ...query
+    } = ctx.request.query;
+
+    if (query.nickname) query.nickname = new RegExp(query.nickname, 'i');
+
+    const total = await AdminUser.count(query);
+    const list = await AdminUser.find(query)
+      .sort('-create.date')
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .select('email mobile nickname create group')
+      .populate('group', 'name description authorities root')
+      .lean();
+
+    ctx.pipeDone({ list, total, pageSize, page });
   } catch(e) {
     ctx.pipeFail(e);
   }
 };
 
+/**
+ * 删除管理员
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.delete = async ctx => {
   ctx.checkParams({
     '_id': {
@@ -159,8 +219,8 @@ exports.delete = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await adminUserService.remove(ctx.params);
-    ctx.pipeDone()
+    await AdminUser.findOneAndRemove(ctx.params);
+    ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
   }

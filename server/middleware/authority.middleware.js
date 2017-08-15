@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const koaAuthority = require('koa-authority');
-const adminUserService = require('../services/admin-user.service');
+const AdminUser = require('../models/admin-user.model');
 
 module.exports = route => koaAuthority({
   routes: route,
@@ -11,8 +11,8 @@ module.exports = route => koaAuthority({
       _id = ctx.state.user.data;
     } catch (e) {}
     if (_id) {
-      const user = await adminUserService.one({ _id: _id });
-      if (user.group && user.group.root) {
+      const user = await AdminUser.findById(_id).populate('group').lean();
+      if (_.pick(user, 'group.root')) {
         ctx.authorities = ctx.authorityModels;
       } else {
         const authorities = user.group && user.group.authorities;

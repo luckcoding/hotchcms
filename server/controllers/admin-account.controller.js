@@ -1,7 +1,10 @@
+const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const sha1 = require('../services/sha1.service');
-const adminUserService = require('../services/admin-user.service');
+const AdminUser = require('../models/admin-user.model');
 const config = require('../config/system.config');
+
+const { expiresInLong, expiresIn, secret } = config;
 
 /**
  * 登陆
@@ -38,18 +41,19 @@ exports.signIn = async ctx => {
   try {
     const { email, password, autoSignIn } = ctx.request.body;
 
-    const adminUser = await adminUserService.one({ email: email, selectPassword: true });
-    if (adminUser && sha1(password) === adminUser.password) {
+    const call = await AdminUser.findOne({ email });
 
-      let expiresIn = autoSignIn ? config.expiresInLong : config.expiresIn; // token 时间
+    if (call && sha1(password) === call.password) {
 
-      const _id = adminUser._id.toString();
-      const token = jwt.sign({ data: _id }, config.secret, { expiresIn });
+      let expiresIn = autoSignIn ? expiresInLong : expiresIn; // token 时间
+
+      const _id = call._id.toString();
+      const token = jwt.sign({ data: _id }, secret, { expiresIn });
       ctx.redis.set(token, _id, 'EX', expiresIn); // 以 token 为key
 
       ctx.pipeDone(token);
     } else {
-      ctx.pipeFail('BN99', '用户名或密码错误');
+      ctx.pipeFail('用户名或密码错误', 'BN99');
     }
   } catch (e) {
     ctx.pipeFail(e);
@@ -79,7 +83,7 @@ exports.signOut = async ctx => {
 exports.current = async ctx => {
   try {
     const _id = ctx.state.user.data;
-    const user = await adminUserService.one({ _id });
+    const user = await AdminUser._one(_id);
     ctx.pipeDone(user);
   } catch (e) {
     ctx.pipeFail(e);
@@ -117,22 +121,17 @@ exports.update = async ctx => {
       optional: true,
       isString: { errorMessage: 'avatar 需为字符串' },
     },
-    'group': {
-      optional: true,
-      isMongoId: { errIorMessage: 'role 需为 mongoId' },
-    }
   });
 
   if (ctx.validationErrors()) return null;
 
-  const _id = ctx.state.user.data;
-
-  if (ctx.request.body.password) {
-    ctx.request.body.password = sha1(ctx.request.body.password);
-  }
-
   try {
-    await adminUserService.update({ ...ctx.request.body, _id });
+    const _id = ctx.state.user.data;
+
+    const input = _.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
+    if (input.password) input.password = sha1(input.password);
+
+    await AdminUser.update({ ...input, _id });
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);

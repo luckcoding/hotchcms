@@ -10,7 +10,7 @@ const AdminGroupSchema = new mongoose.Schema({
   // 备注
   description: String,
 
-  // 是否最高权限，
+  // 是否最高权限
   root: { type: Boolean, default: false },
 
   // 权限列表
