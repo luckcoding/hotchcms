@@ -1,7 +1,12 @@
 const sha1 = require('../services/sha1.service');
-const adminGroupService = require('../services/admin-group.service');
 const AdminGroup = require('../models/admin-group.model');
+const AdminUser = require('../models/admin-user.model');
 
+/**
+ * 创建管理组
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.create = async ctx => {
   ctx.checkBody({
     'name': {
@@ -17,52 +22,28 @@ exports.create = async ctx => {
         errorMessage: 'description 不能为空'
       },
       isString: { errorMessage: 'description 需为字符串' }
+    },
+    'authorities': {
+      optional: true,
+      isArray: { errorMessage: 'authorities 需为数组' }
     }
   });
 
   if (ctx.validationErrors()) return null;
 
   try {
-    await adminGroupService.create(ctx.request.body);
+    await AdminGroup.create(ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
-exports.one = async ctx => {
-  ctx.checkParams({
-    '_id': {
-      notEmpty: {
-        options: [true],
-        errorMessage: '_id 不能为空'
-      },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
-    }
-  });
-
-  if (ctx.validationErrors()) return null;
-
-  try {
-    // const adminGroup = await adminGroupService.one(ctx.params);
-    const adminGroup = await AdminGroup._one(ctx.params._id);
-    ctx.pipeDone(adminGroup);
-  } catch (e) {
-    ctx.pipeFail('9999', e);
-  }
-};
-
-exports.list = async ctx => {
-  ctx.sanitizeQuery('page').toInt();
-  ctx.sanitizeQuery('pageSize').toInt();
-  try {
-    const call = await AdminGroup._list(ctx.query);
-    ctx.pipeDone(call);
-  } catch(e) {
-    ctx.pipeFail('9999', e);
-  }
-};
-
+/**
+ * 更新管理组
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.update = async ctx => {
   ctx.checkBody({
     'name': {
@@ -91,16 +72,87 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  const query = Object.assign(ctx.request.body, ctx.params);
   try {
-    await adminGroupService.one(query);
-    await adminGroupService.update(query);
+    await AdminGroup.findOneAndUpdate(ctx.params._id, ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
+/**
+ * 查询单个管理组
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
+exports.one = async ctx => {
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    const call = await AdminGroup.findById(ctx.params._id)
+      .select('name description authorities root')
+      .lean();
+    call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99');
+  } catch (e) {
+    ctx.pipeFail(e);
+  }
+};
+
+/**
+ * 查询管理组列表
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
+exports.list = async ctx => {
+  ctx.sanitizeQuery('page').toInt();
+  ctx.sanitizeQuery('pageSize').toInt();
+  ctx.checkQuery({
+    'name': {
+      optional: true,
+      isString: { errorMessage: 'name  需为 String' }
+    },
+    'root': {
+      optional: true,
+      isBoolean: { errorMessage: 'root  需为 Boolean' }
+    },
+  });
+  try {
+    const {
+      page = 1, pageSize = 10,
+      ...query
+    } = ctx.request.query;
+
+    if (query.name) query.name = new RegExp(query.name, 'i');
+
+    const total = await AdminGroup.count(query);
+    const list = await AdminGroup.find(query)
+      .sort('-root')
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .select('name description authorities root')
+      .lean();
+
+    ctx.pipeDone({ list, total, pageSize, page });
+  } catch(e) {
+    ctx.pipeFail(e);
+  }
+};
+
+/**
+ * 删除管理组
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.delete = async ctx => {
   ctx.checkParams({
     '_id': {
@@ -115,9 +167,10 @@ exports.delete = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await adminGroupService.remove(ctx.params);
-    ctx.pipeDone()
+    await AdminGroup.findOneAndRemove(ctx.params);
+    await AdminUser.update({ group: ctx.params._id }, { $unset: { group: true } });
+    ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };

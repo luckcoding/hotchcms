@@ -25,10 +25,10 @@ module.exports = {
 
     '/admin-group': {
       post: ['admin-group.create'], // 新增用户组
-      put: ['admin-group.update'], // 更新用户组
       get: ['admin-group.list'], // 查询所有用户组
 
       '/:_id': {
+        put: ['admin-group.update'], // 更新用户组
         get: ['admin-group.one'], // 查询用户组
         delete: ['admin-group.delete'] // 删除用户组
       }

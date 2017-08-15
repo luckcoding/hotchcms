@@ -14,7 +14,7 @@ const AdminGroupSchema = new mongoose.Schema({
   root: { type: Boolean, default: false },
 
   // 权限列表
-  authorities: [Object]
+  authorities: { type: Array, default: [] },
 }, {
   collection: 'adminGroup',
   id: false

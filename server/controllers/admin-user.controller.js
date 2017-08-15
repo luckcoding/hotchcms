@@ -151,7 +151,7 @@ exports.one = async ctx => {
 exports.list = async ctx => {
   ctx.sanitizeQuery('page').toInt();
   ctx.sanitizeQuery('pageSize').toInt();
-    ctx.checkQuery({
+  ctx.checkQuery({
     'page': {
       optional: true,
       isNumber: { errorMessage: 'page  需为 Number' }
