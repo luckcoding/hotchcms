@@ -14,18 +14,22 @@ exports.create = async ctx => {
         options: [true],
         errorMessage: 'name 不能为空'
       },
-      isString: { errorMessage: 'name 需为字符串' }
+      isString: { errorMessage: 'name 需为 String' }
     },
     'description': {
       notEmpty: {
         options: [true],
         errorMessage: 'description 不能为空'
       },
-      isString: { errorMessage: 'description 需为字符串' }
+      isString: { errorMessage: 'description 需为 String' }
+    },
+    'gradation': {
+      optional: true,
+      isNumber: { errorMessage: 'authorities 需为 Number' }
     },
     'authorities': {
       optional: true,
-      isArray: { errorMessage: 'authorities 需为数组' }
+      isArray: { errorMessage: 'authorities 需为 Array' }
     }
   });
 
@@ -48,15 +52,19 @@ exports.update = async ctx => {
   ctx.checkBody({
     'name': {
       optional: true,
-      isString: { errorMessage: 'name 需为字符串' }
+      isString: { errorMessage: 'name 需为 String' }
     },
     'description': {
       optional: true,
-      isString: { errorMessage: 'description 需为字符串' }
+      isString: { errorMessage: 'description 需为 String' }
+    },
+    'gradation': {
+      optional: true,
+      isNumber: { errorMessage: 'authorities 需为 Number' }
     },
     'authorities': {
       optional: true,
-      isArray: { errorMessage: 'authorities 需为数组' }
+      isArray: { errorMessage: 'authorities 需为 Array' }
     }
   });
 
@@ -100,7 +108,7 @@ exports.one = async ctx => {
 
   try {
     const call = await AdminGroup.findById(ctx.params._id)
-      .select('name description authorities root')
+      .select('name description authorities gradation')
       .lean();
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99');
   } catch (e) {
@@ -121,9 +129,9 @@ exports.list = async ctx => {
       optional: true,
       isString: { errorMessage: 'name  需为 String' }
     },
-    'root': {
+    'gradation': {
       optional: true,
-      isBoolean: { errorMessage: 'root  需为 Boolean' }
+      isNumber: { errorMessage: 'authorities 需为 Number' }
     },
   });
   try {
@@ -136,10 +144,10 @@ exports.list = async ctx => {
 
     const total = await AdminGroup.count(query);
     const list = await AdminGroup.find(query)
-      .sort('-root')
+      .sort('-gradation')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select('name description authorities root')
+      .select('name description authorities gradation')
       .lean();
 
     ctx.pipeDone({ list, total, pageSize, page });

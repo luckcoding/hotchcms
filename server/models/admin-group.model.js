@@ -10,9 +10,6 @@ const AdminGroupSchema = new mongoose.Schema({
   // 备注
   description: String,
 
-  // 是否最高权限
-  root: { type: Boolean, default: false },
-
   // 管理等级
   gradation: { type: Number, mix: 0, max: 100, default: 0 },
 
