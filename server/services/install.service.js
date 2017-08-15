@@ -61,7 +61,7 @@ exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise
       new Options({ name: 'siteInfo', value: siteInfoData }).save(),
       // 建立root管理员用户组权限
       new AdminGroup({
-        name: '管理员[系统]', description: '系统内置', root: true
+        name: '管理员[系统]', description: '系统内置', gradation: 100
       }).save()
     ]);
 

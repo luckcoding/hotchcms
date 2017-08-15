@@ -13,6 +13,9 @@ const AdminGroupSchema = new mongoose.Schema({
   // 是否最高权限
   root: { type: Boolean, default: false },
 
+  // 管理等级
+  gradation: { type: Number, mix: 0, max: 100, default: 0 },
+
   // 权限列表
   authorities: { type: Array, default: [] },
 }, {
@@ -23,6 +26,7 @@ const AdminGroupSchema = new mongoose.Schema({
 const select = 'name description root authorities';
 
 AdminGroupSchema.statics = {
+
   _one(_id) {
     return this.findById(_id).select(select);
   },
