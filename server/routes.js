@@ -56,7 +56,7 @@ module.exports = {
       }
     },
 
-    '/authorities': {
+    '/authority': {
       get: ['authority.list'] // 权限列表
     },
   },

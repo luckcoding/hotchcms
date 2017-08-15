@@ -32,7 +32,7 @@ const List = ({ onDeleteItem, onEditItem, isMotion, location, ...tableProps }) =
       className: styles.avatar,
       render: text => <img alt={'avatar'} width={24} src={text} />,
     }, {
-      title: '账号',
+      title: '邮箱',
       dataIndex: 'email',
       key: 'email',
       render: (text, record) => <Link to={`user/${record._id}`}>{text}</Link>,
@@ -41,10 +41,19 @@ const List = ({ onDeleteItem, onEditItem, isMotion, location, ...tableProps }) =
       dataIndex: 'nickname',
       key: 'nickname',
     }, {
+      title: '管理组',
+      dataIndex: 'group',
+      key: 'group',
+      render: text => <span>{text && text.name}</span>,
+    }, {
       title: '创建时间',
       dataIndex: 'create',
       key: 'create',
       render: text => <span>{text.date}</span>,
+    }, {
+      title: '手机号',
+      dataIndex: 'mobile',
+      key: 'mobile',
     }, {
       title: '操作',
       key: 'operation',

@@ -8,8 +8,10 @@ import { YQL, CORS, prefix } from './config'
 
 const fetch = (options) => {
   let { data, url } = options
+
   const method = options.method.toLowerCase() || 'get'
   const fetchType = options.fetchType
+  const headers = options.headers || {}
 
   const cloneData = lodash.cloneDeep(data)
 
@@ -50,6 +52,7 @@ const fetch = (options) => {
   const config = {
     withCredentials: true,
     headers: {
+      ...headers,
       authorization: `Bearer ${localStorage.getItem(`${prefix}token`)}`,
     },
   }
@@ -75,6 +78,10 @@ const fetch = (options) => {
       })
     case 'patch':
       return axios.patch(url, cloneData, {
+        ...config,
+      })
+    case 'form':
+      return axios.post(url, options.data, {
         ...config,
       })
     default:

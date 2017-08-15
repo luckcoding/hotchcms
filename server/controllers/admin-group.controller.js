@@ -81,7 +81,7 @@ exports.update = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await AdminGroup.findOneAndUpdate(ctx.params._id, ctx.request.body);
+    await AdminGroup.update({ _id: ctx.params._id }, ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
@@ -175,7 +175,7 @@ exports.delete = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await AdminGroup.findOneAndRemove(ctx.params);
+    await AdminGroup.remove({ _id: ctx.params._id });
     await AdminUser.update({ group: ctx.params._id }, { $unset: { group: true } });
     ctx.pipeDone();
   } catch(e) {

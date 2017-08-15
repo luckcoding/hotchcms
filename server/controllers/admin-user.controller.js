@@ -107,7 +107,7 @@ exports.update = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await AdminUser.findOneAndUpdate(ctx.params._id, ctx.request.body);
+    await AdminUser.update({ _id: ctx.params._id }, ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
@@ -219,7 +219,7 @@ exports.delete = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await AdminUser.findOneAndRemove(ctx.params);
+    await AdminUser.remove({ _id: ctx.params._id });
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);

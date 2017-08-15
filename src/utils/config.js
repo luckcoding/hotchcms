@@ -18,6 +18,5 @@ module.exports = {
     current: `${APIV1}/admin-account`, // 获取当前用户
     dashboard: `${APIV1}/dashboard`,
     adminUser: `${APIV1}/admin-user/:_id`, // 用户
-
   },
 }

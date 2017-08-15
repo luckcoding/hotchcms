@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal } from 'antd'
+import { Form, Input, Modal, Select } from 'antd'
 
 const FormItem = Form.Item
+const Option = Select.Option
 
 const formItemLayout = {
   labelCol: {
@@ -31,9 +32,12 @@ const modal = ({
       }
       const data = {
         ...getFieldsValue(),
-        // key: item.key,
       }
-      // data.address = data.address.join(' ')
+      for (let key in data) {
+        if (data[key] === '') {
+          delete data[key]
+        }
+      }
       onOk(data)
     })
   }
@@ -41,6 +45,10 @@ const modal = ({
   const modalOpts = {
     ...modalProps,
     onOk: handleOk,
+  }
+
+  function handleChange (value) {
+    console.log(`selected ${value}`)
   }
 
   return (
@@ -53,7 +61,7 @@ const modal = ({
               initialValue: item.email,
               rules: [
                 {
-                  required: true,
+                  required: modalType !== 'update',
                   pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
                   message: '请输入正确的邮箱地址!',
                 },
@@ -66,17 +74,37 @@ const modal = ({
             initialValue: item.nickname,
             rules: [
               {
-                required: true,
+                required: modalType !== 'update',
               },
             ],
           })(<Input />)}
+        </FormItem>
+        <FormItem label="手机号" hasFeedback {...formItemLayout}>
+          {getFieldDecorator('mobile', {
+            initialValue: item.mobile,
+            rules: [
+              {
+                required: modalType !== 'update',
+                pattern: /^1[3|4|5|7|8]\d{9}$/,
+                message: '请输入正确的手机号!',
+              },
+            ],
+          })(<Input />)}
+        </FormItem>
+        <FormItem label="用户组" hasFeedback {...formItemLayout}>
+          <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="disabled" disabled>Disabled</Option>
+            <Option value="Yiminghe">yiminghe</Option>
+          </Select>
         </FormItem>
         <FormItem label="密码" hasFeedback {...formItemLayout}>
           {getFieldDecorator('password', {
             initialValue: item.password,
             rules: [
               {
-                required: true,
+                required: modalType !== 'update',
               },
             ],
           })(<Input type="password" />)}
