@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const contentCategoryModel = require('../models/content-category.model');
+const contentCategoryModel = require('../models/category.model');
 
 const categorySchema = 'uid name path state sort keywords description';
 

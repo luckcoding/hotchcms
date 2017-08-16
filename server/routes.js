@@ -60,4 +60,6 @@ module.exports = {
       get: ['authority.list'] // 权限列表
     },
   },
+
+  '/': { get: 'home' }, // 首页
 };

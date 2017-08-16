@@ -67,9 +67,4 @@ const usersSchema = new mongoose.Schema({
   id: false
 });
 
-/**
- * 发布为模型
- */
-// export default mongoose.model('Users', usersSchema);
-
 module.exports = mongoose.model('Users', usersSchema);

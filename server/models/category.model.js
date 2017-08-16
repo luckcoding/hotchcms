@@ -3,9 +3,12 @@ const mongoose = require('mongoose');
 /**
  * 文章分类
  */
-const ContentCategorySchema = new mongoose.Schema({
+const CategorySchema = new mongoose.Schema({
   // 父级
-  uid: { type: mongoose.Schema.Types.ObjectId, ref: 'ContentCategory' },
+  uid: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+
+  // 首页
+  index: { type: Boolean, default: false },
 
   // 分类名
   name: { type: String, required: true },
@@ -21,8 +24,8 @@ const ContentCategorySchema = new mongoose.Schema({
   // 排序
   sort: { type: Number, default: 0 },
 
-  // 内容模型
-  // model: { type: mongoose.Schema.Types.ObjectId, ref: 'Models' },
+  // 内容模板
+  template: { type: mongoose.Schema.Types.ObjectId, ref: 'ThemeTemplate' },
 
   // 关键字
   keywords: String,
@@ -31,8 +34,8 @@ const ContentCategorySchema = new mongoose.Schema({
   description: String,
   
 }, {
-  collection: 'contentCategory',
+  collection: 'category',
   id: false
 });
 
-module.exports = mongoose.model('ContentCategory', ContentCategorySchema);
+module.exports = mongoose.model('Category', CategorySchema);

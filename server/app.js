@@ -7,7 +7,7 @@ const favicon = require('koa-favicon');
 const koaStatic = require('koa-static');
 const cors = require('kcors');
 const jwt = require('koa-jwt');
-// const views = require('koa-views');
+const views = require('koa-views');
 
 const logger = require('./lib/logger.lib');
 
@@ -47,9 +47,9 @@ app.use(logger.http());
 // redis 链接
 app.use(redis());
 
-app.use(jwt({ secret: config.secret }).unless({
-  path: [ /\/install/, /\/captcha/, /\/sign-in/]
-}));
+// app.use(jwt({ secret: config.secret }).unless({
+//   path: [ /\/install/, /\/captcha/, /\/sign-in/]
+// }));
 
 // middleware
 app.use(convert.compose(
@@ -59,11 +59,12 @@ app.use(convert.compose(
 ));
 
 // 静态文件
-app.use(convert(koaStatic(path.join(__dirname, 'public'))));
+app.use(convert(koaStatic(path.join(__dirname, '../public'))));
 
-// app.use(views(path.join(__dirname, 'public/themes'), {
-//   extension: 'ejs'
-// }))
+// 渲染引擎
+app.use(views(path.join(__dirname, '../public/themes'), {
+  extension: 'ejs'
+}));
 
 // 日志
 app.use(async (ctx, next) => {

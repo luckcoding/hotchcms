@@ -50,7 +50,7 @@ exports.create = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await AdminUser.create(ctx.request.body)
+    await AdminUser.create(ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);

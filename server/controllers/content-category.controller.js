@@ -1,86 +1,91 @@
 const contentCategoryService = require('../services/content-category.service');
+const ContentCategory = require('../models/category.model');
 
 const categorySchema = 'name path state sort keywords description';
 
+/**
+ * 创建分类
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.create = async ctx => {
   ctx.checkBody({
     'uid': {
       optional: true,
-      isMongoId: { errIorMessage: 'role 需为 mongoId' },
+      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
     },
     'name': {
       notEmpty: {
         options: [true],
         errorMessage: 'name 不能为空'
       },
-      isString: { errorMessage: 'name 需为字符串' },
+      isString: { errorMessage: 'name 需为 String' },
     },
     'path': {
       notEmpty: {
         options: [true],
         errorMessage: 'path 不能为空'
       },
-      isString: { errorMessage: 'path 需为字符串' },
+      isString: { errorMessage: 'path 需为 String' },
     },
     'state': {
       optional: true,
-      isBoolean: { errorMessage: 'state 需为布尔值' }
+      isBoolean: { errorMessage: 'state 需为 Boolean' }
     },
     'sort': {
       optional: true,
-      isNumber: { errorMessage: 'sort 为数字' }
+      isNumber: { errorMessage: 'sort 为 Number' }
     },
     'keywords': {
       optional: true,
-      isString: { errorMessage: 'keywords 需为字符串' },
+      isString: { errorMessage: 'keywords 需为 String' },
     },
     'description': {
       optional: true,
-      isString: { errorMessage: 'description 需为字符串' },
+      isString: { errorMessage: 'description 需为 String' },
     }
   });
 
   if (ctx.validationErrors()) return null;
 
   try {
-    await contentCategoryService.create(ctx.request.body)
+    await ContentCategory.create(ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
+/**
+ * 更新分类
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.update = async ctx => {
   ctx.checkBody({
-    'name': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'name 不能为空'
-      },
-      isString: { errorMessage: 'name 需为字符串' },
+    'uid': {
+      optional: true,
+      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
     },
-    'path': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'path 不能为空'
-      },
-      isString: { errorMessage: 'path 需为字符串' },
+    'name': {
+      optional: true,
+      isString: { errorMessage: 'name 需为 String' },
     },
     'state': {
       optional: true,
-      isBoolean: { errorMessage: 'state 需为布尔值' }
+      isBoolean: { errorMessage: 'state 需为 Boolean' }
     },
     'sort': {
       optional: true,
-      isNumber: { errorMessage: 'sort 为数字' }
+      isNumber: { errorMessage: 'sort 为 Number' }
     },
     'keywords': {
       optional: true,
-      isString: { errorMessage: 'keywords 需为字符串' },
+      isString: { errorMessage: 'keywords 需为 String' },
     },
     'description': {
       optional: true,
-      isString: { errorMessage: 'description 需为字符串' },
+      isString: { errorMessage: 'description 需为 String' },
     }
   });
 
@@ -96,17 +101,19 @@ exports.update = async ctx => {
 
   if (ctx.validationErrors()) return null;
 
-  const query = Object.assign(ctx.request.body, ctx.params);
-
   try {
-    await contentCategoryService.one(query);
-    await contentCategoryService.update(query);
+    await ContentCategory.update({ _id: ctx.params._id }, ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
+/**
+ * 查询单个分类
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.one = async ctx => {
   ctx.checkParams({
     '_id': {
@@ -121,22 +128,36 @@ exports.one = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const contentCategory = await contentCategoryService.one(ctx.params);
-    ctx.pipeDone(contentCategory);
+    const call = await ContentCategory.findById(ctx.params._id)
+      .select('uid name path state sort keywords description')
+      .lean();
+    call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99');
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
+/**
+ * 查询分类列表
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.list = async ctx => {
   try {
-    const contentCategories = await contentCategoryService.list();
-    ctx.pipeDone(contentCategories);
+    const call = await AdminUser.find()
+      .select('uid name path state sort keywords description')
+      .lean();
+    ctx.pipeDone(call);
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };
 
+/**
+ * 删除分类
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.delete = async ctx => {
   ctx.checkParams({
     '_id': {
@@ -151,9 +172,10 @@ exports.delete = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await contentCategoryService.remove(ctx.params);
-    ctx.pipeDone()
+    await ContentCategory.remove({ _id: ctx.params._id });
+    await ContentCategory.update({ uid: ctx.params._id }, { $unset: { uid: true } });
+    ctx.pipeDone();
   } catch(e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e);
   }
 };

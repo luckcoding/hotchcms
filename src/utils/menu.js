@@ -7,7 +7,6 @@ module.exports = [
   },
   {
     id: 2,
-    bpid: 1,
     name: '管理',
     icon: 'user',
   },
@@ -21,17 +20,17 @@ module.exports = [
   },
   {
     id: 22,
+    mpid: -1,
+    bpid: 2,
+    name: '用户详情',
+    router: '/user/:id',
+  },
+  {
+    id: 23,
     bpid: 2,
     mpid: 2,
     name: '权限',
     icon: 'solution',
     router: '/authory',
-  },
-  {
-    id: 23,
-    mpid: -1,
-    bpid: 2,
-    name: '用户详情',
-    router: '/user/:id',
   },
 ]
