@@ -6,7 +6,6 @@ const convert = require('koa-convert');
 const favicon = require('koa-favicon');
 const koaStatic = require('koa-static');
 const cors = require('kcors');
-const jwt = require('koa-jwt');
 const views = require('koa-views');
 
 const logger = require('./lib/logger.lib');
@@ -46,10 +45,6 @@ app.use(logger.http());
 
 // redis 链接
 app.use(redis());
-
-// app.use(jwt({ secret: config.secret }).unless({
-//   path: [ /\/install/, /\/captcha/, /\/sign-in/]
-// }));
 
 // middleware
 app.use(convert.compose(
