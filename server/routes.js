@@ -62,4 +62,6 @@ module.exports = {
   },
 
   '/': { get: 'home' }, // 首页
+
+  '/*': { get: 'errors.notFound' }, // 404
 };
