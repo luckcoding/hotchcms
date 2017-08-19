@@ -1,4 +1,8 @@
 module.exports = async (ctx) => {
-  const title = 'home';
-  await ctx.render('default/index', { title });
+  const siteInfo = {
+    title: 'hotchcms',
+    keywords: 'koa koa2 mongodb redis mongoose jwt',
+    description: '一键建站'
+  };
+  await ctx.render('default/template', { siteInfo });
 };

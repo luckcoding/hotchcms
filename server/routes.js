@@ -1,16 +1,20 @@
 module.exports = {
   '/api': {
     '/install': {
-      get: 'install.status',
-      post: 'install.install',
+      get: 'install.status', // 安装状态
+      post: 'install.install', // 安装
 
       '/test-database': {
-        put: 'install.testDatabase'
+        put: 'install.testDatabase' // 链接测试
       }
     },
 
+    '/site-info': {
+      get: ['site-info.get'], // 获取站点信息
+      // put: [110101, 'site-info.update']
+    },
+
     '/admin-account': {
-      // all: 'admin-account.check',
       get: ['admin-account.current'], // 查询当前账号
       put: ['admin-account.update'], // 更新当前账号
 
@@ -45,14 +49,14 @@ module.exports = {
       }
     },
 
-    '/content-category': {
-      post: ['admin-user.create'], // 新增分类
-      get: ['admin-user.list'], // 查询所有分类
+    '/category': {
+      post: ['category.create'], // 新增分类
+      get: ['category.list'], // 查询所有分类
 
       '/:_id': {
-        put: ['admin-user.update'], // 更新分类
-        get: ['admin-user.one'], // 查询分类
-        delete: ['admin-user.delete'] // 删除分类
+        put: ['category.update'], // 更新分类
+        get: ['category.one'], // 查询分类
+        delete: ['category.delete'] // 删除分类
       }
     },
 
@@ -61,7 +65,13 @@ module.exports = {
     },
   },
 
-  '/': { get: 'home' }, // 首页
+  '(\^/|^\/index.html|^\/index.htm)': { get: 'render.index' }, // 首页
 
-  '/*': { get: 'errors.notFound' }, // 404
+  '/page-(.*).htm(l*)': { get: 'render.page' }, // 单页
+
+  '/category/:_id': { get: 'render.category' }, // 分类列表
+
+  '/category/:_id/content/:_id': { get: 'render.content' }, // 分类详情
+
+  '/*': { get: 'render.notFound' }, // 404
 };

@@ -17,7 +17,6 @@ const authority = require('./middleware/authority.middleware');
 
 const config = require('./config/system.config');
 
-
 const route = require('./lib/route.lib');
 const Throw = require('./lib/error.lib');
 

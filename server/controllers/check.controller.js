@@ -6,11 +6,10 @@
  */
 module.exports = () => async (ctx, next) => {
   try {
-    await next()
-    // const _id = ctx.state.user.data;
-    // const auth = ctx.request.headers.authorization.split(' ')[1];
-    // const reply = await ctx.redis.get(auth);
-    // reply === _id ? await next() : ctx.pipeFail('用户未登录', 'BN99');
+    const _id = ctx.state.user.data;
+    const auth = ctx.request.headers.authorization.split(' ')[1];
+    const reply = await ctx.redis.get(auth);
+    reply === _id ? await next() : ctx.pipeFail('用户未登录', 'BN99');
   } catch(e) {
     ctx.pipeFail(e);
   }
