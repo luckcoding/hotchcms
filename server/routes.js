@@ -53,11 +53,19 @@ module.exports = {
       post: ['category.create'], // 新增分类
       get: ['category.list'], // 查询所有分类
 
+      '/tree': {
+        get: ['category.tree']
+      },
+
       '/:_id': {
         put: ['category.update'], // 更新分类
         get: ['category.one'], // 查询分类
         delete: ['category.delete'] // 删除分类
       }
+    },
+
+    '/theme': {
+      get: ['theme.test']
     },
 
     '/authority': {

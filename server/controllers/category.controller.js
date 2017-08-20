@@ -1,7 +1,20 @@
-const contentCategoryService = require('../services/content-category.service');
-const ContentCategory = require('../models/category.model');
+const _ = require('lodash');
+const { arrayToTree } = require('../utils');
+const Category = require('../models/category.model');
 
 const categorySchema = 'name path state sort keywords description';
+
+exports.tree = async ctx => {
+  try {
+    const list = await Category._list();
+
+    const tree = arrayToTree(list.filter(i => i.state), '_id', 'uid')
+
+    ctx.pipeDone(tree);
+  } catch(e) {
+    ctx.pipeFail(e);
+  }
+};
 
 /**
  * 创建分类
@@ -13,6 +26,10 @@ exports.create = async ctx => {
     'uid': {
       optional: true,
       isMongoId: { errIorMessage: 'uid 需为 mongoId' },
+    },
+    'index': {
+      optional: true,
+      isBoolean: { errorMessage: 'index 需为 Boolean' }
     },
     'name': {
       notEmpty: {
@@ -36,6 +53,10 @@ exports.create = async ctx => {
       optional: true,
       isNumber: { errorMessage: 'sort 为 Number' }
     },
+    'template': {
+      optional: true,
+      isMongoId: { errIorMessage: 'template 需为 mongoId' },
+    },
     'keywords': {
       optional: true,
       isString: { errorMessage: 'keywords 需为 String' },
@@ -49,7 +70,7 @@ exports.create = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await ContentCategory.create(ctx.request.body);
+    await Category.create(ctx.request.body);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
@@ -144,9 +165,7 @@ exports.one = async ctx => {
  */
 exports.list = async ctx => {
   try {
-    const call = await AdminUser.find()
-      .select('uid name path state sort keywords description')
-      .lean();
+    const call = await Category._list();
     ctx.pipeDone(call);
   } catch(e) {
     ctx.pipeFail(e);

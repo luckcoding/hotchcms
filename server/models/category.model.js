@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const mongoose = require('mongoose');
+const cache = require('../lib/cache.lib');
 
 /**
  * 文章分类
@@ -37,5 +39,28 @@ const CategorySchema = new mongoose.Schema({
   collection: 'category',
   id: false
 });
+
+CategorySchema.statics = {
+  async _list() {
+    const categories = cache.get('categories');
+    if (categories) return _.cloneDeep(categories);
+
+    const call = await this.find({})
+      .select('uid index name path state sort template keywords description')
+      // .populate('uid')
+      // .populate('template')
+      .lean();
+    cache.set('categories', call, 1000 * 60 * 60 * 24);
+    return call;
+  },
+
+  _save({ _id, input = {} }) {
+    if (_.isEmpty(input)) throw Error('options error');
+    if (_id) {
+      this.findByIdAndUpdate(_id, input, { runValidators: true })
+    }
+    cache.del('categories');
+  }
+}
 
 module.exports = mongoose.model('Category', CategorySchema);

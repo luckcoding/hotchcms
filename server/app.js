@@ -28,7 +28,7 @@ app.jsonSpaces = 0; // 压缩json返回中的空格
 app.keys = ['key'];
 
 // favicon
-app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '../public/favicon.ico'));
 app.use(cors({
   credentials: true
 }));
