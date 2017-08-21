@@ -55,7 +55,7 @@ const torrentsSchema = new mongoose.Schema({
   // 注册信息
   create: {
     // 时间
-    date: { type: Date, default: Date.now() },
+    date: { type: Date, default: Date.now },
     // 地点
     address: { type: String, trim: true },
     // IP

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
-import { Form, Row, Col, Icon, Input, Button, Checkbox } from 'antd'
+import { Form, Icon, Input, Button, Checkbox } from 'antd'
 import { config } from '../../utils'
 import styles from './index.less'
 
@@ -15,17 +15,13 @@ const Login = ({
     validateFieldsAndScroll, // 校验不通过的菜单域不在可见范围内，则自动滚动进可见范围
   },
 }) => {
-  const { loginLoading, captcha } = login
+  const { loginLoading } = login
 
   function handleOk () {
     validateFieldsAndScroll((errors, values) => {
       if (errors) return null
       return dispatch({ type: 'login/login', payload: values })
     })
-  }
-
-  function handleCaptcha () {
-    dispatch({ type: 'login/captcha' })
   }
 
   return (

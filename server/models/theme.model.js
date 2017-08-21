@@ -18,7 +18,7 @@ const ThemeSchema = new mongoose.Schema({
 
   author: { type: String, default: '' }, // 作者
 
-  create: { type: Date, default: Date.now() }, // 创建时间
+  create: { type: Date, default: Date.now }, // 创建时间
   
 }, {
   collection: 'theme',
