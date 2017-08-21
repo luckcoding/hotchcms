@@ -5,7 +5,6 @@ export default {
   namespace: 'login',
   state: {
     loginLoading: false,
-    captcha: '',
   },
   reducers: {
     showLoginLoading (state) {
@@ -13,9 +12,6 @@ export default {
     },
     hideLoginLoading (state) {
       return { ...state, loginLoading: false }
-    },
-    setCaptchaData (state, { payload }) {
-      return { ...state, ...payload }
     },
   },
   effects: {
@@ -31,19 +27,8 @@ export default {
         throw data
       }
     },
-
-    * captcha ({ payload = {} }, { put, call }) {
-      const data = yield call(getCaptcha)
-      if (data.code === '0000') {
-        yield put({ type: 'setCaptchaData', payload: { captcha: data.result } })
-      } else {
-        throw data
-      }
-    },
   },
   subscriptions: {
-    setup ({ dispatch }) {
-      dispatch({ type: 'captcha' })
-    },
+
   },
 }

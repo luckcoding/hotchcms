@@ -1,7 +1,6 @@
 const Koa = require('koa');
 const path = require('path');
 const koaBody = require('koa-body');
-// const json = require('koa-json');
 const convert = require('koa-convert');
 const favicon = require('koa-favicon');
 const koaStatic = require('koa-static');
@@ -37,7 +36,6 @@ app.use(cors({
 app.use(convert(koaBody({
   multipart: true
 })));
-// app.use(convert(json()));
 
 // 日志
 app.use(logger.http());

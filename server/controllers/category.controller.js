@@ -1,20 +1,4 @@
-const _ = require('lodash');
-const { arrayToTree } = require('../utils');
 const Category = require('../models/category.model');
-
-const categorySchema = 'name path state sort keywords description';
-
-exports.tree = async ctx => {
-  try {
-    const list = await Category._list();
-
-    const tree = arrayToTree(list.filter(i => i.state), '_id', 'uid')
-
-    ctx.pipeDone(tree);
-  } catch(e) {
-    ctx.pipeFail(e);
-  }
-};
 
 /**
  * 创建分类
@@ -70,7 +54,7 @@ exports.create = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await Category.create(ctx.request.body);
+    await Category._save({ input: ctx.request.body });
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
@@ -123,7 +107,7 @@ exports.update = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await ContentCategory.update({ _id: ctx.params._id }, ctx.request.body);
+    await Category._save({ _id: ctx.params._id, input: ctx.request.body });
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);
@@ -149,7 +133,7 @@ exports.one = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const call = await ContentCategory.findById(ctx.params._id)
+    const call = await Category.findById(ctx.params._id)
       .select('uid name path state sort keywords description')
       .lean();
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99');
@@ -191,8 +175,7 @@ exports.delete = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    await ContentCategory.remove({ _id: ctx.params._id });
-    await ContentCategory.update({ uid: ctx.params._id }, { $unset: { uid: true } });
+    await Category._remove(ctx.params._id);
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);

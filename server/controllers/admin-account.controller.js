@@ -131,7 +131,7 @@ exports.update = async ctx => {
     const input = _.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
     if (input.password) input.password = sha1(input.password);
 
-    await AdminUser.update({ _id }, input);
+    await AdminUser.update({ _id }, input, { runValidators: true });
     ctx.pipeDone();
   } catch(e) {
     ctx.pipeFail(e);

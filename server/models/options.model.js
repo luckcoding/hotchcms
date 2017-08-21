@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 /**
  * 配置模型
  */
-const optionsSchema = new mongoose.Schema({
+const OptionsSchema = new mongoose.Schema({
 
   // 配置名
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
 
   // 值 object
   value: mongoose.Schema.Types.Mixed
@@ -16,5 +16,4 @@ const optionsSchema = new mongoose.Schema({
   id: false
 });
 
-// export default mongoose.model('Options', optionsSchema);
-module.exports = mongoose.model('Options', optionsSchema);
+module.exports = mongoose.model('Options', OptionsSchema);

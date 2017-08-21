@@ -33,8 +33,8 @@ exports.create = async ctx => {
       optional: true,
       isString: { errorMessage: 'nickname 需为字符串' },
       isLength: {
-        options: [4,20],
-        errorMessage: 'mobile 为 4-20 位'
+        options: [2,20],
+        errorMessage: 'nickname 为 2-20 位'
       }
     },
     'avatar': {
@@ -43,7 +43,7 @@ exports.create = async ctx => {
     },
     'group': {
       optional: true,
-      isMongoId: { errIorMessage: 'role 需为 mongoId' },
+      isMongoId: { errIorMessage: 'group 需为 mongoId' },
     }
   });
 

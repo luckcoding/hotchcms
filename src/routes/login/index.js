@@ -50,20 +50,6 @@ const Login = ({
           )}
         </FormItem>
         <FormItem>
-          <Row>
-            <Col span={16}>
-              {getFieldDecorator('captcha', {
-                rules: [{ required: true, message: '请输入验证码!' }],
-              })(
-                <Input type="text" placeholder="验证码" />
-              )}
-            </Col>
-            <div style={{ textAlign: 'center' }}>
-              <img className={styles.captcha} onClick={handleCaptcha} src={captcha} alt="验证码" />
-            </div>
-          </Row>
-        </FormItem>
-        <FormItem>
           {getFieldDecorator('autoSignIn', {
             valuePropName: 'checked',
             initialValue: true,

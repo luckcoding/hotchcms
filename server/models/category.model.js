@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const cache = require('../lib/cache.lib');
+const { arrayToTree } = require('../utils');
 
 /**
  * 文章分类
@@ -44,22 +45,35 @@ CategorySchema.statics = {
   async _list() {
     const categories = cache.get('categories');
     if (categories) return _.cloneDeep(categories);
-
     const call = await this.find({})
       .select('uid index name path state sort template keywords description')
-      // .populate('uid')
-      // .populate('template')
+      .sort('sort')
+      .populate('template')
       .lean();
     cache.set('categories', call, 1000 * 60 * 60 * 24);
     return call;
   },
 
-  _save({ _id, input = {} }) {
+  async _save({ _id, input = {} }) {
     if (_.isEmpty(input)) throw Error('options error');
     if (_id) {
-      this.findByIdAndUpdate(_id, input, { runValidators: true })
+      await this.findByIdAndUpdate(_id, input, { runValidators: true })
+    } else {
+      await this.create(input);
     }
-    cache.del('categories');
+    return cache.del('categories');
+  },
+
+  async _remove(_id) {
+    await this.remove({ _id });
+    await this.update({ _id }, { $unset: { uid: true } });
+    return cache.del('categories');
+  },
+
+  async _navigation() {
+    const list = await this._list();
+    const tree = arrayToTree(list.filter(i => i.state), '_id', 'uid');
+    return tree;
   }
 }
 

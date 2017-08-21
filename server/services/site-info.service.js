@@ -1,6 +1,5 @@
-const logger = require('../lib/logger.lib');
 const cache = require('../lib/cache.lib');
-const optionsModel = require('../models/options.model');
+const Options = require('../models/options.model');
 
 /**
  * 获取网站信息
@@ -10,13 +9,11 @@ const optionsModel = require('../models/options.model');
 exports.get = () => new Promise(async (resolve, reject) => {
   const siteInfoCache = cache.get('siteInfo');
   if (siteInfoCache) return resolve(siteInfoCache);
-
   try {
-    const siteInfo = await optionsModel.findOne({ name: 'siteInfo' });
+    const siteInfo = await Options.findOne({ name: 'siteInfo' });
     cache.set('siteInfo', siteInfo.value, 1000 * 60 * 60 * 24 * 30);
     resolve(siteInfo.value);
   } catch (e) {
-    e.type = 'database';
     reject(e);
   };
 });
@@ -28,7 +25,7 @@ exports.get = () => new Promise(async (resolve, reject) => {
  */
 exports.save = () => new Promise(async (resolve, reject) => {
   try {
-    await optionsModel.findOneAndUpdate({ name: 'siteInfo' },{ value: options.data },{ runValidators: true });
+    await Options.findOneAndUpdate({ name: 'siteInfo' },{ value: options.data },{ runValidators: true });
     cache.del('siteInfo');
     resolve();
   } catch (e) {
