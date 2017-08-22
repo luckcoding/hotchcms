@@ -11,14 +11,14 @@ const CategorySchema = new mongoose.Schema({
   uid: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
 
   // 首页
-  index: { type: Boolean, default: false },
+  isHome: { type: Boolean, default: false },
 
   // 分类名
   name: { type: String, required: true },
 
   // 目录
   path: { type: String, unique: true, trim: true, lowercase: true,
-    match: /^[A-z0-9\-\_\/]+$/, sparse: true
+    match: /^[A-z0-9\-\_\/]+$/, sparse: true, minlength: 2
   },
 
   // 是否在导航中显示
@@ -46,7 +46,7 @@ CategorySchema.statics = {
     const categories = cache.get('categories');
     if (categories) return _.cloneDeep(categories);
     const call = await this.find({})
-      .select('uid index name path state sort template keywords description')
+      .select('uid isHome name path state sort template keywords description')
       .sort('sort')
       .populate('template')
       .lean();
@@ -56,6 +56,12 @@ CategorySchema.statics = {
 
   async _save({ _id, input = {} }) {
     if (_.isEmpty(input)) throw Error('options error');
+    if (input.isHome) {
+      const list = await this.find({ isHome: true });
+      for (let value of list) {
+        await value.update({ isHome: false });
+      }
+    }
     if (_id) {
       await this.findByIdAndUpdate(_id, input, { runValidators: true })
     } else {

@@ -69,7 +69,7 @@ module.exports = {
     },
   },
 
-  '(\^/|^\/index.html|^\/index.htm)': { get: 'render.index' }, // 首页
+  '(\^/|^\/index.html|^\/index.htm)': { get: 'render.home' }, // 首页
 
   '/page-(.*).htm(l*)': { get: 'render.page' }, // 单页
 

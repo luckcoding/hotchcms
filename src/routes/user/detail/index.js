@@ -11,20 +11,21 @@ const Detail = ({ userDetail }) => {
       content.push(<div key={key} className={styles.item}>
         <div>{key}</div>
         <div>{
-          (() => {
-            const child = []
-            const input = data[key]
-            for (let k in input) {
-              if ({}.hasOwnProperty.call(input, k)) {
-                child.push(<div key={k} className={styles.item}>
-                  <div>{k}</div>
-                  <div>{String(input[k])}</div>
-                </div>)
-              } else {
-                return child.push(String(input))
+          (function () {
+            if (typeof data[key] === 'object') {
+              const child = []
+              for (let k in data[key]) {
+                if ({}.hasOwnProperty.call(data[key], k)) {
+                  child.push(<div key={k} className={styles.item}>
+                    <div>{k}</div>
+                    <div>{String(data[key][k])}</div>
+                  </div>)
+                }
               }
+              return child
+            } else {
+              return String(data[key])
             }
-            return child
           })()
         }</div>
       </div>)

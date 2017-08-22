@@ -1,11 +1,8 @@
 const Category = require('../models/category.model');
+const SiteInfo = require('../services/site-info.service');
 
-exports.index = async (ctx) => {
-  const siteInfo = {
-    title: 'hotchcms',
-    keywords: 'koa koa2 mongodb redis mongoose jwt',
-    description: '一键建站'
-  };
+exports.home = async (ctx) => {
+  const siteInfo = await SiteInfo.get();
   const navigation =  await Category._navigation();
   await ctx.render('default/default-0/home', {
     siteInfo,

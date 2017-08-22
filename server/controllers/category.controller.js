@@ -6,14 +6,16 @@ const Category = require('../models/category.model');
  * @return {[type]}     [description]
  */
 exports.create = async ctx => {
+  ctx.sanitizeBody('isHome').toBoolean();
+  ctx.sanitizeBody('state').toBoolean();
   ctx.checkBody({
     'uid': {
       optional: true,
       isMongoId: { errIorMessage: 'uid 需为 mongoId' },
     },
-    'index': {
+    'isHome': {
       optional: true,
-      isBoolean: { errorMessage: 'index 需为 Boolean' }
+      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
     },
     'name': {
       notEmpty: {
@@ -71,6 +73,10 @@ exports.update = async ctx => {
     'uid': {
       optional: true,
       isMongoId: { errIorMessage: 'uid 需为 mongoId' },
+    },
+    'isHome': {
+      optional: true,
+      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
     },
     'name': {
       optional: true,

@@ -36,30 +36,13 @@ module.exports = () => koaValidator({
           case 'isNumber': return _.isNumber(item); break;
           case 'isObject': return _.isObject(item); break;
           case 'isArray': return _.isArray(item); break;
-          case 'isBoolean':
-            switch (typeof item) {
-              case 'string': return item === 'true' || item === 'false'; break;
-              case 'boolean': return item === true || item === false; break;
-              default: return false;
-            }
-            break;
+          case 'isBoolean': return _.isBoolean(value); break;
           default:
             return validator[validatorName].apply(this, validatorOptions);
         }
       });
     },
-    isBoolean: value => {
-      switch (typeof value) {
-        case 'string':
-          return value === 'true' || value === 'false';
-          break;
-        case 'boolean':
-          return value === true || value === false;
-          break;
-        default:
-          return false;
-      }
-    },
+    isBoolean: value => _.isBoolean(value),
     custom: (value, callback) => {
       if (typeof value !== 'undefined') {
         return callback(value);
