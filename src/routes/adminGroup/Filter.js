@@ -30,17 +30,9 @@ const Filter = ({
     setFieldsValue,
   },
 }) => {
-  const handleFields = (fields) => {
-    const { createTime } = fields
-    if (createTime.length) {
-      fields.createTime = [createTime[0].format('YYYY-MM-DD'), createTime[1].format('YYYY-MM-DD')]
-    }
-    return fields
-  }
-
   const handleSubmit = () => {
     let fields = getFieldsValue()
-    fields = handleFields(fields)
+    // fields = handleFields(fields)
     onFilterChange(fields)
   }
 
@@ -82,7 +74,7 @@ const Filter = ({
           </div>
           <div>
             <Switch style={{ marginRight: 16 }} size="large" defaultChecked={isMotion} onChange={switchIsMotion} checkedChildren={'Motion'} unCheckedChildren={'Motion'} />
-            <Button size="large" type="ghost" onClick={onAdd}>创建用户</Button>
+            <Button size="large" type="ghost" onClick={onAdd}>创建管理组</Button>
           </div>
         </div>
       </Col>
