@@ -23,10 +23,9 @@ const Detail = ({ userDetail }) => {
                 }
               }
               return child
-            } else {
-              return String(data[key])
             }
-          })()
+            return String(data[key])
+          }())
         }</div>
       </div>)
     }
