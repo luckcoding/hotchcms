@@ -1,10 +1,8 @@
 import modelExtend from 'dva-model-extend'
-import { create, remove, update } from '../services/adminGroup'
-import * as adminGroupsService from '../services/adminGroups'
+import { create, remove, update, _query, _remove } from '../services/adminGroup'
 import { pageModel } from './common'
 import { config } from '../utils'
 
-const { query } = adminGroupsService
 const { prefix } = config
 
 export default modelExtend(pageModel, {
@@ -34,7 +32,7 @@ export default modelExtend(pageModel, {
   effects: {
 
     * query ({ payload = {} }, { call, put }) {
-      const data = yield call(query, payload)
+      const data = yield call(_query, payload)
       if (data.code === '0000') {
         yield put({
           type: 'querySuccess',
@@ -62,7 +60,7 @@ export default modelExtend(pageModel, {
     },
 
     * multiDelete ({ payload }, { call, put }) {
-      const data = yield call(adminGroupsService.remove, payload)
+      const data = yield call(_remove, payload)
       if (data.success) {
         yield put({ type: 'updateState', payload: { selectedRowKeys: [] } })
         yield put({ type: 'query' })

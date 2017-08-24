@@ -35,7 +35,7 @@ const List = ({ onDeleteItem, onEditItem, isMotion, location, ...tableProps }) =
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',
-      render: (text, record) => <Link to={`user/${record._id}`}>{text}</Link>,
+      render: (text, record) => <Link to={`admin-user/${record._id}`}>{text}</Link>,
     }, {
       title: '昵称',
       dataIndex: 'nickname',

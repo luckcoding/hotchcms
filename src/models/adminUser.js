@@ -1,14 +1,12 @@
 import modelExtend from 'dva-model-extend'
-import { create, remove, update } from '../services/user'
-import * as usersService from '../services/users'
+import { create, remove, update, _query, _remove } from '../services/adminUser'
 import { pageModel } from './common'
 import { config } from '../utils'
 
-const { query } = usersService
 const { prefix } = config
 
 export default modelExtend(pageModel, {
-  namespace: 'user',
+  namespace: 'adminUser',
 
   state: {
     currentItem: {},
@@ -21,7 +19,7 @@ export default modelExtend(pageModel, {
   subscriptions: {
     setup ({ dispatch, history }) {
       history.listen((location) => {
-        if (location.pathname === '/user') {
+        if (location.pathname === '/admin-user') {
           dispatch({
             type: 'query',
             payload: location.query,
@@ -34,7 +32,7 @@ export default modelExtend(pageModel, {
   effects: {
 
     * query ({ payload = {} }, { call, put }) {
-      const data = yield call(query, payload)
+      const data = yield call(_query, payload)
       if (data.code === '0000') {
         yield put({
           type: 'querySuccess',
@@ -52,7 +50,7 @@ export default modelExtend(pageModel, {
 
     * delete ({ payload }, { call, put, select }) {
       const data = yield call(remove, { _id: payload })
-      const { selectedRowKeys } = yield select(_ => _.user)
+      const { selectedRowKeys } = yield select(_ => _.adminUser)
       if (data.code === '0000') {
         yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
         yield put({ type: 'query' })
@@ -62,7 +60,7 @@ export default modelExtend(pageModel, {
     },
 
     * multiDelete ({ payload }, { call, put }) {
-      const data = yield call(usersService.remove, payload)
+      const data = yield call(_remove, payload)
       if (data.success) {
         yield put({ type: 'updateState', payload: { selectedRowKeys: [] } })
         yield put({ type: 'query' })
@@ -82,7 +80,7 @@ export default modelExtend(pageModel, {
     },
 
     * update ({ payload }, { select, call, put }) {
-      const _id = yield select(({ user }) => user.currentItem._id)
+      const _id = yield select(({ adminUser }) => adminUser.currentItem._id)
       const newUser = { ...payload, _id }
       const data = yield call(update, newUser)
       if (data.code === '0000') {

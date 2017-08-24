@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import styles from './index.less'
 
-const Detail = ({ userDetail }) => {
-  const { data } = userDetail
+const Detail = ({ adminUserDetail }) => {
+  const { data } = adminUserDetail
   const content = []
   for (let key in data) {
     if ({}.hasOwnProperty.call(data, key)) {
@@ -38,7 +38,7 @@ const Detail = ({ userDetail }) => {
 }
 
 Detail.propTypes = {
-  userDetail: PropTypes.object,
+  adminUserDetail: PropTypes.object,
 }
 
-export default connect(({ userDetail }) => ({ userDetail }))(Detail)
+export default connect(({ adminUserDetail }) => ({ adminUserDetail }))(Detail)

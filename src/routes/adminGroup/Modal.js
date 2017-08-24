@@ -65,6 +65,11 @@ const modal = ({
         <FormItem label="描述" hasFeedback {...formItemLayout}>
           {getFieldDecorator('description', {
             initialValue: item.description,
+            rules: [
+              {
+                required: modalType !== 'update',
+              },
+            ],
           })(<Input />)}
         </FormItem>
         <FormItem label="级别" hasFeedback {...formItemLayout}>

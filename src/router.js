@@ -44,22 +44,22 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: 'user',
+          path: 'admin-user',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
-              registerModel(app, require('./models/user'))
-              cb(null, require('./routes/user/'))
-            }, 'user')
+              registerModel(app, require('./models/adminUser'))
+              cb(null, require('./routes/adminUser/'))
+            }, 'admin-user')
           },
         },
 
         {
-          path: 'user/:id',
+          path: 'admin-user/:id',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
-              registerModel(app, require('./models/user/detail'))
-              cb(null, require('./routes/user/detail'))
-            }, 'user-detail')
+              registerModel(app, require('./models/adminUser/detail'))
+              cb(null, require('./routes/adminUser/detail/'))
+            }, 'admin-user-detail')
           },
         },
 

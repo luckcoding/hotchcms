@@ -34,3 +34,23 @@ export async function update (params) {
     data: params,
   })
 }
+
+/**
+ * =========== list ===========
+ */
+
+export async function _query (params) {
+  return request({
+    url: adminGroup.replace('/:_id', ''),
+    method: 'get',
+    data: params,
+  })
+}
+
+export async function _remove (params) {
+  return request({
+    url: adminGroup.replace('/:_id', ''),
+    method: 'delete',
+    data: params,
+  })
+}
