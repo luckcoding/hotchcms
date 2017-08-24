@@ -62,6 +62,17 @@ const Routers = ({ history, app }) => {
             }, 'user-detail')
           },
         },
+
+        {
+          path: 'admin-group',
+          getComponent (nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/adminGroup'))
+              cb(null, require('./routes/adminGroup/'))
+            }, 'admin-group')
+          },
+        },
+
       ],
     },
   ]

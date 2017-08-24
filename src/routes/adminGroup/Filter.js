@@ -1,12 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-import { Form, Button, Row, Col, DatePicker, Input, Cascader, Switch } from 'antd'
-import { FilterItem } from '../../components'
-import city from '../../utils/city'
+import { Form, Button, Row, Col, Input, Switch } from 'antd'
 
 const Search = Input.Search
-const { RangePicker } = DatePicker
 
 const ColProps = {
   xs: 24,
@@ -62,13 +59,7 @@ const Filter = ({
     handleSubmit()
   }
 
-  const handleChange = (key, values) => {
-    let fields = getFieldsValue()
-    fields[key] = values
-    fields = handleFields(fields)
-    onFilterChange(fields)
-  }
-  const { nickname, address } = filter
+  const { name } = filter
 
   let initialCreateTime = []
   if (filter.createTime && filter.createTime[0]) {
@@ -81,24 +72,7 @@ const Filter = ({
   return (
     <Row gutter={24}>
       <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-        {getFieldDecorator('nickname', { initialValue: nickname })(<Search placeholder="Search Name" size="large" onSearch={handleSubmit} />)}
-      </Col>
-      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-        {getFieldDecorator('address', { initialValue: address })(
-          <Cascader
-            size="large"
-            style={{ width: '100%' }}
-            options={city}
-            placeholder="Please pick an address"
-            onChange={handleChange.bind(null, 'address')}
-          />)}
-      </Col>
-      <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }} sm={{ span: 12 }}>
-        <FilterItem label="创建时间">
-          {getFieldDecorator('createTime', { initialValue: initialCreateTime })(
-            <RangePicker style={{ width: '100%' }} size="large" onChange={handleChange.bind(null, 'createTime')} />
-          )}
-        </FilterItem>
+        {getFieldDecorator('name', { initialValue: name })(<Search placeholder="Search Name" size="large" onSearch={handleSubmit} />)}
       </Col>
       <Col {...TwoColProps} xl={{ span: 10 }} md={{ span: 24 }} sm={{ span: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>

@@ -39,7 +39,7 @@ module.exports = [
     bpid: 2,
     name: '管理组',
     icon: 'team',
-    router: '/group',
+    router: '/admin-group',
   },
   {
     id: 3,

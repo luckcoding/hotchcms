@@ -17,6 +17,7 @@ module.exports = {
     captcha: `${APIV1}/common/captcha`, // 验证码
     current: `${APIV1}/admin-account`, // 获取当前用户
     dashboard: `${APIV1}/dashboard`,
-    adminUser: `${APIV1}/admin-user/:_id`, // 用户
+    adminUser: `${APIV1}/admin-user/:_id`, // 管理员
+    adminGroup: `${APIV1}/admin-group/:_id`, // 管理组
   },
 }
