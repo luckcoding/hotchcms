@@ -51,7 +51,7 @@ module.exports = {
 
     '/category': {
       post: ['category.create'], // 新增分类
-      get: ['category.list'], // 查询所有分类
+      get: ['category.tree'], // 查询分类树
 
       '/:_id': {
         put: ['category.update'], // 更新分类

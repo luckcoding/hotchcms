@@ -76,10 +76,16 @@ CategorySchema.statics = {
     return cache.del('categories');
   },
 
+  async _tree() {
+    const list = await this._list();
+    const tree = arrayToTree(list, '_id', 'uid');
+    return tree;
+  },
+
   async _navigation() {
     const list = await this._list();
-    const tree = arrayToTree(list.filter(i => i.state), '_id', 'uid');
-    return tree;
+    const navigation = arrayToTree(list.filter(i => i.state), '_id', 'uid');
+    return navigation;
   }
 }
 

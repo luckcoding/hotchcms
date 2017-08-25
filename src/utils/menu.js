@@ -43,7 +43,15 @@ module.exports = [
   },
   {
     id: 3,
-    name: '内容管理',
+    name: '内容',
     icon: 'file-text',
+  },
+  {
+    id: 31,
+    bpid: 3,
+    mpid: 3,
+    name: '分类',
+    icon: 'filter',
+    router: '/category',
   },
 ]

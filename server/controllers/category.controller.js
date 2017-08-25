@@ -163,6 +163,20 @@ exports.list = async ctx => {
 };
 
 /**
+ * 获取分类树
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
+exports.tree = async ctx => {
+  try {
+    const call = await Category._tree();
+    ctx.pipeDone(call);
+  } catch(e) {
+    ctx.pipeFail(e);
+  }
+};
+
+/**
  * 删除分类
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
