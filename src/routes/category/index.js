@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
-import { Tree, Button, Popover } from 'antd'
+import lodash from 'lodash'
+import { Tree, Button } from 'antd'
 import Modal from './Modal'
 
 const TreeNode = Tree.TreeNode
-const ButtonGroup = Button.Group
 
 const Category = ({ category, loading, dispatch }) => {
   const { tree, modalType, currentItem, modalVisible } = category
@@ -16,7 +16,7 @@ const Category = ({ category, loading, dispatch }) => {
     visible: modalVisible,
     maskClosable: false,
     confirmLoading: loading.effects['category/update'],
-    title: `${modalType === 'create' ? '创建分类' : '更新分类'}`,
+    title: `${modalType === 'create' ? '创建分类' : '编辑分类'}`,
     wrapClassName: 'vertical-center-modal',
     onOk (data) {
       dispatch({
@@ -31,7 +31,7 @@ const Category = ({ category, loading, dispatch }) => {
     },
   }
 
-  const onAdd = function () {
+  const onAdd = () => {
     dispatch({
       type: 'category/showModal',
       payload: {
@@ -39,23 +39,6 @@ const Category = ({ category, loading, dispatch }) => {
       },
     })
   }
-
-  // onDeleteItem (id) {
-  //   dispatch({
-  //     type: 'adminUser/delete',
-  //     payload: id,
-  //   })
-  // },
-
-  // onEditItem (item) {
-  //   dispatch({
-  //     type: 'adminUser/showModal',
-  //     payload: {
-  //       modalType: 'update',
-  //       currentItem: item,
-  //     },
-  //   })
-  // },
 
   const onRightClick = function ($event, node) {
     console.log('onRightClick', $event, node)
@@ -69,22 +52,30 @@ const Category = ({ category, loading, dispatch }) => {
     console.log('onDragEnd', $event, node)
   }
 
+  const onSelect = function (selectedKeys, $event) {
+    if (!lodash.isEmpty(selectedKeys)) {
+      dispatch({
+        type: 'category/showModal',
+        payload: {
+          modalType: 'edit',
+          currentItem: $event.node.props.dataSource,
+        },
+      })
+    }
+  }
+
   const expandedKeys = []
 
   const loop = data => data.map((item) => {
-    const editEle = (<Popover content={<ButtonGroup><Button>更新</Button><Button type="danger">删除</Button></ButtonGroup>}>
-      {item.name}
-    </Popover>)
-
     if (item.children) {
       expandedKeys.push(item._id)
       return (
-        <TreeNode key={item._id} title={editEle} disabled={!item.state}>
+        <TreeNode key={item._id} title={item.name} disabled={!item.state} dataSource={item}>
           {loop(item.children)}
         </TreeNode>
       )
     }
-    return <TreeNode key={item._id} title={editEle} disabled={!item.state} />
+    return <TreeNode key={item._id} title={item.name} disabled={!item.state} dataSource={item} />
   })
 
   return (
@@ -103,6 +94,7 @@ const Category = ({ category, loading, dispatch }) => {
         onRightClick={onRightClick}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onSelect={onSelect}
       >
         {loop(tree)}
       </Tree>

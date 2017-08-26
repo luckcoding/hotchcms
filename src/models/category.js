@@ -33,7 +33,14 @@ export default {
     },
 
     // * delete ({ payload }, { call, put, select }) {
-
+    //   // const data = yield call(remove, { _id: payload })
+    //   // const { selectedRowKeys } = yield select(_ => _.adminUser)
+    //   // if (data.code === '0000') {
+    //   //   yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
+    //   //   yield put({ type: 'query' })
+    //   // } else {
+    //   //   throw data
+    //   // }
     // },
 
     // * create ({ payload }, { call, put }) {
