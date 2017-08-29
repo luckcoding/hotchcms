@@ -42,6 +42,14 @@ module.exports = [
     router: '/authory',
   },
   {
+    id: 25,
+    bpid: 2,
+    mpid: 2,
+    name: '配置',
+    icon: 'setting',
+    router: '/setting',
+  },
+  {
     id: 3,
     name: '内容',
     icon: 'file-text',

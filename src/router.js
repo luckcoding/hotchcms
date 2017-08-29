@@ -74,6 +74,16 @@ const Routers = ({ history, app }) => {
         },
 
         {
+          path: 'setting',
+          getComponent (nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/setting'))
+              cb(null, require('./routes/setting/'))
+            }, 'setting')
+          },
+        },
+
+        {
           path: 'category',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {

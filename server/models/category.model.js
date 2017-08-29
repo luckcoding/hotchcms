@@ -25,7 +25,7 @@ const CategorySchema = new mongoose.Schema({
   state: { type: Boolean, default: true },
 
   // 排序
-  sort: { type: Number, default: 0 },
+  sort: { type: Number, default: 0, unique: true },
 
   // 内容模板
   template: { type: mongoose.Schema.Types.ObjectId, ref: 'ThemeTemplate' },
