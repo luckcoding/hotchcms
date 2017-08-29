@@ -6,9 +6,10 @@ import { Tree, Button } from 'antd'
 import Modal from './Modal'
 
 const TreeNode = Tree.TreeNode
+const ButtonGroup = Button.Group
 
 const Category = ({ category, loading, dispatch }) => {
-  const { tree, modalType, currentItem, modalVisible } = category
+  const { tree, modalType, currentItem, checkItems, modalVisible } = category
 
   const modalProps = {
     modalType,
@@ -52,52 +53,68 @@ const Category = ({ category, loading, dispatch }) => {
     console.log('onDragEnd', $event, node)
   }
 
-  const onSelect = function (selectedKeys, $event) {
+  const onCheck = (expandedKeys) => {
+    const { checked } = expandedKeys
+    dispatch({
+      type: 'category/onCheckItems',
+      payload: checked,
+    })
+  }
+
+  const onSelect = (selectedKeys, e) => {
     if (!lodash.isEmpty(selectedKeys)) {
       dispatch({
         type: 'category/showModal',
         payload: {
-          modalType: 'edit',
-          currentItem: $event.node.props.dataSource,
+          modalType: 'update',
+          currentItem: e.node.props.dataSource,
         },
       })
     }
   }
 
+  const onRemve = () => {
+    dispatch({
+      type: 'category/multiDelete',
+    })
+  }
+
   const expandedKeys = []
 
   const loop = data => data.map((item) => {
+    const title = <span style={{ textDecoration: !item.state && 'line-through' }}>{item.name}</span>
     if (item.children) {
       expandedKeys.push(item._id)
       return (
-        <TreeNode key={item._id} title={item.name} disabled={!item.state} dataSource={item}>
+        <TreeNode key={item._id} title={title} dataSource={item}>
           {loop(item.children)}
         </TreeNode>
       )
     }
-    return <TreeNode key={item._id} title={item.name} disabled={!item.state} dataSource={item} />
+    return <TreeNode key={item._id} title={title} dataSource={item} />
   })
 
   return (
-    <div className="content-inner">
-      <Button type="primary" size="large" style={{
-        position: 'absolute',
-        right: 0,
-        top: -48,
-      }} onClick={onAdd}
-      >添加分类</Button>
-
+    <div className="content-inner" style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Tree
+        checkable
+        checkStrictly
         defaultExpandAll
         draggable
         expandedKeys={expandedKeys}
         onRightClick={onRightClick}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onCheck={onCheck}
         onSelect={onSelect}
       >
         {loop(tree)}
       </Tree>
+
+      <ButtonGroup>
+        <Button onClick={onRemve} disabled={lodash.isEmpty(checkItems)}>删除所选</Button>
+        <Button onClick={onAdd}>添加分类</Button>
+      </ButtonGroup>
       {modalVisible && <Modal {...modalProps} />}
     </div>
   )

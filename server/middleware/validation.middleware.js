@@ -28,7 +28,6 @@ module.exports = () => koaValidator({
       return _.every(param, item => {
         let validatorOptions = _.tail(argumentsArray);
         validatorOptions.unshift(item);
-
         switch(validatorOptions[1]) {
           case 'isEmail': return /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value); break;
           case 'isMobile': return /^1[3|4|5|7|8]\d{9}$/.test(item); break;

@@ -20,5 +20,6 @@ module.exports = {
     adminUser: `${APIV1}/admin-user/:_id`, // 管理员
     adminGroup: `${APIV1}/admin-group/:_id`, // 管理组
     category: `${APIV1}/category/:_id`, // 分类
+    categories: `${APIV1}/category/multi`, // 分类
   },
 }

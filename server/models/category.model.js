@@ -70,9 +70,14 @@ CategorySchema.statics = {
     return cache.del('categories');
   },
 
-  async _remove(_id) {
-    await this.remove({ _id });
-    await this.update({ _id }, { $unset: { uid: true } });
+  async _remove(input) {
+    if (_.isArray(input)) {
+      await this.remove({ _id: { $in: input } });
+      await this.update({ _id: { $in: input } }, { $unset: { uid: true } });
+    } else {
+      await this.remove({ _id: input });
+      await this.update({ _id: input }, { $unset: { uid: true } });
+    }
     return cache.del('categories');
   },
 

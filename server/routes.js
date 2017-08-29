@@ -57,8 +57,14 @@ module.exports = {
         put: ['category.update'], // 更新分类
         get: ['category.one'], // 查询分类
         delete: ['category.delete'] // 删除分类
+      },
+
+      '/multi': {
+        post: ['category.multi'], // 删除分类
       }
     },
+
+
 
     '/theme': {
       get: ['theme.test']

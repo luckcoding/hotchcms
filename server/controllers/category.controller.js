@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Category = require('../models/category.model');
 
 /**
@@ -56,6 +57,11 @@ exports.create = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
+    const { sort } = ctx.request.body;
+    const call = await Category._list();
+    _.forEach(call, item => {
+      if (item.sort == sort) throw Error('已存在排序')
+    });
     await Category._save({ input: ctx.request.body });
     ctx.pipeDone();
   } catch(e) {
@@ -189,7 +195,7 @@ exports.delete = async ctx => {
         errorMessage: '_id 不能为空'
       },
       isMongoId: { errorMessage: '_id  需为 mongoId' }
-    }
+    },
   });
 
   if (ctx.validationErrors()) return null;
@@ -197,6 +203,48 @@ exports.delete = async ctx => {
   try {
     await Category._remove(ctx.params._id);
     ctx.pipeDone();
+  } catch(e) {
+    ctx.pipeFail(e);
+  }
+};
+
+/**
+ * [description]
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
+exports.multi = async ctx => {
+  ctx.checkBody({
+    'type': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'type 不能为空'
+      },
+      isIn: {
+        options: [['remove', 'add', 'update']],
+        errorMessage: 'type 必须为 remove/add/update'
+      }
+    },
+    'multi': {
+      optional: true,
+      inArray: {
+        options: ['isMongoId'],
+        errorMessage: 'multi 内需为 mongoId'
+      }
+    },
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    const { multi, type } = ctx.request.body;
+
+    if (type === 'remove') {
+      await Category._remove(multi);
+      ctx.pipeDone();
+    } else {
+      ctx.pipeFail(`暂无${type}操作`,'BN99');
+    }
   } catch(e) {
     ctx.pipeFail(e);
   }
