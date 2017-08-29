@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal, Switch, InputNumber, Tag, Tooltip, Button } from 'antd'
+import { Form, Input, Modal, TreeSelect, Switch, InputNumber, Tag, Tooltip, Button } from 'antd'
 
 const FormItem = Form.Item
 const { TextArea } = Input
+const TreeNode = TreeSelect.TreeNode
 
 const formItemLayout = {
   labelCol: {
@@ -15,15 +16,23 @@ const formItemLayout = {
 }
 
 class modal extends React.Component {
-  state = {
-    tags: [],
-    inputVisible: false,
-    inputValue: '',
-  };
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      tags: props.item.keywords || [],
+      inputVisible: false,
+      inputValue: '',
+      uid: props.item.uid,
+    }
+  }
+
+  onChange = (uid) => {
+    this.setState({ uid })
+  }
 
   handleClose = (removedTag) => {
     const tags = this.state.tags.filter(tag => tag !== removedTag)
-    console.log(tags)
     this.setState({ tags })
   }
 
@@ -42,7 +51,7 @@ class modal extends React.Component {
     if (inputValue && tags.indexOf(inputValue) === -1) {
       tags = [...tags, inputValue]
     }
-    console.log(tags)
+
     this.setState({
       tags,
       inputVisible: false,
@@ -57,6 +66,7 @@ class modal extends React.Component {
   render () {
     const {
       modalType,
+      tree = {},
       item = {},
       onOk,
       form: {
@@ -67,6 +77,8 @@ class modal extends React.Component {
       ...modalProps
     } = this.props
 
+    const { tags, uid, inputVisible, inputValue } = this.state
+
     const handleOk = () => {
       validateFields((errors) => {
         if (errors) {
@@ -74,11 +86,8 @@ class modal extends React.Component {
         }
         const data = {
           ...getFieldsValue(),
-        }
-        for (let key in data) {
-          if (data[key] === '') {
-            delete data[key]
-          }
+          keywords: tags,
+          uid,
         }
         onOk(data)
       })
@@ -89,11 +98,33 @@ class modal extends React.Component {
       onOk: handleOk,
     }
 
-    const { tags, inputVisible, inputValue } = this.state
+    const loop = data => data.map((i) => {
+      const title = <span style={{ textDecoration: !i.state && 'line-through' }}>{i.name}</span>
+      const disabled = i._id === item._id
+      if (i.children) {
+        return (
+          <TreeNode key={i._id} title={title} disabled={disabled} value={i._id}>
+            {loop(i.children)}
+          </TreeNode>
+        )
+      }
+      return <TreeNode key={i._id} title={title} disabled={disabled} value={i._id} />
+    })
 
     return (
       <Modal {...modalOpts}>
         <Form layout="horizontal">
+          <FormItem label="所属" hasFeedback {...formItemLayout}>
+            <TreeSelect
+              value={this.state.uid}
+              allowClear
+              treeDefaultExpandAll
+              placeholder="不选代表顶级分类"
+              onChange={this.onChange}
+            >
+              {loop(tree)}
+            </TreeSelect>
+          </FormItem>
           <FormItem label="名称" hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
@@ -115,10 +146,16 @@ class modal extends React.Component {
             })(<Input />)}
           </FormItem>
           <FormItem label="是否首页" hasFeedback {...formItemLayout}>
-            <Switch defaultChecked={false} />
+            {getFieldDecorator('isHome', {
+              valuePropName: 'checked',
+              initialValue: item.isHome,
+            })(<Switch />)}
           </FormItem>
           <FormItem label="导航显示" hasFeedback {...formItemLayout}>
-            <Switch defaultChecked />
+            {getFieldDecorator('state', {
+              valuePropName: 'checked',
+              initialValue: item.state,
+            })(<Switch />)}
           </FormItem>
           <FormItem label="排序" hasFeedback {...formItemLayout}>
             {getFieldDecorator('sort', {
@@ -131,38 +168,28 @@ class modal extends React.Component {
             })(<InputNumber min={1} max={100} defaultValue={item.sort} />)}
           </FormItem>
           <FormItem label="关键词" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('keywords', {
-              initialValue: item.keywords,
-              rules: [
-                {
-                  required: modalType !== 'update',
-                },
-              ],
-            })(<div>
-
-              {tags.map((tag) => {
-                const isLongTag = tag.length > 20
-                const tagElem = (
-                  <Tag key={tag} afterClose={() => this.handleClose(tag)}>
-                    {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-                  </Tag>
-                )
-                return isLongTag ? <Tooltip title={tag}>{tagElem}</Tooltip> : tagElem
-              })}
-              {inputVisible && (
-                <Input
-                  ref={this.saveInputRef}
-                  type="text"
-                  size="small"
-                  style={{ width: 78 }}
-                  value={inputValue}
-                  onChange={this.handleInputChange}
-                  onBlur={this.handleInputConfirm}
-                  onPressEnter={this.handleInputConfirm}
-                />
-              )}
-              {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
-            </div>)}
+            {tags.map((tag) => {
+              const isLongTag = tag.length > 20
+              const tagElem = (
+                <Tag key={tag} closable afterClose={() => this.handleClose(tag)}>
+                  {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+                </Tag>
+              )
+              return isLongTag ? <Tooltip title={tag}>{tagElem}</Tooltip> : tagElem
+            })}
+            {inputVisible && (
+              <Input
+                ref={this.saveInputRef}
+                type="text"
+                size="small"
+                style={{ width: 78 }}
+                value={inputValue}
+                onChange={this.handleInputChange}
+                onBlur={this.handleInputConfirm}
+                onPressEnter={this.handleInputConfirm}
+              />
+            )}
+            {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
           </FormItem>
           <FormItem label="描述" hasFeedback {...formItemLayout}>
             {getFieldDecorator('description', {
@@ -180,6 +207,7 @@ modal.propTypes = {
   form: PropTypes.object.isRequired,
   type: PropTypes.string,
   item: PropTypes.object,
+  tree: PropTypes.object,
   onOk: PropTypes.func,
 }
 

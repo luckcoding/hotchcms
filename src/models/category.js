@@ -1,4 +1,4 @@
-import { query, create, multi } from '../services/category'
+import { query, create, update, multi } from '../services/category'
 
 export default {
   namespace: 'category',
@@ -46,6 +46,18 @@ export default {
 
     * create ({ payload }, { call, put }) {
       const data = yield call(create, payload)
+      if (data.code === '0000') {
+        yield put({ type: 'hideModal' })
+        yield put({ type: 'query' })
+      } else {
+        throw data
+      }
+    },
+
+    * update ({ payload }, { select, call, put }) {
+      const _id = yield select(({ category }) => category.currentItem._id)
+      const newCategory = { ...payload, _id }
+      const data = yield call(update, newCategory)
       if (data.code === '0000') {
         yield put({ type: 'hideModal' })
         yield put({ type: 'query' })

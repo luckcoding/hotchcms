@@ -7,8 +7,8 @@ const Category = require('../models/category.model');
  * @return {[type]}     [description]
  */
 exports.create = async ctx => {
-  ctx.sanitizeBody('isHome').toBoolean();
-  ctx.sanitizeBody('state').toBoolean();
+  // ctx.sanitizeBody('isHome').toBoolean();
+  // ctx.sanitizeBody('state').toBoolean();
   ctx.checkBody({
     'uid': {
       optional: true,
@@ -46,7 +46,10 @@ exports.create = async ctx => {
     },
     'keywords': {
       optional: true,
-      isString: { errorMessage: 'keywords 需为 String' },
+      inArray: {
+        options: ['isString'],
+        errorMessage: 'keywords 内需为 string'
+      },
     },
     'description': {
       optional: true,
@@ -57,11 +60,6 @@ exports.create = async ctx => {
   if (ctx.validationErrors()) return null;
 
   try {
-    const { sort } = ctx.request.body;
-    const call = await Category._list();
-    _.forEach(call, item => {
-      if (item.sort == sort) throw Error('已存在排序')
-    });
     await Category._save({ input: ctx.request.body });
     ctx.pipeDone();
   } catch(e) {
@@ -98,7 +96,10 @@ exports.update = async ctx => {
     },
     'keywords': {
       optional: true,
-      isString: { errorMessage: 'keywords 需为 String' },
+      inArray: {
+        options: ['isString'],
+        errorMessage: 'keywords 内需为 string'
+      },
     },
     'description': {
       optional: true,

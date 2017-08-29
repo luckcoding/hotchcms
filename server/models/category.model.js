@@ -31,7 +31,7 @@ const CategorySchema = new mongoose.Schema({
   template: { type: mongoose.Schema.Types.ObjectId, ref: 'ThemeTemplate' },
 
   // 关键字
-  keywords: String,
+  keywords: [ { type: String } ],
 
   // 描述
   description: String,
@@ -55,15 +55,19 @@ CategorySchema.statics = {
   },
 
   async _save({ _id, input = {} }) {
-    if (_.isEmpty(input)) throw Error('options error');
     if (input.isHome) {
-      const list = await this.find({ isHome: true });
-      for (let value of list) {
-        await value.update({ isHome: false });
-      }
+      await this.update({ isHome: true }, { isHome: false }, { multi: true, runValidators: true });
     }
     if (_id) {
-      await this.findByIdAndUpdate(_id, input, { runValidators: true })
+      if (input.uid) {
+        const call = await this.find({ uid: _id });
+        const child = [];
+        _.forEach(call, i => child.push(String(i._id)));
+        if (_.includes(child, String(input.uid))) throw Error('不能被包含');
+        await this.findByIdAndUpdate({ _id }, { $set: input }, { runValidators: true });
+      } else {
+        await this.findByIdAndUpdate({ _id }, { $set: input, $unset: { uid: true } }, { runValidators: true });
+      }
     } else {
       await this.create(input);
     }
@@ -71,13 +75,9 @@ CategorySchema.statics = {
   },
 
   async _remove(input) {
-    if (_.isArray(input)) {
-      await this.remove({ _id: { $in: input } });
-      await this.update({ _id: { $in: input } }, { $unset: { uid: true } });
-    } else {
-      await this.remove({ _id: input });
-      await this.update({ _id: input }, { $unset: { uid: true } });
-    }
+    const _in = _.isArray(input) ? { $in: input } : input;
+    await this.remove({ _id: _in });
+    await this.update({ _id: _in }, { $unset: { uid: true } });
     return cache.del('categories');
   },
 

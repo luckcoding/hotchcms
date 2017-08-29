@@ -14,6 +14,7 @@ const Category = ({ category, loading, dispatch }) => {
   const modalProps = {
     modalType,
     item: modalType === 'create' ? {} : currentItem,
+    tree,
     visible: modalVisible,
     maskClosable: false,
     confirmLoading: loading.effects['category/update'],
@@ -39,18 +40,6 @@ const Category = ({ category, loading, dispatch }) => {
         modalType: 'create',
       },
     })
-  }
-
-  const onRightClick = function ($event, node) {
-    console.log('onRightClick', $event, node)
-  }
-
-  const onDragStart = function ($event, node) {
-    console.log('onDragStart', $event, node)
-  }
-
-  const onDragEnd = function ($event, node) {
-    console.log('onDragEnd', $event, node)
   }
 
   const onCheck = (expandedKeys) => {
@@ -100,11 +89,7 @@ const Category = ({ category, loading, dispatch }) => {
         checkable
         checkStrictly
         defaultExpandAll
-        draggable
         expandedKeys={expandedKeys}
-        onRightClick={onRightClick}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
         onCheck={onCheck}
         onSelect={onSelect}
       >
