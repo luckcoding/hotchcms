@@ -4,12 +4,16 @@ const redis  = require('./redis.lib');
 exports.get = key => new Promise((resolve, reject) => {
   redis.get(key, (err, data) => {
     if (err) return reject(err);
-    return isJson(data) ? resolve(JSON.parse(data)) : resolve(data);
+    try {
+      return resolve(JSON.parse(data));
+    } catch (e) {
+      return resolve(data);
+    }
   });
 });
 
 exports.set = (key, value, maxAge) => new Promise((resolve, reject) => {
-  if (isJson(value)) {
+  if (isJson(value) || _.isArray(value)) {
     value = JSON.stringify(value);
   }
 

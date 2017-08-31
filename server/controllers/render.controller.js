@@ -5,7 +5,6 @@ exports.home = async (ctx) => {
   const siteInfo = await SiteInfo.get();
   const list = await Category._list();
   let current = '/';
-  console.log(list)
   list.forEach(_ => _.isHome ? current = _.fullPath : null);
   await ctx.render('default/default-0/home', {
     siteInfo,

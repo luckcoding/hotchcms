@@ -43,14 +43,14 @@ const CategorySchema = new mongoose.Schema({
 
 CategorySchema.statics = {
   async _list() {
-    const categories = cache.get('categories');
+    const categories = await cache.get('categories');
     if (categories) return _.cloneDeep(categories);
     const call = await this.find({})
       .select('uid isHome name path state sort template keywords description')
       .sort('sort')
       .populate('template')
       .lean();
-    cache.set('categories', call, 1000 * 60 * 60 * 24);
+    await cache.set('categories', call, 1000 * 60 * 60 * 24);
     return call;
   },
 
