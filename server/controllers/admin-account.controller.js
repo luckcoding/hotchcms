@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
+const cache = require('../lib/cache.lib');
 const sha1 = require('../services/sha1.service');
 const AdminUser = require('../models/admin-user.model');
 const config = require('../config/system.config');
@@ -49,8 +50,8 @@ exports.signIn = async ctx => {
 
       const _id = call._id.toString();
       const token = jwt.sign({ data: _id }, secret, { expiresIn });
-      ctx.redis.set(token, _id, 'EX', expiresIn); // 以 token 为key
-
+      // ctx.redis.set(token, _id, 'EX', expiresIn); // 以 token 为key
+      await cache.set(token, _id, expiresIn)
       ctx.pipeDone(token);
     } else {
       ctx.pipeFail('用户名或密码错误', 'BN99');
@@ -68,7 +69,8 @@ exports.signIn = async ctx => {
 exports.signOut = async ctx => {
   try {
     const auth = ctx.request.headers.authorization.split(' ')[1];
-    await ctx.redis.del(auth);
+    // await ctx.redis.del(auth);
+    await cache.del(auth);
     ctx.pipeDone();
   } catch (e) {
     ctx.pipeFail(e);

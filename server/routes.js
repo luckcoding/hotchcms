@@ -79,9 +79,9 @@ module.exports = {
 
   '/page-(.*).htm(l*)': { get: 'render.page' }, // 单页
 
-  '/category/:_id': { get: 'render.category' }, // 分类列表
+  '/category-*': { get: 'render.category' }, // 分类列表
 
-  '/category/:_id/content/:_id': { get: 'render.content' }, // 分类详情
+  // '/category/:_id/content/:_id': { get: 'render.content' }, // 分类详情
 
   '/*': { get: 'render.notFound' }, // 404
 };

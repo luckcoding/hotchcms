@@ -9,7 +9,6 @@ const views = require('koa-views');
 
 const logger = require('./lib/logger.lib');
 
-const redis = require('./middleware/redis.middleware');
 const validation = require('./middleware/validation.middleware');
 const pipe = require('./middleware/pipe.middleware');
 const authority = require('./middleware/authority.middleware');
@@ -39,9 +38,6 @@ app.use(convert(koaBody({
 
 // 日志
 app.use(logger.http());
-
-// redis 链接
-app.use(redis());
 
 // middleware
 app.use(convert.compose(

@@ -29,7 +29,6 @@ const List = ({ onDeleteItem, onEditItem, isMotion, location, ...tableProps }) =
       title: '名称',
       dataIndex: 'name',
       key: 'name',
-      render: (text, record) => <Link to={`admin-group/${record._id}`}>{text}</Link>,
     }, {
       title: '描述',
       dataIndex: 'description',

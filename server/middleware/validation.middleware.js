@@ -19,7 +19,7 @@ module.exports = () => koaValidator({
     isString: value => _.isString(value),
     isNumber: value => !isNaN(Number(value)),
     isObject: value => _.isObject(value),
-    isJson: value => Object.prototype.toString.call({}).toLowerCase() === '[object object]',
+    isJson: value => Object.prototype.toString.call(value).toLowerCase() === '[object object]',
     isArray: value => _.isArray(value),
     inArray: function (param) {
       const argumentsArray = [].slice.apply(arguments);
@@ -35,13 +35,30 @@ module.exports = () => koaValidator({
           case 'isNumber': return _.isNumber(item); break;
           case 'isObject': return _.isObject(item); break;
           case 'isArray': return _.isArray(item); break;
-          case 'isBoolean': return _.isBoolean(value); break;
+          case 'isBoolean':
+            switch (typeof item) {
+              case 'string': return item === 'true' || item === 'false'; break;
+              case 'boolean': return item === true || item === false; break;
+              default: return false;
+            }
+            break;
           default:
             return validator[validatorName].apply(this, validatorOptions);
         }
       });
     },
-    isBoolean: value => _.isBoolean(value),
+    isBoolean: value => {
+      switch (typeof value) {
+        case 'string':
+          return value === 'true' || value === 'false';
+          break;
+        case 'boolean':
+          return value === true || value === false;
+          break;
+        default:
+          return false;
+      }
+    },
     custom: (value, callback) => {
       if (typeof value !== 'undefined') {
         return callback(value);
