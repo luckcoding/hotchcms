@@ -75,13 +75,15 @@ module.exports = {
     },
   },
 
-  '(\^/|^\/index.html|^\/index.htm)': { get: 'render.home' }, // 首页
+  // '(\^/|^\/index.html|^\/index.htm)': { get: 'render.home' }, // 首页
 
-  '/page-(.*).htm(l*)': { get: 'render.page' }, // 单页
+  // '/page-(.*).htm(l*)': { get: 'render.page' }, // 单页
 
-  '/category-*': { get: 'render.category' }, // 分类列表
+  // '/category-*': { get: 'render.category' }, // 分类列表
 
   // '/category/:_id/content/:_id': { get: 'render.content' }, // 分类详情
 
-  '/*': { get: 'render.notFound' }, // 404
+  // '/:category*': { get: 'render' }, // 404
+
+  '/:target*': { get: 'render' },
 };

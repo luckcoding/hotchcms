@@ -18,7 +18,7 @@ const CategorySchema = new mongoose.Schema({
 
   // 目录
   path: { type: String, unique: true, trim: true, lowercase: true,
-    match: /^[A-z0-9\-\_\/]+$/, sparse: true, minlength: 2
+    match: /^[A-z]+$/, sparse: true, minlength: 4
   },
 
   // 是否在导航中显示
@@ -35,6 +35,9 @@ const CategorySchema = new mongoose.Schema({
 
   // 描述
   description: String,
+
+  // 创建时间
+  // createDate: { type: Date, default: Date.now },
   
 }, {
   collection: 'category',
@@ -43,7 +46,7 @@ const CategorySchema = new mongoose.Schema({
 
 CategorySchema.statics = {
   async _list() {
-    const categories = await cache.get('categories');
+    const categories = await cache.get('SYSTEM_CATEGORIES');
     if (categories) return _.cloneDeep(categories);
     const call = await this.find({})
       .select('uid isHome name path state sort template keywords description')
@@ -54,9 +57,16 @@ CategorySchema.statics = {
     return call;
   },
 
+  async _path() {
+    const list = await this._list();
+    const output = [];
+    _.forEach(list, item => output.push(item.path));
+    return output;
+  },
+
   async _save({ _id, input = {} }) {
     if (input.isHome) {
-      await this.update({ isHome: true }, { isHome: false }, { multi: true, runValidators: true });
+      await this.update({ isHome: true }, { $set: { isHome :　false } }, { multi: true });
     }
     if (_id) {
       if (input.uid) {
@@ -89,7 +99,7 @@ CategorySchema.statics = {
 
   async _navigation() {
     const list = await this._list();
-    const navigation = arrayToTree(list.filter(i => i.state), '_id', 'uid');
+    const navigation = list.filter(i => i.state);
     return navigation;
   }
 }

@@ -30,7 +30,10 @@ exports.create = async ctx => {
         options: [true],
         errorMessage: 'path 不能为空'
       },
-      isString: { errorMessage: 'path 需为 String' },
+      matches: {
+        options: [/^[A-z]+$/],
+        errorMessage: 'path 格式不正确'
+      }
     },
     'state': {
       optional: true,

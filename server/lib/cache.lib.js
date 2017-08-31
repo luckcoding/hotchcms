@@ -29,5 +29,5 @@ exports.del = key => new Promise((resolve, reject) => {
 })
 
 function isJson(input) {
-  Object.prototype.toString.call(input).toLowerCase() === '[object object]'
+  return Object.prototype.toString.call(input).toLowerCase() === '[object object]'
 }

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const cache = require('../lib/cache.lib');
 
 const ThemeSchema = new mongoose.Schema({
 
@@ -19,10 +20,27 @@ const ThemeSchema = new mongoose.Schema({
   author: { type: String, default: '' }, // 作者
 
   create: { type: Date, default: Date.now }, // 创建时间
+
+  themes: [{ type: String , ref: 'ThemeTemplate' }], // 风格
   
 }, {
   collection: 'theme',
   id: false
 });
+
+
+
+ThemeSchema.statics = {
+  async _set(id) {
+    await this.update({}, { $set : { using:　false } }, { multi : true });
+  },
+
+  async _default() {
+    const theme = await cache.get('SYSTEM_THEME');
+    if (theme) return theme;
+    const call = await this.findOne({ using: true }).populate('themes').lean();
+    return call;
+  },
+};
 
 module.exports = mongoose.model('Theme', ThemeSchema);
