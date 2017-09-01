@@ -1,5 +1,7 @@
 const send = require('koa-send');
+const regx = require('../lib/regx.lib');
 const database = require('../lib/database.lib');
+const redis = require('../lib/redis.lib');
 const logger = require('../lib/logger.lib');
 const installService = require('../services/install.service');
 
@@ -8,15 +10,10 @@ const installService = require('../services/install.service');
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.access = async ctx => {
+exports.access = async (ctx, next) => {
   try {
     const hasInstall = await installService.status();
-    console.log('========>', hasInstall);
-    if (hasInstall) {
-      next()
-    } else {
-      await ctx.render('admin/install', {});
-    }
+    hasInstall ? await next() :  await ctx.render('admin/install', {})
   } catch (e) {
     ctx.pipeFail(e);
   }
@@ -30,11 +27,7 @@ exports.access = async ctx => {
 exports.status = async ctx => {
   try {
     const hasInstall = await installService.status();
-    if (hasInstall) {
-      ctx.pipeFail('已安装');
-    } else {
-      ctx.pipeDone('可安装');
-    }
+    hasInstall ? ctx.pipeFail('已安装') : ctx.pipeDone('可安装');
   } catch (e) {
     ctx.pipeFail(e);
   }
@@ -53,7 +46,7 @@ exports.testDatabase = async ctx => {
         errorMessage: 'host 不能为空'
       },
       matches: {
-        options: [/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$|^localhost$/],
+        options: [regx.host],
         errorMessage: 'host 格式不正确'
       }
     },
@@ -94,6 +87,64 @@ exports.testDatabase = async ctx => {
   }
 };
 
+exports.testRedis = async ctx => {
+  ctx.checkBody({
+    'host': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'host 不能为空'
+      },
+      matches: {
+        options: [regx.host],
+        errorMessage: 'host 格式不正确'
+      }
+    },
+    'port': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'port 不能为空'
+      },
+      isInt: {
+        options: [{ min: 0, max: 65535 }],
+        errorMessage: 'port 需为0-65535之间的整数'
+      }
+    },
+    'family': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'family 不能为空'
+      },
+      matches: {
+        options: [/^(IPv4|IPv6)$/],
+        errorMessage: 'family 为 IPv4 或 IPv6'
+      }
+    },
+    'db': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'db 不能为空'
+      },
+      isInt: {
+        options: [{ min: 0, max: 10 }],
+        errorMessage: 'db 需为0-10之间的整数'
+      },
+    },
+    'pass': {
+      optional: true,
+      isString: { errorMessage: 'password 需为字符串' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    await redis.test(ctx.request.body);
+    ctx.pipeDone();
+  } catch (e) {
+    ctx.pipeFail(e);
+  }
+};
+
 /**
  * 安装
  * @param  {[type]} ctx [description]
@@ -107,7 +158,7 @@ exports.install = async ctx => {
         errorMessage: 'dbHost 不能为空'
       },
       matches: {
-        options: [/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$|^localhost$/],
+        options: [regx.host],
         errorMessage: 'dbHost 格式不正确'
       }
     },
@@ -136,18 +187,50 @@ exports.install = async ctx => {
       optional: true,
       isString: { errorMessage: 'dbPassword 需为字符串' }
     },
-    'theme': {
-      optional: true,
-      isString: { errorMessage: 'theme 需为字符串' }
+    'rdHost': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'host 不能为空'
+      },
+      matches: {
+        options: [regx.host],
+        errorMessage: 'host 格式不正确'
+      }
     },
-    // 导入示例数据，下一版本
-    //'case': {
-    //  notEmpty: {
-    //    options: [true],
-    //    errorMessage: 'case 不能为空'
-    //  },
-    //  isBoolean: { errorMessage: 'case 需为布尔值' }
-    //},
+    'rdPort': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'port 不能为空'
+      },
+      isInt: {
+        options: [{ min: 0, max: 65535 }],
+        errorMessage: 'port 需为0-65535之间的整数'
+      }
+    },
+    'rdFamily': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'family 不能为空'
+      },
+      matches: {
+        options: [/^(IPv4|IPv6)$/],
+        errorMessage: 'family 为 IPv4 或 IPv6'
+      }
+    },
+    'rdDb': {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'db 不能为空'
+      },
+      isInt: {
+        options: [{ min: 0, max: 10 }],
+        errorMessage: 'db 需为0-10之间的整数'
+      },
+    },
+    'rdPass': {
+      optional: true,
+      isString: { errorMessage: 'password 需为字符串' }
+    },
     'title': {
       notEmpty: {
         options: [true],
@@ -161,7 +244,7 @@ exports.install = async ctx => {
         errorMessage: 'email 不能为空'
       },
       matches: {
-        options: [/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/],
+        options: [regx.email],
         errorMessage: 'email 格式不正确'
       }
     },
@@ -183,7 +266,8 @@ exports.install = async ctx => {
 
   const {
     dbHost, dbPort, db, dbUser, dbPassword,
-    title, theme,
+    rdHost, rdPort, rdFamily, rdDb, rdPass,
+    title,
     email, password
   } = ctx.request.body;
 
@@ -198,7 +282,14 @@ exports.install = async ctx => {
         user: dbUser,
         pass: dbPassword
       },
-      siteInfoData: { title, theme },
+      redisData: {
+        host: rdHost,
+        port: rdPass,
+        db: rdDb,
+        family: rdFamily,
+        pass: rdPass
+      },
+      siteInfoData: { title },
       adminUserData: { email, password },
     });
 

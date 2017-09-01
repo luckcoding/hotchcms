@@ -1,7 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+
 const configFile = () => path.join(__dirname,'../config/siteInfo.config.json');
 
 // 网站基本信息
-exports.siteInfo = {
+module.exports = {
   // 获取
   get: options => new Promise((resolve, reject) => {
     if (err) {

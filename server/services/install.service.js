@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const redis = require('../lib/redis.lib');
 const database = require('../lib/database.lib');
 const siteInfo = require('../lib/siteInfo.lib');
 const Options = require('../models/options.model');
@@ -35,11 +36,11 @@ exports.status = () => new Promise((resolve,reject) => {
 
 /**
  * 安装
- * @param  {[type]} { databaseData, siteInfoData, adminUserData }) [description]
+ * @param  {[type]} { siteInfoData, adminUserData }) [description]
  * @return {[type]}    [description]
  */
-exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise(async (resolve,reject) => {
-  if (!databaseData || !siteInfoData || !adminUserData) {
+exports.install = ({ databaseData, redisData, siteInfoData, adminUserData }) => new Promise(async (resolve,reject) => {
+  if (!databaseData || !redisData || !siteInfoData || !adminUserData) {
     return reject(Throw('缺少参数'));
   };
 
@@ -50,9 +51,11 @@ exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise
 
     // 初始化配置
     await database.init(databaseData);
+    await redis.init(redisData);
 
     // 链接数据库
     await database.connect();
+    await redis.connect();
 
     /**
      * 建表
@@ -69,7 +72,7 @@ exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise
     // 存储cms信息
     await siteInfo.save(siteInfoData);
     // 建立root管理员用户组权限
-    const adminGroup = new AdminGroup({
+    const adminGroup = await new AdminGroup({
       name: '管理员[系统]', description: '系统内置', gradation: 100
     }).save();
     // 建立root管理员用户
@@ -80,7 +83,7 @@ exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise
     }).save();
 
     // 建表成功后写入lock
-    fs.writeFile('install.lock', true, err => err ? reject(Throw(err.message)) : resolve());
+    fs.writeFile('install.lock', true, err => err ? reject(err) : resolve());
   } catch (e) {
     e.type = 'database';
     reject(e);

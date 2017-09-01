@@ -1,7 +1,5 @@
 {
   "host": "localhost",
-  "port": 6379,
-  "family": 4,
-  "db": 0,
-  "pass": ""
+  "db": "0",
+  "family": "IPv4"
 }

@@ -5,7 +5,11 @@ module.exports = {
       post: 'install.install', // 安装
 
       '/test-database': {
-        put: 'install.testDatabase' // 链接测试
+        put: 'install.testDatabase' // mongodb 连接测试
+      },
+
+      '/test-redis': {
+        put: 'install.testRedis' // redis 连接测试
       }
     },
 

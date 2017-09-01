@@ -6,6 +6,7 @@ const app = require('../server/app');
 const portlib = require('../server/lib/port.lib');
 const logger = require('../server/lib/logger.lib');
 const database = require('../server/lib/database.lib');
+const redis = require('../server/lib/redis.lib');
 const installService = require('../server/services/install.service');
 
 const port = portlib();
@@ -41,6 +42,7 @@ const logDir = path.join(appDir, 'logs');
     if (hasInstall) {
       // 连接 mongodb
       await database.connect();
+      await redis.connect();
     }
 
     //创建 HTTP 服务器

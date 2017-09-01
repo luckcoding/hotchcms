@@ -59,8 +59,7 @@ exports.connect = () => new Promise((resolve, reject) => {
       await mongoose.connect(`mongodb://${host}:${port}/${db}`, { user, pass });
       resolve();
     } catch (e) {
-      e.type = 'database';
-      return reject(e);
+      reject(e);
     }
   });
 });
