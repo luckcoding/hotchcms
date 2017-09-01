@@ -3,16 +3,22 @@ const database = require('../lib/database.lib');
 const logger = require('../lib/logger.lib');
 const installService = require('../services/install.service');
 
+/**
+ * 安装状态
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.access = async ctx => {
   try {
     const hasInstall = await installService.status();
+    console.log('========>', hasInstall);
     if (hasInstall) {
       next()
     } else {
-      await send(ctx, './public/assets/admin/index.html');
+      await ctx.render('admin/install', {});
     }
   } catch (e) {
-
+    ctx.pipeFail(e);
   }
 }
 

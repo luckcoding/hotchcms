@@ -4,7 +4,15 @@ const Options = require('../models/options.model');
 const Theme = require('../models/theme.model');
 const cache = require('../lib/cache.lib');
 
-exports.SiteInfo = function () {
+exports.ThemeInfo = () => {
+  return {
+    _default() {
+      return Theme._default();
+    }
+  }
+};
+
+exports.SiteInfo = () => {
   return {
     async get() {
       const call = await cache.get('SYSTEM_SITEINFO');

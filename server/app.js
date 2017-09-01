@@ -50,7 +50,7 @@ app.use(convert.compose(
 app.use(convert(koaStatic(path.join(__dirname, '../public'))));
 
 // 渲染引擎
-app.use(views(path.join(__dirname, '../public/themes'), {
+app.use(views(path.join(__dirname, '../public'), {
   extension: 'ejs'
 }));
 

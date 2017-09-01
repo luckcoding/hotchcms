@@ -85,5 +85,7 @@ module.exports = {
 
   // '/:category*': { get: 'render' }, // 404
 
+  '*': { get: 'install.access' },
+
   '/:target*': { get: 'render' },
 };

@@ -3,7 +3,7 @@ const validator = require('validator');
 const Category = require('../models/category.model');
 // const SiteInfo = require('../services/site-info.service');
 
-const { SiteInfo } = require('../services/site.service');
+const { SiteInfo, ThemeInfo } = require('../services/site.service');
 
 /**
  * 过滤路由
@@ -13,17 +13,22 @@ const { SiteInfo } = require('../services/site.service');
  * @param  {[type]} path [description]
  * @return {[type]}      [description]
  */
-const filter = target => {
+const filter = (target = '') => {
   const parts = target.split('/');
 
   if (parts.length > 2) return false;
-  if (parts.length === 2) return validator.isMongoId(parts[1]) ? false : true;
+  if (parts.length === 2) return validator.isMongoId(parts[1]) ? true : false;
 
   return true;
 }
 
 module.exports = async (ctx) => {
   const { target } = ctx.params;
+
+  // 获取主题
+  const theme = await ThemeInfo()._default();
+  if (!theme) return ctx.body = '未设置主题';
+
   const navigation = await Category._navigation();
 
   if (!filter(target)) return await ctx.render('default/default-0/404', {

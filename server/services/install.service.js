@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const database = require('../lib/database.lib');
+const siteInfo = require('../lib/siteInfo.lib');
 const Options = require('../models/options.model');
 const AdminGroup = require('../models/admin-group.model');
 const AdminUser = require('../models/admin-user.model');
@@ -19,16 +20,13 @@ exports.status = () => new Promise((resolve,reject) => {
   // 读取锁文件
   fs.stat(path.join(__dirname, '../../install.lock'), (err, stat) => {
 
-    if (err && err.code == 'ENOENT') return resolve(false);
+    if (err && err.code == 'ENOENT') return resolve(false); // 未安装
 
-    if (err) {
-      err.type = 'system';
-      return reject(err);
-    }
+    if (err) return reject(err); // 出错
 
     if (stat.isFile()) {
       hasInstall = true;
-      return resolve(true);
+      resolve(true);
     } else {
       reject(Throw('install.lock 非文件，请检查'));
     }
@@ -37,49 +35,52 @@ exports.status = () => new Promise((resolve,reject) => {
 
 /**
  * 安装
- * @param  {[type]} options [description]
- * @return {[type]}         [description]
+ * @param  {[type]} { databaseData, siteInfoData, adminUserData }) [description]
+ * @return {[type]}    [description]
  */
 exports.install = ({ databaseData, siteInfoData, adminUserData }) => new Promise(async (resolve,reject) => {
   if (!databaseData || !siteInfoData || !adminUserData) {
     return reject(Throw('缺少参数'));
   };
 
-  if (hasInstall) return reject(Throw('非法调用,cms已安装'));
-
   try {
+    // 检查安装状态
+    const status = await exports.status();
+    if (status) return reject(Throw('非法调用,cms已安装'));
+
     // 初始化配置
     await database.init(databaseData);
 
     // 链接数据库
     await database.connect();
+
     /**
      * 建表
      */
-    let [siteInfo, adminGroup] = await Promise.all([
-      // 存储cms信息
-      new Options({ name: 'siteInfo', value: siteInfoData }).save(),
-      // 建立root管理员用户组权限
-      new AdminGroup({
-        name: '管理员[系统]', description: '系统内置', gradation: 100
-      }).save()
-    ]);
+    // let [siteInfo, adminGroup] = await Promise.all([
+    //   // 存储cms信息
+    //   new Options({ name: 'siteInfo', value: siteInfoData }).save(),
+    //   // 建立root管理员用户组权限
+    //   new AdminGroup({
+    //     name: '管理员[系统]', description: '系统内置', gradation: 100
+    //   }).save()
+    // ]);
 
+    // 存储cms信息
+    await siteInfo.save(siteInfoData);
+    // 建立root管理员用户组权限
+    const adminGroup = new AdminGroup({
+      name: '管理员[系统]', description: '系统内置', gradation: 100
+    }).save();
     // 建立root管理员用户
-    const { email, password } = adminUserData;
     await new AdminUser({
-      email,
-      password,
+      email: adminUserData.email,
+      password: adminUserData.password,
       group: adminGroup._id
     }).save();
+
     // 建表成功后写入lock
-    fs.writeFile('install.lock', true, err => {
-      if (err) {
-        err.type = 'system';
-        return reject(err);
-      }
-    });
-    resolve();
+    fs.writeFile('install.lock', true, err => err ? reject(Throw(err.message)) : resolve());
   } catch (e) {
     e.type = 'database';
     reject(e);

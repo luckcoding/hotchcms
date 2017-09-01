@@ -12,17 +12,16 @@ mongoose.Promise = global.Promise;
 
 /**
  * 测试数据库连接
- * @param  {[type]} options [description]
- * @return {[type]}         [description]
+ * @param  {[type]} { host,         port, db, user, pass }) [description]
+ * @return {[type]}    [description]
  */
-exports.test = options => new Promise((resolve, reject) => {
+exports.test = ({ host, port, db, user, pass }) => new Promise((resolve, reject) => {
   const DB = mongoose.createConnection();
-  const { host, port, db, user, pass } = options;
   DB.open(host, db, port, { user, pass }, err => {
     if (err) {
       reject(err);
     } else {
-      // 关闭成功再返回
+      // 关闭后返回
       DB.close();
       resolve();
     };
@@ -37,11 +36,7 @@ exports.test = options => new Promise((resolve, reject) => {
  */
 exports.init = options => new Promise((resolve, reject) => {
   fs.writeFile(configFile(), JSON.stringify(options, null, 2), err => {
-    if (err) {
-      reject(err);
-    } else {
-      resolve(true);
-    }
+    err ? reject(err) : resolve(true);
   });
 });
 

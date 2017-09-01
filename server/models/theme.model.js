@@ -31,15 +31,23 @@ const ThemeSchema = new mongoose.Schema({
 
 
 ThemeSchema.statics = {
+
+  /**
+   * 设置默认主题
+   * @param {[type]} id [description]
+   */
   async _set(id) {
     await this.update({}, { $set : { using:　false } }, { multi : true });
   },
 
+  /**
+   * 获取默认主题
+   * @return {[type]} [description]
+   */
   async _default() {
     const theme = await cache.get('SYSTEM_THEME');
     if (theme) return theme;
-    const call = await this.findOne({ using: true }).populate('themes').lean();
-    return call;
+    return await this.findOne({ using: true }).populate('themes').lean();
   },
 };
 
