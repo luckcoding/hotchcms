@@ -284,7 +284,7 @@ exports.install = async ctx => {
       },
       redisData: {
         host: rdHost,
-        port: rdPass,
+        port: rdPort,
         db: rdDb,
         family: rdFamily,
         pass: rdPass
