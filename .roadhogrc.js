@@ -10,7 +10,7 @@ export default {
   svgSpriteLoaderDirs: svgSpriteDirs,
   theme: 'src/theme.config.js',
   publicPath: '',
-  outputPath: 'publish/admin/',
+  outputPath: 'publish/management/',
   env: {
       development: {
         extraBabelPlugins: [

@@ -1,0 +1,132 @@
+<%- include h -%>
+<div class="container">
+  <div class="mt-1">
+    <h1>安装</h1>
+  </div>
+  <hr />
+  <p class="lead">本系统需要安装node、mongodb、redis环境。</p>
+  <br />
+
+  <h3>1. 检测mongodb</h3>
+  <hr />
+  <form id="mongodb-test" novalidate method="put" action="/api/install/test-database">
+    <!-- <fieldset> -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="form-control-label" for="formGroupExampleInput">主机</label>
+            <input type="text" class="form-control" id="validationServer01" placeholder="127.0.0.1" required>
+            <div class="invalid-feedback">
+              请输入正确的主机地址
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="form-group">
+            <label class="form-control-label" for="formGroupExampleInput">端口</label>
+            <input type="tel" class="form-control" id="validationServer02" placeholder="27017" required>
+            <div class="invalid-feedback">
+              请输入正确的端口号
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="form-group">
+            <label class="form-control-label" for="formGroupExampleInput">数据库</label>
+            <input type="text" class="form-control" value="" placeholder="hotchcms" required>
+            <div class="invalid-feedback">
+              请输入数据库名
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="form-control-label" for="formGroupExampleInput">账号</label>
+            <input type="email" class="form-control" id="validationServer04" placeholder="没有则不填">
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="form-group">
+            <label class="form-control-label" for="formGroupExampleInput">密码</label>
+            <input type="password" class="form-control" id="validationServer04" placeholder="没有则不填">
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">Submit form</button>
+    <!-- </fieldset> -->
+  </form>
+  <br />
+  <br />
+
+<!--   <h3>2. 检测redis</h3>
+  <hr />
+  <form id="redis-test" novalidate>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label class="form-control-label" for="formGroupExampleInput">主机</label>
+          <input type="text" class="form-control" id="validationServer01" placeholder="127.0.0.1" required>
+          <div class="invalid-feedback">
+            请输入正确的主机地址
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="form-group">
+          <label class="form-control-label" for="formGroupExampleInput">端口</label>
+          <input type="tel" class="form-control" id="validationServer02" placeholder="27017" required>
+          <div class="invalid-feedback">
+            请输入正确的端口号
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="form-group">
+          <label class="form-control-label" for="formGroupExampleInput">数据库</label>
+          <input type="text" class="form-control" id="validationServer03" placeholder="hotchcms" required>
+          <div class="invalid-feedback">
+            请输入数据库名
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </form>
+  <br />
+  <br /> -->
+
+<!--   <h3>1. 设置管理员账号</h3>
+  <hr />
+  <form action="">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label class="form-control-label" for="formGroupExampleInput">账号</label>
+          <input type="email" class="form-control" id="validationServer04" placeholder="1@qq.com">
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label class="form-control-label" for="formGroupExampleInput">密码</label>
+          <input type="password" class="form-control" id="validationServer04" placeholder="123456">
+        </div>
+      </div>
+    </div>
+  </form> -->
+</div>
+<script>
+(function() {
+  "use strict";
+  window.addEventListener("load", function() {
+    var form = document.getElementById("mongodb-test");
+    form.addEventListener("submit", function(event) {
+      if (form.checkValidity() == false) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add("was-validated");
+    }, false);
+  }, false);
+}());
+</script>
+<%- include f -%>

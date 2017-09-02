@@ -12,6 +12,6 @@ logs/*/*
 !logs/*/*.gitkeep
 tmp/*
 !tmp/*.gitkeep
-publish/*/*
-!publish/*/*.gitkeep
+publish/*
+!publish/themes/*
 dist
