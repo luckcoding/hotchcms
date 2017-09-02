@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Router } from 'dva/router'
 import App from './routes/app'
-import { routePrefix } from './utils/config';
+import { routePrefix } from './utils/config'
 
 const registerModel = (app, model) => {
   if (!(app._models.filter(m => m.namespace === model.namespace).length === 1)) {
