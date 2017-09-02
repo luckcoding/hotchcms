@@ -6,7 +6,9 @@ import { Link } from 'dva/router'
 import AnimTableBody from '../../components/DataTable/AnimTableBody'
 import { DropOption } from '../../components'
 import styles from './List.less'
+import { config } from '../../utils'
 
+const { routePrefix } = config
 const confirm = Modal.confirm
 
 const List = ({ onDeleteItem, onEditItem, isMotion, location, ...tableProps }) => {
@@ -35,7 +37,7 @@ const List = ({ onDeleteItem, onEditItem, isMotion, location, ...tableProps }) =
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',
-      render: (text, record) => <Link to={`admin-user/${record._id}`}>{text}</Link>,
+      render: (text, record) => <Link to={`${routePrefix}/admin-user/${record._id}`}>{text}</Link>,
     }, {
       title: '昵称',
       dataIndex: 'nickname',

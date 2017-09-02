@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import { Menu, Icon } from 'antd'
 import { Link } from 'dva/router'
 import pathToRegexp from 'path-to-regexp'
-import { arrayToTree, queryArray } from '../../utils'
+import { arrayToTree, queryArray, config } from '../../utils'
+
+const { routePrefix } = config
 
 const Menus = ({ siderFold, darkTheme, location, handleClickNavMenu, navOpenKeys, changeOpenKeys, menu }) => {
   // 生成树状
@@ -31,7 +33,7 @@ const Menus = ({ siderFold, darkTheme, location, handleClickNavMenu, navOpenKeys
       }
       return (
         <Menu.Item key={item.id}>
-          <Link to={item.router}>
+          <Link to={routePrefix + item.router}>
             {item.icon && <Icon type={item.icon} />}
             {(!siderFoldN || menuTree.indexOf(item) < 0) && item.name}
           </Link>

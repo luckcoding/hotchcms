@@ -9,7 +9,8 @@ module.exports = {
   iconFontJS: '/iconfont.js',
   YQL: ['http://www.zuimeitianqi.com'],
   CORS: ['http://localhost:3030'],
-  openPages: ['/login'],
+  routePrefix: '/admin',
+  openPages: ['/admin/login'],
   apiPrefix: '/api/v1',
   api: {
     signIn: `${APIV1}/admin-account/sign-in`, // 登录

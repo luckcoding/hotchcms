@@ -3,7 +3,7 @@ import { parse } from 'qs'
 import { config } from '../utils'
 import { logout, query } from '../services/app'
 
-const { prefix } = config
+const { prefix, routePrefix } = config
 
 export default {
   namespace: 'app',
@@ -37,12 +37,12 @@ export default {
           type: 'querySuccess',
           payload: data.result,
         })
-        if (location.pathname === '/login') {
-          yield put(routerRedux.push('/dashboard'))
+        if (location.pathname === `${routePrefix}/login`) {
+          yield put(routerRedux.push(`${routePrefix}/dashboard`))
         }
       } else if (config.openPages && config.openPages.indexOf(location.pathname) < 0) {
         let from = location.pathname
-        window.location = `${location.origin}/login?from=${from}`
+        window.location = `${location.origin}${routePrefix}/login?from=${from}`
       }
     },
 

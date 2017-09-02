@@ -3,7 +3,7 @@ import { create, remove, update, _query, _remove } from '../services/adminGroup'
 import { pageModel } from './common'
 import { config } from '../utils'
 
-const { prefix } = config
+const { prefix, routePrefix } = config
 
 export default modelExtend(pageModel, {
   namespace: 'adminGroup',
@@ -19,7 +19,7 @@ export default modelExtend(pageModel, {
   subscriptions: {
     setup ({ dispatch, history }) {
       history.listen((location) => {
-        if (location.pathname === '/admin-group') {
+        if (location.pathname === `${routePrefix}/admin-group`) {
           dispatch({
             type: 'query',
             payload: location.query,
