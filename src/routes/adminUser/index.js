@@ -6,9 +6,6 @@ import { Row, Col, Button, Popconfirm } from 'antd'
 import List from './List'
 import Filter from './Filter'
 import Modal from './Modal'
-import { config } from '../../utils'
-
-const { routePrefix } = config
 
 const AdminUser = ({ location, dispatch, adminUser, loading }) => {
   const { list, pagination, currentItem, modalVisible, modalType, isMotion, selectedRowKeys } = adminUser
@@ -97,13 +94,13 @@ const AdminUser = ({ location, dispatch, adminUser, loading }) => {
     },
     onSearch (fieldsValue) {
       fieldsValue.keyword.length ? dispatch(routerRedux.push({
-        pathname: `${routePrefix}/adminUser`,
+        pathname: '/adminUser',
         query: {
           field: fieldsValue.field,
           keyword: fieldsValue.keyword,
         },
       })) : dispatch(routerRedux.push({
-        pathname: `${routePrefix}/adminUser`,
+        pathname: '/adminUser',
       }))
     },
     onAdd () {

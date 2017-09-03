@@ -37,8 +37,8 @@ export default {
           type: 'querySuccess',
           payload: data.result,
         })
-        if (location.pathname === `${routePrefix}/login`) {
-          yield put(routerRedux.push(`${routePrefix}/dashboard`))
+        if (location.pathname === '/login') {
+          yield put(routerRedux.push('/dashboard'))
         }
       } else if (config.openPages && config.openPages.indexOf(location.pathname) < 0) {
         let from = location.pathname

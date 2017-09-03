@@ -1,8 +1,5 @@
 import { routerRedux } from 'dva/router'
 import { login } from '../services/login'
-import { config } from '../utils'
-
-const { routePrefix } = config
 
 export default {
   namespace: 'login',
@@ -25,7 +22,7 @@ export default {
       if (data.code === '0000') {
         yield put({ type: 'app/setToken', payload: { token: data.result } })
         yield put({ type: 'app/query' })
-        yield put(routerRedux.push(`${routePrefix}/dashboard`))
+        yield put(routerRedux.push('/dashboard'))
       } else {
         throw data
       }

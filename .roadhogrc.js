@@ -9,8 +9,9 @@ export default {
   entry: 'src/index.js',
   svgSpriteLoaderDirs: svgSpriteDirs,
   theme: 'src/theme.config.js',
-  publicPath: '',
-  outputPath: 'publish/management/',
+  path: path.join(__dirname, '/' ),
+  publicPath: '/admin/',
+  outputPath: 'publish/admin/',
   env: {
       development: {
         extraBabelPlugins: [

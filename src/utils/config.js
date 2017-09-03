@@ -1,6 +1,6 @@
 const APIV1 = 'http://localhost:3030/api'
 
-module.exports = {
+const config = {
   name: 'Hotchcms',
   prefix: 'HotchCMS',
   footerText: 'Ant Design Admin  © 2017 zuiidea',
@@ -9,8 +9,8 @@ module.exports = {
   iconFontJS: '/iconfont.js',
   YQL: ['http://www.zuimeitianqi.com'],
   CORS: ['http://localhost:3030'],
+  openPages: ['/login', '/admin/login'],
   routePrefix: '/admin',
-  openPages: ['/admin/login'],
   apiPrefix: '/api/v1',
   api: {
     signIn: `${APIV1}/admin-account/sign-in`, // 登录
@@ -24,3 +24,11 @@ module.exports = {
     categories: `${APIV1}/category/multi`, // 分类
   },
 }
+
+if (process.env.NODE_ENV === 'production') {
+  config.iconFontCSS = config.routePrefix + config.iconFontCSS
+  config.iconFontJS = config.routePrefix + config.iconFontJS
+  config.logo = config.routePrefix + config.logo
+}
+
+module.exports = config

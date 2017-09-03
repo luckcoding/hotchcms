@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const send = require('koa-send');
 const regx = require('../lib/regx.lib');
 const database = require('../lib/database.lib');
@@ -13,7 +14,14 @@ const installService = require('../services/install.service');
 exports.access = async (ctx, next) => {
   try {
     const hasInstall = await installService.status();
-    hasInstall ? await next() :  await ctx.render('admin/install', {})
+    if (hasInstall) {
+      await next();
+    } else {
+      const target = ctx.params[0];
+      if (target === '/install') {
+        await ctx.render('install/1')
+      }
+    }
   } catch (e) {
     ctx.pipeFail(e);
   }
@@ -87,6 +95,11 @@ exports.testDatabase = async ctx => {
   }
 };
 
+/**
+ * 检测redis
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
+ */
 exports.testRedis = async ctx => {
   ctx.checkBody({
     'host': {

@@ -1,10 +1,13 @@
-const send = require('koa-send');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * 后台首页
- * @param {Object} req
- * @param {Object} res
+ * @param  {[type]} ctx [description]
+ * @return {[type]}     [description]
  */
 module.exports = async ctx => {
-  await send(ctx, './public/assets/admin/index.html');
+  ctx.type = 'html';
+  console.log('===========>')
+  ctx.body = fs.createReadStream(path.join(__dirname, '../../publish/admin/index.html'));
 };

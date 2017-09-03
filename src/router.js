@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Router } from 'dva/router'
 import App from './routes/app'
-import { routePrefix } from './utils/config'
 
 const registerModel = (app, model) => {
   if (!(app._models.filter(m => m.namespace === model.namespace).length === 1)) {
@@ -10,11 +9,10 @@ const registerModel = (app, model) => {
   }
 }
 
-
 const Routers = ({ history, app }) => {
   const routes = [
     {
-      path: routePrefix,
+      path: '/',
       component: App,
       getIndexRoute (nextState, cb) {
         require.ensure([], (require) => {
@@ -25,7 +23,7 @@ const Routers = ({ history, app }) => {
 
       childRoutes: [
         {
-          path: `${routePrefix}/dashboard`,
+          path: 'dashboard',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/dashboard'))
@@ -35,7 +33,7 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: `${routePrefix}/login`,
+          path: 'login',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/login'))
@@ -45,7 +43,7 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: `${routePrefix}/admin-user`,
+          path: 'admin-user',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/adminUser'))
@@ -55,7 +53,7 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: `${routePrefix}/admin-user/:id`,
+          path: 'admin-user/:id',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/adminUser/detail'))
@@ -65,7 +63,7 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: `${routePrefix}/admin-group`,
+          path: 'admin-group',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/adminGroup'))
@@ -75,7 +73,7 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: `${routePrefix}/setting`,
+          path: 'setting',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/setting'))
@@ -85,7 +83,7 @@ const Routers = ({ history, app }) => {
         },
 
         {
-          path: `${routePrefix}/category`,
+          path: 'category',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {
               registerModel(app, require('./models/category'))

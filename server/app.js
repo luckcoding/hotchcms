@@ -47,10 +47,10 @@ app.use(convert.compose(
 ));
 
 // 静态文件
-app.use(convert(koaStatic(path.join(__dirname, '../public'))));
+app.use(convert(koaStatic(path.join(__dirname, '../publish/'))));
 
 // 渲染引擎
-app.use(views(path.join(__dirname, '../public'), {
+app.use(views(path.join(__dirname, '../publish/themes'), {
   extension: 'ejs'
 }));
 

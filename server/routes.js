@@ -89,7 +89,9 @@ module.exports = {
 
   // '/:category*': { get: 'render' }, // 404
 
-  '*': { get: 'install.access' },
+  '/admin*': { get: 'admin' }, // 后台
 
-  '/:target*': { get: 'render' },
+  '*': { get: 'install.access' }, // 查询安装状态 
+
+  // '/:target*': { get: 'render' },
 };

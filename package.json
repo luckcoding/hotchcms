@@ -32,6 +32,7 @@
     "dva-loading": "^0.2.1",
     "dva-model-extend": "^0.1.1",
     "ejs": "^2.5.7",
+    "history": "^2.1.2",
     "jsonp": "^0.2.1",
     "jsonwebtoken": "^7.4.1",
     "kcors": "^2.2.1",

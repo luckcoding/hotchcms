@@ -1,9 +1,13 @@
 import 'babel-polyfill'
 import dva from 'dva'
 import createLoading from 'dva-loading'
-import { browserHistory } from 'dva/router'
+import { useRouterHistory } from 'dva/router'
+import createBrowserHistory from 'history/lib/createBrowserHistory'
 import { message } from 'antd'
+import { config } from './utils'
 import './index.html'
+
+const { routePrefix } = config
 
 const ERROR_DURATION = 2
 
@@ -13,7 +17,7 @@ const app = dva({
     effects: true,
   }),
   // initialState: {},
-  history: browserHistory,
+  history: useRouterHistory(createBrowserHistory)({ basename: routePrefix }),
   onError (error) {
     message.error(error.msg || error.message, ERROR_DURATION)
   },
