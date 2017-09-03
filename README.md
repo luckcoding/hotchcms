@@ -10,9 +10,35 @@
 
 ## Run
 
-1. `$ git clone https://github.com/luckcoding/hotchcms.git`
-2. `$ npm install`
-3. `$ npm run dev`
+`$ git clone https://github.com/luckcoding/hotchcms.git`
+
+`$ npm install`
+
+### 开发环境
+
+`$ npm run dev`
+
+### 生产环境
+
+`$ npm run client:build`
+
+**修改 publish/admin/index.html**
+
+```
+1.
+<link rel="stylesheet" href="/index.css" />
+修改为:
+<link rel="stylesheet" href="/admin/index.css" />
+
+2.
+
+<script src="/index.js"></script>
+修改为:
+<script src="/admin/index.js"></script>
+```
+
+`$ node index.js`
+
 
 ## 设计
 
