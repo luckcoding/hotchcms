@@ -50,9 +50,9 @@ app.use(convert.compose(
 app.use(convert(koaStatic(path.join(__dirname, '../publish/'))));
 
 // 渲染引擎
-app.use(views(path.join(__dirname, '../publish/themes'), {
-  extension: 'ejs'
-}));
+// app.use(views(path.join(__dirname, '../publish/themes'), {
+//   extension: 'ejs'
+// }));
 
 // 日志
 app.use(async (ctx, next) => {

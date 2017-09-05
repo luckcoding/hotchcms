@@ -92,6 +92,16 @@ const Routers = ({ history, app }) => {
           },
         },
 
+        {
+          path: 'install',
+          getComponent (nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/install'))
+              cb(null, require('./routes/install/'))
+            }, 'install')
+          },
+        },
+
       ],
     },
   ]

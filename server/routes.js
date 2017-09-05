@@ -68,10 +68,8 @@ module.exports = {
       }
     },
 
-
-
     '/theme': {
-      get: ['theme.test']
+      get: ['theme.list']
     },
 
     '/authority': {
@@ -93,5 +91,5 @@ module.exports = {
 
   '*': { get: 'install.access' }, // 查询安装状态 
 
-  // '/:target*': { get: 'render' },
+  '/:target*': { get: 'render' },
 };

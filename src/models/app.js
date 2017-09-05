@@ -18,7 +18,9 @@ export default {
   },
   subscriptions: {
     setup ({ dispatch }) {
-      dispatch({ type: 'query' })
+      if (config.openPages.indexOf(location.pathname) < 0) {
+        dispatch({ type: 'query' })
+      }
 
       let tid
       window.onresize = () => {

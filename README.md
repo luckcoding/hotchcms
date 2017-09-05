@@ -8,7 +8,7 @@
 * npm ^4.0.0
 * mongodb ^3.0.0
 
-## Run
+## 安装
 
 `$ git clone https://github.com/luckcoding/hotchcms.git`
 
@@ -20,9 +20,21 @@
 
 ### 生产环境
 
-`$ npm run client:build`
+#### 编译
 
-**修改 publish/admin/index.html**
+一、 **修改 src/themes/default.less**
+
+```
+@icon-url: "/antd/iconfont";
+修改为:
+@icon-url: "/admin/antd/iconfont";
+```
+
+二、 `$ npm run client:build`
+
+#### run
+
+一、 **修改 publish/admin/index.html**
 
 ```
 1.
@@ -37,7 +49,7 @@
 <script src="/admin/index.js"></script>
 ```
 
-`$ node index.js`
+二、 `$ node index.js`
 
 
 ## 设计
