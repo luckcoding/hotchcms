@@ -17,10 +17,7 @@ exports.access = async (ctx, next) => {
     if (hasInstall) {
       await next();
     } else {
-      const target = ctx.params[0];
-      if (target === '/install') {
-        await ctx.render('install/1')
-      }
+      ctx.redirect('/admin/install');
     }
   } catch (e) {
     ctx.pipeFail(e);
