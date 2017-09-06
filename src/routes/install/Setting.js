@@ -31,14 +31,12 @@ const Redis = ({
     <Form>
       <FormItem
         {...formItemLayout}
-        label="主机地址"
+        label="管理员邮箱"
         hasFeedback
-        extra="默认 localhost"
       >
-        {getFieldDecorator('host', {
-          initialValue: 'localhost',
+        {getFieldDecorator('email', {
           rules: [{
-            pattern: /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$|^localhost$/,
+            type: 'email',
             message: '格式错误',
           }, {
             required: true,
@@ -49,67 +47,33 @@ const Redis = ({
       </FormItem>
       <FormItem
         {...formItemLayout}
-        label="端口"
+        label="管理员密码"
         hasFeedback
-        extra="默认 6379"
       >
-        {getFieldDecorator('port', {
-          initialValue: '6379',
+        {getFieldDecorator('password', {
           rules: [{
-            pattern: /\d/,
-            message: '格式错误',
-          }, {
+            required: true,
+          }],
+        })(
+          <Input type="password" />
+        )}
+      </FormItem>
+      <FormItem
+        {...formItemLayout}
+        label="网站标题"
+        hasFeedback
+      >
+        {getFieldDecorator('title', {
+          initialValue: 'hotchcms',
+          rules: [{
             required: true,
           }],
         })(
           <Input />
         )}
-      </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="数据库名"
-        hasFeedback
-        extra="默认 0"
-      >
-        {getFieldDecorator('db', {
-          initialValue: '0',
-          rules: [{
-            pattern: /\d/,
-            message: '格式错误',
-          }, {
-            required: true,
-          }],
-        })(
-          <Input />
-        )}
-      </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="family"
-        hasFeedback
-        extra="默认 IPv4"
-      >
-        {getFieldDecorator('family', {
-          initialValue: 'IPv4',
-          rules: [{
-            pattern: /(IPv4|IPv6)/,
-            message: '格式错误',
-          }, {
-            required: true,
-          }],
-        })(
-          <Input />
-        )}
-      </FormItem>
-      <FormItem
-        {...formItemLayout}
-        label="数据库密码"
-        hasFeedback
-      >
-        {getFieldDecorator('pass')(<Input type="password" />)}
       </FormItem>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button type="primary" onClick={handleOk}>检测</Button>
+        <Button type="primary" onClick={handleOk}>安装</Button>
       </div>
     </Form>
   )
