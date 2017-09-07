@@ -1,21 +1,16 @@
-import { query, create, update, multi } from '../services/category'
+import { query, save } from '../services/setting'
 
 export default {
   namespace: 'setting',
 
   state: {
-    tree: [],
-    currentItem: {},
-    checkItems: [],
-    modalVisible: false,
-    modalType: 'create',
+    siteInfo: {},
   },
 
   subscriptions: {
     setup ({ dispatch }) {
       dispatch({
         type: 'query',
-        payload: location.query,
       })
     },
   },
@@ -33,33 +28,9 @@ export default {
       }
     },
 
-    * multiDelete ({ payload }, { call, put, select }) {
-      const { checkItems } = yield select(_ => _.category)
-
-      const data = yield call(multi, { type: 'remove', multi: checkItems })
+    * save ({ payload }, { call, put }) {
+      const data = yield call(save, payload)
       if (data.code === '0000') {
-        yield put({ type: 'query' })
-      } else {
-        throw data
-      }
-    },
-
-    * create ({ payload }, { call, put }) {
-      const data = yield call(create, payload)
-      if (data.code === '0000') {
-        yield put({ type: 'hideModal' })
-        yield put({ type: 'query' })
-      } else {
-        throw data
-      }
-    },
-
-    * update ({ payload }, { select, call, put }) {
-      const _id = yield select(({ category }) => category.currentItem._id)
-      const newCategory = { ...payload, _id }
-      const data = yield call(update, newCategory)
-      if (data.code === '0000') {
-        yield put({ type: 'hideModal' })
         yield put({ type: 'query' })
       } else {
         throw data
@@ -69,19 +40,11 @@ export default {
   },
 
   reducers: {
-    querySuccess (state, { payload: tree }) {
+    querySuccess (state, { payload: siteInfo }) {
       return {
         ...state,
-        tree,
+        siteInfo,
       }
-    },
-
-    showModal (state, { payload }) {
-      return { ...state, ...payload, modalVisible: true }
-    },
-
-    hideModal (state) {
-      return { ...state, modalVisible: false }
     },
 
     onCheckItems (state, { payload: checkItems }) {

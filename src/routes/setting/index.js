@@ -19,9 +19,15 @@ class Setting extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      tags: [],
+      tags: props.setting.siteInfo.keywords || [],
       inputVisible: false,
       inputValue: '',
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.setting.siteInfo.keywords) {
+      this.setState({ tags: nextProps.setting.siteInfo.keywords })
     }
   }
 
@@ -62,16 +68,32 @@ class Setting extends React.Component {
       setting = {},
       form: {
         getFieldDecorator,
+        validateFieldsAndScroll,
       },
     } = this.props
 
+    const { siteInfo } = setting
+
     const { tags, inputVisible, inputValue } = this.state
+
+    const handleOk = () => {
+      validateFieldsAndScroll((errors, values) => {
+        if (errors) return null
+        return this.props.dispatch({
+          type: 'setting/save',
+          payload: {
+            ...values,
+            keywords: tags,
+          },
+        })
+      })
+    }
 
     return (
       <Form layout="horizontal">
         <FormItem label="网站标题" hasFeedback {...formItemLayout}>
           {getFieldDecorator('title', {
-            initialValue: setting.title,
+            initialValue: siteInfo.title,
             rules: [
               {
                 required: true,
@@ -105,7 +127,7 @@ class Setting extends React.Component {
         </FormItem>
         <FormItem label="网站描述" hasFeedback {...formItemLayout}>
           {getFieldDecorator('description', {
-            initialValue: setting.description,
+            initialValue: siteInfo.description,
             rules: [
               {
                 required: true,
@@ -115,14 +137,17 @@ class Setting extends React.Component {
         </FormItem>
         <FormItem label="顶部代码块" hasFeedback {...formItemLayout}>
           {getFieldDecorator('headerCode', {
-            initialValue: setting.headerCode,
+            initialValue: siteInfo.headerCode,
           })(<TextArea autosize={{ minRows: 4, maxRows: 8 }} />)}
         </FormItem>
         <FormItem label="底部代码块" hasFeedback {...formItemLayout}>
           {getFieldDecorator('footerCode', {
-            initialValue: setting.footerCode,
+            initialValue: siteInfo.footerCode,
           })(<TextArea autosize={{ minRows: 4, maxRows: 8 }} />)}
         </FormItem>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button type="primary" onClick={handleOk}>设置</Button>
+        </div>
       </Form>
     )
   }
@@ -130,6 +155,7 @@ class Setting extends React.Component {
 
 Setting.propTypes = {
   form: PropTypes.object.isRequired,
+  dispatch: PropTypes.func,
   setting: PropTypes.object,
 }
 

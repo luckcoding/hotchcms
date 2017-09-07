@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const validator = require('validator');
 const Category = require('../models/category.model');
-// const SiteInfo = require('../services/site-info.service');
 
 const { SiteInfo, ThemeInfo } = require('../services/site.service');
 

@@ -15,7 +15,7 @@ module.exports = {
 
     '/site-info': {
       get: ['site-info.get'], // 获取站点信息
-      // put: [110101, 'site-info.update']
+      put: ['site-info.save'], // 存储站点信息 
     },
 
     '/admin-account': {

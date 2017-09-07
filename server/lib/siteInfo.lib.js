@@ -7,14 +7,16 @@ const configFile = () => path.join(__dirname,'../config/siteInfo.config.json');
 module.exports = {
   // 获取
   get: options => new Promise((resolve, reject) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        err.message = 'siteInfo.config.json 文件不存在';
-      }
-      return reject(error);
-    };
+    fs.readFile(configFile(), async (err, file) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          err.message = 'siteInfo.config.json 文件不存在';
+        }
+        return reject(err);
+      };
 
-    return resolve(JSON.parse(file));
+      return resolve(JSON.parse(file));
+    })
   }),
 
   // 存储
