@@ -17,9 +17,10 @@ exports.SiteInfo = () => {
     async get() {
       const call = await cache.get('SYSTEM_SITEINFO');
       if (call) return call;
-      const { value } = await Options.findOne({ name: 'siteInfo' });
-      await cache.set('SYSTEM_SITEINFO', value, 1000 * 60 * 60 * 24 * 30);
-      return value;
+      const siteInfo = await Options.findOne({ name: 'siteInfo' });
+      if (!siteInfo) return {};
+      await cache.set('SYSTEM_SITEINFO', siteInfo.value, 1000 * 60 * 60 * 24 * 30);
+      return siteInfo.value;
     },
 
     async set(value) {

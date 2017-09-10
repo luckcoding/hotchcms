@@ -1,9 +1,9 @@
 const fs = require('fs');
-const siteInfo = require('../lib/siteInfo.lib');
+const { SiteInfo } = require('../services/site.service');
 
 exports.get = async ctx => {
   try {
-    const call = await siteInfo.get();
+    const call = await SiteInfo().get();
     ctx.pipeDone(call);
   } catch (e) {
     ctx.pipeFail(e);
@@ -31,7 +31,7 @@ exports.save = async ctx => {
 
   if (ctx.validationErrors()) return null;
   try {
-    await siteInfo.save(ctx.request.body);
+    await SiteInfo().set(ctx.request.body);
     ctx.pipeDone();
   } catch (e) {
     ctx.pipeFail(e);

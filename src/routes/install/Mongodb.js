@@ -71,6 +71,7 @@ const Mongodb = ({
         hasFeedback
       >
         {getFieldDecorator('db', {
+          initialValue: 'hotchcms',
           rules: [{
             required: true,
           }],

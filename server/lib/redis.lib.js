@@ -46,5 +46,3 @@ exports.connect = () => new Promise((resolve, reject) => {
     }
   });
 });
-
-// module.exports = client;

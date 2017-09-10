@@ -51,7 +51,7 @@ exports.connect = () => new Promise((resolve, reject) => {
       if (err.code === 'ENOENT') {
         err.message = 'database.config.json 文件不存在';
       }
-      return reject(error);
+      return reject(err);
     };
 
     try {

@@ -26,7 +26,7 @@ module.exports = async (ctx) => {
 
   // 获取主题
   const theme = await ThemeInfo()._default();
-  if (!theme) return ctx.body = '未设置主题';
+  if (!theme) return ctx.body = '请登录后台设置主题';
 
   const navigation = await Category._navigation();
 

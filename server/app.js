@@ -33,7 +33,8 @@ app.use(cors({
 
 // 请求解析
 app.use(convert(koaBody({
-  multipart: true
+  multipart: true,
+  formLimit: '5mb',
 })));
 
 // 日志

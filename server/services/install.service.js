@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const redis = require('../lib/redis.lib');
 const database = require('../lib/database.lib');
-const siteInfo = require('../lib/siteInfo.lib');
 const Options = require('../models/options.model');
 const AdminGroup = require('../models/admin-group.model');
 const AdminUser = require('../models/admin-user.model');
@@ -60,21 +59,15 @@ exports.install = ({ databaseData, redisData, siteInfoData, adminUserData }) => 
     /**
      * 建表
      */
-    // let [siteInfo, adminGroup] = await Promise.all([
-    //   // 存储cms信息
-    //   new Options({ name: 'siteInfo', value: siteInfoData }).save(),
-    //   // 建立root管理员用户组权限
-    //   new AdminGroup({
-    //     name: '管理员[系统]', description: '系统内置', gradation: 100
-    //   }).save()
-    // ]);
+    let [siteInfo, adminGroup] = await Promise.all([
+      // 存储cms信息
+      new Options({ name: 'siteInfo', value: siteInfoData }).save(),
+      // 建立root管理员用户组权限
+      new AdminGroup({
+        name: '管理员[系统]', description: '系统内置', gradation: 100
+      }).save()
+    ]);
 
-    // 存储cms信息
-    await siteInfo.save(siteInfoData);
-    // 建立root管理员用户组权限
-    const adminGroup = await new AdminGroup({
-      name: '管理员[系统]', description: '系统内置', gradation: 100
-    }).save();
     // 建立root管理员用户
     await new AdminUser({
       email: adminUserData.email,
