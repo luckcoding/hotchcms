@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const AdmZip = require('adm-zip');
+const ThemeLib = require('../lib/themes.lib');
 const Theme = require('../models/theme.model');
 const ThemeTemplate = require('../models/theme-template.model');
 
@@ -22,35 +23,18 @@ exports.install = async ctx => {
 
   try {
     let { file } = ctx.request.body.files;
-    file = file.toJSON();
-
-    const zip = new AdmZip(file.path);
-    const entry = zip.getEntry('default/info.json');
-    if (!entry) throw Error('非法主题！')
-    const info = JSON.parse(entry.getData());
+    const info = await ThemeLib(file);
     ctx.pipeDone(info);
   } catch (e) {
-    ctx.pipeFail('9999', e);
+    ctx.pipeFail(e, '9999');
   }
 };
 
 exports.list = async (ctx) => {
-  const directory = path.join(__dirname, '../../publish/themes');
-  fs.readdirSync(directory)
-    .forEach(function (file) {
-      const fullpath = path.join(directory, file);
-      const stat = fs.statSync(fullpath);
-      if (stat.isDirectory()) {
-        fs.readFile(`${fullpath}/info.json`, async (err, file) => {
-          if (err) {
-            if (err.code === 'ENOENT') {
-              err.message = 'database.config.json 文件不存在';
-            }
-            return reject(err);
-          };
-          console.log(JSON.parse(file))
-        });
-      }
-    })
-  ctx.pipeDone();
+  try {
+    const call = await Theme._list();
+    ctx.pipeDone(call)
+  } catch (e) {
+    ctx.pipeFail(e, '9999');
+  }
 };
