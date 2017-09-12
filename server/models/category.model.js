@@ -53,7 +53,7 @@ CategorySchema.statics = {
       .sort('sort')
       .populate('template')
       .lean();
-    await cache.set('categories', call, 1000 * 60 * 60 * 24);
+    await cache.set('SYSTEM_CATEGORIES', call, 1000 * 60 * 60 * 24);
     return call;
   },
 
@@ -81,14 +81,14 @@ CategorySchema.statics = {
     } else {
       await this.create(input);
     }
-    return cache.del('categories');
+    return cache.del('SYSTEM_CATEGORIES');
   },
 
   async _remove(input) {
     const _in = _.isArray(input) ? { $in: input } : input;
     await this.remove({ _id: _in });
     await this.update({ _id: _in }, { $unset: { uid: true } });
-    return cache.del('categories');
+    return cache.del('SYSTEM_CATEGORIES');
   },
 
   async _tree() {

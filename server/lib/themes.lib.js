@@ -3,7 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 const AdmZip = require('adm-zip');
 
-module.exports = (file) => new Promise((resolve, reject) => {
+exports.install = file => new Promise((resolve, reject) => {
   if (!file) throw Error('主题为空');
   file = file.toJSON();
   if (file.type !== 'application/zip') throw Error('仅支持zip');

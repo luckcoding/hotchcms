@@ -23,14 +23,14 @@ exports.install = async ctx => {
 
   try {
     let { file } = ctx.request.body.files;
-    const info = await ThemeLib(file);
+    const info = await ThemeLib.install(file);
     ctx.pipeDone(info);
   } catch (e) {
     ctx.pipeFail(e, '9999');
   }
 };
 
-exports.list = async (ctx) => {
+exports.list = async ctx => {
   try {
     const call = await Theme._list();
     ctx.pipeDone(call)
@@ -38,3 +38,24 @@ exports.list = async (ctx) => {
     ctx.pipeFail(e, '9999');
   }
 };
+
+exports.set = async ctx => {
+  ctx.checkParams({
+    '_id': {
+      notEmpty: {
+        options: [true],
+        errorMessage: '_id 不能为空'
+      },
+      isMongoId: { errorMessage: '_id  需为 mongoId' }
+    }
+  });
+
+  if (ctx.validationErrors()) return null;
+
+  try {
+    await Theme._set(ctx.params._id);
+    ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e, '9999');
+  }
+}

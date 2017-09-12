@@ -69,8 +69,11 @@ module.exports = {
     },
 
     '/theme': {
-      get: 'theme.list',
-      post: 'theme.install', // 安装主题
+      get: ['theme.list'],
+      post: ['theme.install'], // 安装主题
+      '/:_id': {
+        put: ['theme.set'], // 设置默认主题
+      }
     },
 
     '/authority': {

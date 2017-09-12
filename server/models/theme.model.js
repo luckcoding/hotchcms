@@ -42,10 +42,11 @@ ThemeSchema.statics = {
 
   /**
    * 设置默认主题
-   * @param {[type]} id [description]
+   * @param {[type]} _id [description]
    */
-  async _set(id) {
+  async _set(_id) {
     await this.update({}, { $set : { using:　false } }, { multi : true });
+    return this.findByIdAndUpdate({ _id }, { $set: { using:true } }, { runValidators: true });
   },
 
   /**
@@ -55,10 +56,12 @@ ThemeSchema.statics = {
   async _default() {
     const theme = await cache.get('SYSTEM_THEME');
     if (theme) return theme;
-    return await this.findOne({ using: true }).populate('themes').lean();
+    const call = await this.findOne({ using: true }).populate('themes').lean();
+    await cache.set('SYSTEM_THEME', call, 1000 * 60 * 60 * 24);
+    return call;
   },
 
-  async _list() {
+  _list() {
     return this.find({}).populate('template', {}).lean();
   }
 };
