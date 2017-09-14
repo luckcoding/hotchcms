@@ -23,6 +23,7 @@ const config = {
     category: `${APIV1}/category/:_id`, // 分类
     categories: `${APIV1}/category/multi`, // 分类
     siteInfo: `${APIV1}/site-info`, // 站点信息
+    theme: `${APIV1}/theme/:_id`, // 主题
 
     install: `${APIV1}/install`, // 安装
     testDatabase: `${APIV1}/install/test-database`, // 检测数据裤

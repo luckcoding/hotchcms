@@ -83,6 +83,16 @@ const Routers = ({ history, app }) => {
         },
 
         {
+          path: 'theme',
+          getComponent (nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/theme'))
+              cb(null, require('./routes/theme/'))
+            }, 'theme')
+          },
+        },
+
+        {
           path: 'category',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {

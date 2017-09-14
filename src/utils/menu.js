@@ -50,6 +50,14 @@ module.exports = [
     router: '/setting',
   },
   {
+    id: 26,
+    bpid: 2,
+    mpid: 2,
+    name: '主题',
+    icon: 'layout',
+    router: '/theme',
+  },
+  {
     id: 3,
     name: '内容',
     icon: 'file-text',
