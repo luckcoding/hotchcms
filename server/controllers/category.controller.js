@@ -1,64 +1,17 @@
 const _ = require('lodash');
 const Category = require('../models/category.model');
 
+const { _validator } = Category.schema;
+
 /**
  * 创建分类
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
 exports.create = async ctx => {
-  // ctx.sanitizeBody('isHome').toBoolean();
-  // ctx.sanitizeBody('state').toBoolean();
-  ctx.checkBody({
-    'uid': {
-      optional: true,
-      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
-    },
-    'isHome': {
-      optional: true,
-      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
-    },
-    'name': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'name 不能为空'
-      },
-      isString: { errorMessage: 'name 需为 String' },
-    },
-    'path': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'path 不能为空'
-      },
-      matches: {
-        options: [/^[A-z]+$/],
-        errorMessage: 'path 格式不正确'
-      }
-    },
-    'state': {
-      optional: true,
-      isBoolean: { errorMessage: 'state 需为 Boolean' }
-    },
-    'sort': {
-      optional: true,
-      isNumber: { errorMessage: 'sort 为 Number' }
-    },
-    'template': {
-      optional: true,
-      isMongoId: { errIorMessage: 'template 需为 mongoId' },
-    },
-    'keywords': {
-      optional: true,
-      inArray: {
-        options: ['isString'],
-        errorMessage: 'keywords 内需为 string'
-      },
-    },
-    'description': {
-      optional: true,
-      isString: { errorMessage: 'description 需为 String' },
-    }
-  });
+  ctx.checkBody(_validator([
+    'uid','isHome','*name','*path','state','sort','template','keywords','description'
+  ]));
 
   if (ctx.validationErrors()) return null;
 
@@ -76,39 +29,9 @@ exports.create = async ctx => {
  * @return {[type]}     [description]
  */
 exports.update = async ctx => {
-  ctx.checkBody({
-    'uid': {
-      optional: true,
-      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
-    },
-    'isHome': {
-      optional: true,
-      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
-    },
-    'name': {
-      optional: true,
-      isString: { errorMessage: 'name 需为 String' },
-    },
-    'state': {
-      optional: true,
-      isBoolean: { errorMessage: 'state 需为 Boolean' }
-    },
-    'sort': {
-      optional: true,
-      isNumber: { errorMessage: 'sort 为 Number' }
-    },
-    'keywords': {
-      optional: true,
-      inArray: {
-        options: ['isString'],
-        errorMessage: 'keywords 内需为 string'
-      },
-    },
-    'description': {
-      optional: true,
-      isString: { errorMessage: 'description 需为 String' },
-    }
-  });
+  ctx.checkBody(_validator([
+    'uid','isHome','name','state','sort','template','keywords','description'
+  ]));
 
   ctx.checkParams({
     '_id': {

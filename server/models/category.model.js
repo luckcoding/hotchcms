@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cache = require('../lib/cache.lib');
 const { arrayToTree } = require('../utils');
 
+const Validator = require('../lib/mongoose-validator-schema');
+
 /**
  * 文章分类
  */
@@ -37,12 +39,13 @@ const CategorySchema = new mongoose.Schema({
   description: String,
 
   // 创建时间
-  // createDate: { type: Date, default: Date.now },
-  
+  createDate: { type: Date, default: Date.now },
 }, {
   collection: 'category',
   id: false
 });
+
+CategorySchema.plugin(Validator);
 
 CategorySchema.statics = {
   async _list() {
