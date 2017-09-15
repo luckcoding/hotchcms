@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-
+const mongoose = require('mongoose')
+const Validator = require('../lib/mongoose-validator-schema')
 
 const ThemeTemplateSchema = new mongoose.Schema({
 
@@ -13,13 +13,15 @@ const ThemeTemplateSchema = new mongoose.Schema({
 
   cover: { type: String }, // 封面
 
-  author: { type: String , default: '' }, // 作者
+  author: { type: String, default: '' }, // 作者
 
   description: String, // 描述
-  
+
 }, {
   collection: 'themeTemplate',
-  id: false
-});
+  id: false,
+})
 
-module.exports = mongoose.model('ThemeTemplate', ThemeTemplateSchema);
+ThemeTemplateSchema.plugin(Validator)
+
+module.exports = mongoose.model('ThemeTemplate', ThemeTemplateSchema)

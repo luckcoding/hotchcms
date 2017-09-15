@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 /**
  * 配置模型
@@ -9,11 +9,11 @@ const OptionsSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
 
   // 值 object
-  value: mongoose.Schema.Types.Mixed
-  
+  value: mongoose.Schema.Types.Mixed,
+
 }, {
   collection: 'options',
-  id: false
-});
+  id: false,
+})
 
-module.exports = mongoose.model('Options', OptionsSchema);
+module.exports = mongoose.model('Options', OptionsSchema)

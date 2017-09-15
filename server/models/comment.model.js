@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 /**
  * 评论模型
@@ -13,11 +13,11 @@ const commentSchema = new mongoose.Schema({
 
   // 评论内容
   content: { type: String, required: true },
-  
+
 }, {
   collection: 'comment',
-  id: false
-});
+  id: false,
+})
 
 // export default mongoose.model('Comment', commentSchema);
-module.exports = mongoose.model('Comment', commentSchema);
+module.exports = mongoose.model('Comment', commentSchema)

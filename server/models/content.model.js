@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 /**
  * 文章内容
@@ -38,7 +38,7 @@ const ContentSchema = new mongoose.Schema({
   from: { type: Number, enum: [0, 1], default: 0 }, // 来源 0为原创 1为转载
 }, {
   collection: 'content',
-  id: false
-});
+  id: false,
+})
 
-module.exports = mongoose.model('Content', ContentSchema);
+module.exports = mongoose.model('Content', ContentSchema)

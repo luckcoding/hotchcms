@@ -1,141 +1,100 @@
-const _ = require('lodash');
-const jwt = require('jsonwebtoken');
-const cache = require('../lib/cache.lib');
-const sha1 = require('../services/sha1.service');
-const AdminUser = require('../models/admin-user.model');
-const config = require('../config/system.config');
+const _ = require('lodash')
+const jwt = require('jsonwebtoken')
+const cache = require('../lib/cache.lib')
+const sha1 = require('../services/sha1.service')
+const AdminUser = require('../models/admin-user.model')
+const config = require('../config/system.config')
 
-const { expiresInLong, expiresIn, secret } = config;
+const { expiresInLong, expiresIn, secret } = config
+const { _validator } = AdminUser.schema
 
 /**
  * 登陆
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.signIn = async ctx => {
-  ctx.checkBody({
-    'email': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'email 不能为空'
-      },
-      isEmail: { errorMessage: 'email 格式不正确' }
-    },
-    'password': {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'password 不能为空'
-      },
-      isLength: {
-        options: [6],
-        errorMessage: 'password 不能小于 6 位'
-      }
-    },
-    'autoSignIn': {
+exports.signIn = async (ctx) => {
+  ctx.checkBody(_validator([
+    '*email', '*password',
+  ], {
+    autoSignIn: {
       optional: true,
-      isBoolean: { errorMessage: 'autoSignIn 需为布尔值' }
-    }
-  });
+      isBoolean: { errorMessage: 'autoSignIn 需为布尔值' },
+    },
+  }))
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    const { email, password, autoSignIn } = ctx.request.body;
+    const { email, password, autoSignIn } = ctx.request.body
 
-    const call = await AdminUser.findOne({ email });
+    const call = await AdminUser.findOne({ email })
 
     if (call && sha1(password) === call.password) {
+      let expires = autoSignIn ? expiresInLong : expiresIn // token 时间
 
-      let expiresIn = autoSignIn ? expiresInLong : expiresIn; // token 时间
-
-      const _id = call._id.toString();
-      const token = jwt.sign({ data: _id }, secret, { expiresIn });
-      // ctx.redis.set(token, _id, 'EX', expiresIn); // 以 token 为key
-      await cache.set(token, _id, expiresIn)
-      ctx.pipeDone(token);
+      const _id = call._id.toString()
+      const token = jwt.sign({ data: _id }, secret, { expiresIn: expires })
+      await cache.set(token, _id, expires) // 以 token 为key
+      ctx.pipeDone(token)
     } else {
-      ctx.pipeFail('用户名或密码错误', 'BN99');
+      ctx.pipeFail('用户名或密码错误', 'BN99')
     }
   } catch (e) {
-    ctx.pipeFail(e);
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 注销
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.signOut = async ctx => {
+exports.signOut = async (ctx) => {
   try {
-    const auth = ctx.request.headers.authorization.split(' ')[1];
+    const auth = ctx.request.headers.authorization.split(' ')[1]
     // await ctx.redis.del(auth);
-    await cache.del(auth);
-    ctx.pipeDone();
+    await cache.del(auth)
+    ctx.pipeDone()
   } catch (e) {
-    ctx.pipeFail(e);
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 查询当前账号
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.current = async ctx => {
+exports.current = async (ctx) => {
   try {
-    const _id = ctx.state.user.data;
-    const user = await AdminUser._one(_id);
-    ctx.pipeDone(user);
+    const _id = ctx.state.user.data
+    const user = await AdminUser._one(_id)
+    ctx.pipeDone(user)
   } catch (e) {
-    ctx.pipeFail(e);
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 更新当前账号
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.update = async ctx => {
-  ctx.checkBody({
-    'nickname': {
-      optional: true,
-      isString: { errorMessage: 'nickname 需为字符串' }
-    },
-    'mobile': {
-      optional: true,
-      isString: { errorMessage: 'mobile 需为字符串' },
-      isLength: {
-        options: [11,11],
-        errorMessage: 'mobile 为11位'
-      }
-    },
-    'password': {
-      optional: true,
-      isString: { errorMessage: 'password 需为字符串' },
-      isLength: {
-        options: [6],
-        errorMessage: 'password 不能小于6位'
-      }
-    },
-    'avatar': {
-      optional: true,
-      isString: { errorMessage: 'avatar 需为字符串' },
-    },
-  });
+exports.update = async (ctx) => {
+  ctx.checkBody(_validator(['nickname', 'mobile', 'password', 'avatar']))
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    const _id = ctx.state.user.data;
+    const _id = ctx.state.user.data
 
     const input = _.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
-    if (input.password) input.password = sha1(input.password);
+    if (input.password) input.password = sha1(input.password)
 
-    await AdminUser.update({ _id }, input, { runValidators: true });
-    ctx.pipeDone();
-  } catch(e) {
-    ctx.pipeFail(e);
+    await AdminUser.update({ _id }, input, { runValidators: true })
+    ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}

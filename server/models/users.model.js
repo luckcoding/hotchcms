@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const sha1 = require('../services/sha1.service');
+const mongoose = require('mongoose')
+const sha1 = require('../services/sha1.service')
 
 /**
  * trim: 去除字符串2边空格
@@ -17,8 +17,12 @@ const usersSchema = new mongoose.Schema({
 
   // 邮箱
   email: {
-    type: String, unique: true, trim: true, lowercase: true, required: true,
-    match: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+    type: String,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    required: true,
+    match: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
   },
 
   // 密码
@@ -26,24 +30,24 @@ const usersSchema = new mongoose.Schema({
 
   // 帐号名
   nickname: { type: String, unique: true, trim: true, minlength: 2, maxlength: 20 },
-  
+
   // 头像
   avatar: { type: String, trim: true },
 
   // 资源库数
-  repositories: { type: Number, default: 0, },
+  repositories: { type: Number, default: 0 },
 
   // 追随者数
-  followers: { type: Number, default: 0, },
+  followers: { type: Number, default: 0 },
 
   // 关注数
-  following: { type: Number, default: 0, },
+  following: { type: Number, default: 0 },
 
   // 金币数
-  coin: { type: Number, default: 0, },
+  coin: { type: Number, default: 0 },
 
   // 积分
-  integral: { type: Number, default: 0, },
+  integral: { type: Number, default: 0 },
 
   // 注册信息
   create: {
@@ -56,7 +60,7 @@ const usersSchema = new mongoose.Schema({
     // 平台
     platform: { type: String, trim: true },
     // 其他
-    collection: { type: Object }
+    collection: { type: Object },
   },
 
   // 权限
@@ -64,7 +68,7 @@ const usersSchema = new mongoose.Schema({
 
 }, {
   collection: 'users',
-  id: false
-});
+  id: false,
+})
 
-module.exports = mongoose.model('Users', usersSchema);
+module.exports = mongoose.model('Users', usersSchema)

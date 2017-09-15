@@ -1,61 +1,57 @@
-const fs = require('fs');
-const path = require('path');
-const AdmZip = require('adm-zip');
-const ThemeLib = require('../lib/themes.lib');
-const Theme = require('../models/theme.model');
-const ThemeTemplate = require('../models/theme-template.model');
+const ThemeLib = require('../lib/themes.lib')
+const Theme = require('../models/theme.model')
 
-exports.install = async ctx => {
+exports.install = async (ctx) => {
   ctx.checkHeaders({
     'content-type': {
       notEmpty: {
         options: [true],
-        errorMessage: 'content-type 不能为空'
+        errorMessage: 'content-type 不能为空',
       },
       matches: {
         options: [/multipart\/form-data/i],
-        errorMessage: '数据需为文件格式'
-      }
+        errorMessage: '数据需为文件格式',
+      },
     },
-  });
+  })
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    let { file } = ctx.request.body.files;
-    const info = await ThemeLib.install(file);
-    ctx.pipeDone(info);
+    let { file } = ctx.request.body.files
+    const info = await ThemeLib.install(file)
+    ctx.pipeDone(info)
   } catch (e) {
-    ctx.pipeFail(e, '9999');
+    ctx.pipeFail(e, '9999')
   }
-};
+}
 
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   try {
-    const call = await Theme._list();
+    const call = await Theme._list()
     ctx.pipeDone(call)
   } catch (e) {
-    ctx.pipeFail(e, '9999');
+    ctx.pipeFail(e, '9999')
   }
-};
+}
 
-exports.set = async ctx => {
+exports.set = async (ctx) => {
   ctx.checkParams({
-    '_id': {
+    _id: {
       notEmpty: {
         options: [true],
-        errorMessage: '_id 不能为空'
+        errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
-    }
-  });
+      isMongoId: { errorMessage: '_id  需为 mongoId' },
+    },
+  })
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    await Theme._set(ctx.params._id);
+    await Theme._set(ctx.params._id)
     ctx.pipeDone()
   } catch (e) {
-    ctx.pipeFail(e, '9999');
+    ctx.pipeFail(e, '9999')
   }
 }

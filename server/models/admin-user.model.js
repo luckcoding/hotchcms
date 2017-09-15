@@ -1,5 +1,9 @@
-const mongoose = require('mongoose');
-const sha1 = require('../services/sha1.service');
+const mongoose = require('mongoose')
+const sha1 = require('../lib/sha1.lib')
+const random = require('../lib/random.lib')
+const Validator = require('../lib/mongoose-validator-schema')
+
+const mobileSet = input => input || `>>${random()}`
 
 /**
  * 管理员
@@ -8,19 +12,23 @@ const AdminUserSchema = new mongoose.Schema({
 
   // 邮箱
   email: {
-    type: String, unique: true, trim: true, lowercase: true, required: true,
-    match: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+    type: String,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    required: true,
+    match: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
   },
 
   // 密码
   password: { type: String, set: sha1, required: true },
 
   // 手机
-  mobile: { type: Number },
+  mobile: { type: Number, set: mobileSet, required: true, unique: true },
 
   // 昵称
   nickname: { type: String, trim: true, minlength: 2, maxlength: 20 },
-  
+
   // 头像
   avatar: { type: String, trim: true },
 
@@ -35,35 +43,43 @@ const AdminUserSchema = new mongoose.Schema({
     // 平台
     platform: { type: String, trim: true },
     // 其他
-    collection: { type: Object }
+    collection: { type: Object },
   },
 
   // 用户组
   group: { type: mongoose.Schema.Types.ObjectId, ref: 'AdminGroup' },
-  
+
 }, {
   collection: 'adminUser',
-  id: false
-});
+  id: false,
+})
+
+AdminUserSchema.plugin(Validator)
+
+const select = 'email mobile nickname avatar create group'
 
 AdminUserSchema.statics = {
-  _one(_id) {
+  _one (_id) {
     return this
       .findById(_id)
-      .select('email mobile nickname avatar create group')
-      .populate('group', 'name description');
+      .select(select)
+      .populate('group', 'name description')
   },
 
-  async _list({ page = 1, size = 20, ...query }) {
-    if (query.name) query.name = new RegExp(query.name, 'i');
-    const count = await this.count(query);
-    const list = await this.find(query).skip((page - 1) * size).limit(size).select(select).lean();
-    return { count, page, size, list };
+  async _list ({ page = 1, size = 20, ...query }) {
+    if (query.name) query.name = new RegExp(query.name, 'i')
+    const count = await this.count(query)
+    const list = await this.find(query)
+      .skip((page - 1) * size)
+      .limit(size)
+      .select(select)
+      .lean()
+    return { count, page, size, list }
   },
 
-  _count() {
-    return this.count({});
-  }
-};
+  _count () {
+    return this.count({})
+  },
+}
 
-module.exports = mongoose.model('AdminUser', AdminUserSchema);
+module.exports = mongoose.model('AdminUser', AdminUserSchema)

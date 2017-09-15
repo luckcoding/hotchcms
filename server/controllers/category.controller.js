@@ -1,178 +1,177 @@
-const _ = require('lodash');
-const Category = require('../models/category.model');
+const Category = require('../models/category.model')
 
-const { _validator } = Category.schema;
+const { _validator } = Category.schema
 
 /**
  * 创建分类
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   ctx.checkBody(_validator([
-    'uid','isHome','*name','*path','state','sort','template','keywords','description'
-  ]));
+    'uid', 'isHome', '*name', '*path', 'state', 'sort', 'template', 'keywords', 'description',
+  ]))
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    await Category._save({ input: ctx.request.body });
-    ctx.pipeDone();
-  } catch(e) {
-    ctx.pipeFail(e);
+    await Category._save({ input: ctx.request.body })
+    ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 更新分类
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.update = async ctx => {
+exports.update = async (ctx) => {
   ctx.checkBody(_validator([
-    'uid','isHome','name','state','sort','template','keywords','description'
-  ]));
+    'uid', 'isHome', 'name', 'state', 'sort', 'template', 'keywords', 'description',
+  ]))
 
   ctx.checkParams({
-    '_id': {
+    _id: {
       notEmpty: {
         options: [true],
-        errorMessage: '_id 不能为空'
+        errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
-    }
-  });
+      isMongoId: { errorMessage: '_id  需为 mongoId' },
+    },
+  })
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    await Category._save({ _id: ctx.params._id, input: ctx.request.body });
-    ctx.pipeDone();
-  } catch(e) {
-    ctx.pipeFail(e);
+    await Category._save({ _id: ctx.params._id, input: ctx.request.body })
+    ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 查询单个分类
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.one = async ctx => {
+exports.one = async (ctx) => {
   ctx.checkParams({
-    '_id': {
+    _id: {
       notEmpty: {
         options: [true],
-        errorMessage: '_id 不能为空'
+        errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
-    }
-  });
+      isMongoId: { errorMessage: '_id  需为 mongoId' },
+    },
+  })
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
     const call = await Category.findById(ctx.params._id)
       .select('uid name path state sort keywords description')
-      .lean();
-    call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99');
-  } catch(e) {
-    ctx.pipeFail(e);
+      .lean()
+    call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99')
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 查询分类列表
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   try {
-    const call = await Category._list();
-    ctx.pipeDone(call);
-  } catch(e) {
-    ctx.pipeFail(e);
+    const call = await Category._list()
+    ctx.pipeDone(call)
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 获取分类树
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.tree = async ctx => {
+exports.tree = async (ctx) => {
   try {
-    const call = await Category._tree();
-    ctx.pipeDone(call);
-  } catch(e) {
-    ctx.pipeFail(e);
+    const call = await Category._tree()
+    ctx.pipeDone(call)
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * 删除分类
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.delete = async ctx => {
+exports.delete = async (ctx) => {
   ctx.checkParams({
-    '_id': {
+    _id: {
       notEmpty: {
         options: [true],
-        errorMessage: '_id 不能为空'
+        errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' }
+      isMongoId: { errorMessage: '_id  需为 mongoId' },
     },
-  });
+  })
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    await Category._remove(ctx.params._id);
-    ctx.pipeDone();
-  } catch(e) {
-    ctx.pipeFail(e);
+    await Category._remove(ctx.params._id)
+    ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}
 
 /**
  * [description]
  * @param  {[type]} ctx [description]
  * @return {[type]}     [description]
  */
-exports.multi = async ctx => {
+exports.multi = async (ctx) => {
   ctx.checkBody({
-    'type': {
+    type: {
       notEmpty: {
         options: [true],
-        errorMessage: 'type 不能为空'
+        errorMessage: 'type 不能为空',
       },
       isIn: {
         options: [['remove', 'add', 'update']],
-        errorMessage: 'type 必须为 remove/add/update'
-      }
+        errorMessage: 'type 必须为 remove/add/update',
+      },
     },
-    'multi': {
+    multi: {
       optional: true,
       inArray: {
         options: ['isMongoId'],
-        errorMessage: 'multi 内需为 mongoId'
-      }
+        errorMessage: 'multi 内需为 mongoId',
+      },
     },
-  });
+  })
 
-  if (ctx.validationErrors()) return null;
+  if (ctx.validationErrors()) return null
 
   try {
-    const { multi, type } = ctx.request.body;
+    const { multi, type } = ctx.request.body
 
     if (type === 'remove') {
-      await Category._remove(multi);
-      ctx.pipeDone();
+      await Category._remove(multi)
+      ctx.pipeDone()
     } else {
-      ctx.pipeFail(`暂无${type}操作`,'BN99');
+      ctx.pipeFail(`暂无${type}操作`, 'BN99')
     }
-  } catch(e) {
-    ctx.pipeFail(e);
+  } catch (e) {
+    ctx.pipeFail(e)
   }
-};
+}

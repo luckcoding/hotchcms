@@ -9,7 +9,7 @@
     "server:dev": "nodemon index.js",
     "client:dev": "roadhog server",
     "client:build": "roadhog build",
-    "lint": "eslint --fix --ext .js src",
+    "lint": "eslint --fix --ext .js src server",
     "precommit": "npm run lint"
   },
   "keywords": [

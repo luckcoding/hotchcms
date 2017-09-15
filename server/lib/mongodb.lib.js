@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const mongoose = require('mongoose')
 
-const configFile = () => path.join(__dirname, '../config/database.config.json')
+const configFile = () => path.join(__dirname, '../config/mongodb.config.json')
 
 /**
  * 使用 bluebird 诺言库
@@ -12,11 +12,10 @@ mongoose.Promise = global.Promise
 
 /**
  * 测试数据库连接
- * @param  {[type]} { host,         port, db, user, pass }) [description]
- * @return {[type]}    [description]
  */
-exports.test = ({ host, port, db, user, pass }) => new Promise((resolve, reject) => {
+exports.test = (options = {}) => new Promise((resolve, reject) => {
   const DB = mongoose.createConnection()
+  const { host, port, db, user, pass } = options
   DB.open(host, db, port, { user, pass }, (err) => {
     if (err) {
       reject(err)
@@ -31,8 +30,6 @@ exports.test = ({ host, port, db, user, pass }) => new Promise((resolve, reject)
 
 /**
  * 初始化数据库配置
- * @param  {[type]} options [description]
- * @return {[type]}         [description]
  */
 exports.init = options => new Promise((resolve, reject) => {
   fs.writeFile(configFile(), JSON.stringify(options, null, 2), (err) => {
@@ -42,8 +39,6 @@ exports.init = options => new Promise((resolve, reject) => {
 
 /**
  * 链接数据库
- * @param  {Function} ) [description]
- * @return {[type]}     [description]
  */
 exports.connect = () => new Promise((resolve, reject) => {
   fs.readFile(configFile(), async (err, file) => {
