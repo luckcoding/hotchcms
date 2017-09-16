@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const redis = require('../lib/redis.lib')
-const database = require('../lib/database.lib')
+const mongodb = require('../lib/mongodb.lib')
 const Options = require('../models/options.model')
 const AdminGroup = require('../models/admin-group.model')
 const AdminUser = require('../models/admin-user.model')
@@ -11,8 +11,6 @@ let hasInstall = false
 
 /**
  * 查询安装状态
- * @param  {Function} ) [description]
- * @return {[type]}     [description]
  */
 exports.status = () => new Promise((resolve, reject) => {
   if (hasInstall) return resolve(true)
@@ -34,8 +32,6 @@ exports.status = () => new Promise((resolve, reject) => {
 
 /**
  * 安装
- * @param  {[type]} { siteInfoData, adminUserData }) [description]
- * @return {[type]}    [description]
  */
 exports.install = ({ databaseData, redisData, siteInfoData, adminUserData }) => new Promise(async (resolve, reject) => {
   if (!databaseData || !redisData || !siteInfoData || !adminUserData) {
@@ -48,25 +44,25 @@ exports.install = ({ databaseData, redisData, siteInfoData, adminUserData }) => 
     if (status) return reject(Throw('非法调用,cms已安装'))
 
     // 初始化配置
-    await database.init(databaseData)
+    await mongodb.init(databaseData)
     await redis.init(redisData)
 
     // 链接数据库
-    await database.connect()
+    await mongodb.connect()
     await redis.connect()
 
-    /**
-     * 建表
-     */
+    // 存储站点信息
     await new Options({ name: 'siteInfo', value: siteInfoData }).save()
 
-    const adminGroup = new AdminGroup({
+    // 创建root用户组
+    const adminGroup = await new AdminGroup({
       name: '管理员[系统]', description: '系统内置', gradation: 100,
     }).save()
 
-    // 建立root管理员用户
+    // 建立root用户
     await new AdminUser({
       email: adminUserData.email,
+      mobile: adminUserData.mobile,
       password: adminUserData.password,
       group: adminGroup._id,
     }).save()

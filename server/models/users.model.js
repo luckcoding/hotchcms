@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const sha1 = require('../services/sha1.service')
+const sha1 = require('../lib/sha1.lib')
 
 /**
  * trim: 去除字符串2边空格

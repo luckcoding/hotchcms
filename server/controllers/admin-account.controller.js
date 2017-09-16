@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const cache = require('../lib/cache.lib')
-const sha1 = require('../services/sha1.service')
+const sha1 = require('../lib/sha1.lib')
 const AdminUser = require('../models/admin-user.model')
 const config = require('../config/system.config')
 
@@ -10,8 +10,6 @@ const { _validator } = AdminUser.schema
 
 /**
  * 登陆
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.signIn = async (ctx) => {
   ctx.checkBody(_validator([
@@ -47,13 +45,10 @@ exports.signIn = async (ctx) => {
 
 /**
  * 注销
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.signOut = async (ctx) => {
   try {
     const auth = ctx.request.headers.authorization.split(' ')[1]
-    // await ctx.redis.del(auth);
     await cache.del(auth)
     ctx.pipeDone()
   } catch (e) {
@@ -78,8 +73,6 @@ exports.current = async (ctx) => {
 
 /**
  * 更新当前账号
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.update = async (ctx) => {
   ctx.checkBody(_validator(['nickname', 'mobile', 'password', 'avatar']))

@@ -13,15 +13,15 @@ module.exports = route => koaAuthority({
   middleware: async (ctx, auth) => {
     let _id = null
     let authorities = []
-    try {
-      const parts = ctx.header.authorization.split(' ')
+
+    const { authorization } = ctx.header
+    if (authorization) {
+      const parts = authorization.split(' ')
       if (parts.length === 2 && /^Bearer$/i.test(parts[0])) {
         const decoded = await verify(parts[1], 'hotchcms')
         ctx.state.user = decoded
         _id = ctx.state.user.data
       }
-    } catch (e) {
-      console.log(e)
     }
 
     if (_id) {

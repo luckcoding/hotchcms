@@ -1,18 +1,30 @@
+const regx = require('../lib/regx.lib')
+const random = require('../lib/random.lib')
 const AdminUser = require('../models/admin-user.model')
 
 const { _validator } = AdminUser.schema
 
 /**
  * 创建管理员
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.create = async (ctx) => {
-  ctx.checkBody(_validator(['*email', '*password', 'mobile', 'nickname', 'avatar', 'group']))
+  ctx.checkBody(_validator(['*email', '*password', 'nickname', 'avatar', 'group'], {
+    mobile: {
+      optional: true,
+      matches: {
+        options: [regx.mobile],
+        errorMessage: 'mobile 格式不正确',
+      },
+    },
+  }))
 
   if (ctx.validationErrors()) return null
 
   try {
+    if (!ctx.request.body.mobile) {
+      ctx.request.body.mobile = random()
+    }
+
     await AdminUser.create(ctx.request.body)
     ctx.pipeDone()
   } catch (e) {
@@ -22,11 +34,17 @@ exports.create = async (ctx) => {
 
 /**
  * 更新管理员
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator(['password', 'mobile', 'nickname', 'avatar', 'group']))
+  ctx.checkBody(_validator(['password', 'nickname', 'avatar', 'group'], {
+    mobile: {
+      optional: true,
+      matches: {
+        options: [regx.mobile],
+        errorMessage: 'mobile 格式不正确',
+      },
+    },
+  }))
 
   ctx.checkParams({
     _id: {
@@ -41,6 +59,10 @@ exports.update = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
+    if (!ctx.request.body.mobile) {
+      ctx.request.body.mobile = random()
+    }
+
     await AdminUser.update({ _id: ctx.params._id }, ctx.request.body)
     ctx.pipeDone()
   } catch (e) {
@@ -50,8 +72,6 @@ exports.update = async (ctx) => {
 
 /**
  * 查询单个管理员
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.one = async (ctx) => {
   ctx.checkParams({
@@ -79,13 +99,18 @@ exports.one = async (ctx) => {
 
 /**
  * 管理员列表查询
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
-  ctx.checkQuery(_validator(['email', 'mobile', 'nickname', 'group'], {
+  ctx.checkQuery(_validator(['email', 'nickname', 'group'], {
+    mobile: {
+      optional: true,
+      matches: {
+        options: [regx.mobile],
+        errorMessage: 'mobile 格式不正确',
+      },
+    },
     page: {
       optional: true,
       isNumber: { errorMessage: 'page  需为 Number' },
@@ -123,8 +148,6 @@ exports.list = async (ctx) => {
 
 /**
  * 删除管理员
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.delete = async (ctx) => {
   ctx.checkParams({

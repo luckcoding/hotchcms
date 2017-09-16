@@ -4,8 +4,6 @@ const { _validator } = Category.schema
 
 /**
  * 创建分类
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.create = async (ctx) => {
   ctx.checkBody(_validator([
@@ -24,8 +22,6 @@ exports.create = async (ctx) => {
 
 /**
  * 更新分类
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.update = async (ctx) => {
   ctx.checkBody(_validator([
@@ -54,8 +50,6 @@ exports.update = async (ctx) => {
 
 /**
  * 查询单个分类
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.one = async (ctx) => {
   ctx.checkParams({
@@ -82,8 +76,6 @@ exports.one = async (ctx) => {
 
 /**
  * 查询分类列表
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.list = async (ctx) => {
   try {
@@ -96,8 +88,6 @@ exports.list = async (ctx) => {
 
 /**
  * 获取分类树
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.tree = async (ctx) => {
   try {
@@ -110,8 +100,6 @@ exports.tree = async (ctx) => {
 
 /**
  * 删除分类
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.delete = async (ctx) => {
   ctx.checkParams({
@@ -135,9 +123,7 @@ exports.delete = async (ctx) => {
 }
 
 /**
- * [description]
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
+ * 多选操作
  */
 exports.multi = async (ctx) => {
   ctx.checkBody({

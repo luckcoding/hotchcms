@@ -1,9 +1,6 @@
 const mongoose = require('mongoose')
 const sha1 = require('../lib/sha1.lib')
-const random = require('../lib/random.lib')
 const Validator = require('../lib/mongoose-validator-schema')
-
-const mobileSet = input => input || `>>${random()}`
 
 /**
  * 管理员
@@ -24,7 +21,7 @@ const AdminUserSchema = new mongoose.Schema({
   password: { type: String, set: sha1, required: true },
 
   // 手机
-  mobile: { type: Number, set: mobileSet, required: true, unique: true },
+  mobile: { type: Number, required: true, unique: true },
 
   // 昵称
   nickname: { type: String, trim: true, minlength: 2, maxlength: 20 },

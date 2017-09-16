@@ -5,8 +5,6 @@ const { _validator } = AdminGroup.schema
 
 /**
  * 创建管理组
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.create = async (ctx) => {
   ctx.checkBody(_validator(['*name', '*description', 'gradation', 'authorities']))
@@ -23,8 +21,6 @@ exports.create = async (ctx) => {
 
 /**
  * 更新管理组
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.update = async (ctx) => {
   ctx.checkBody(_validator(['name', 'description', 'gradation', 'authorities']))
@@ -51,8 +47,6 @@ exports.update = async (ctx) => {
 
 /**
  * 查询单个管理组
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.one = async (ctx) => {
   ctx.checkParams({
@@ -79,8 +73,6 @@ exports.one = async (ctx) => {
 
 /**
  * 查询管理组列表
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
@@ -113,8 +105,6 @@ exports.list = async (ctx) => {
 
 /**
  * 删除管理组
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.delete = async (ctx) => {
   ctx.checkParams({

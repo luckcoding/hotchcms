@@ -1,12 +1,11 @@
 const regx = require('../lib/regx.lib')
-const database = require('../lib/database.lib')
+const mongodb = require('../lib/mongodb.lib')
 const redis = require('../lib/redis.lib')
+const random = require('../lib/random.lib')
 const installService = require('../services/install.service')
 
 /**
  * 安装状态
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.access = async (ctx, next) => {
   try {
@@ -22,9 +21,7 @@ exports.access = async (ctx, next) => {
 }
 
 /**
- * 安装状态
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
+ * 查询安装状态
  */
 exports.status = async (ctx) => {
   try {
@@ -37,8 +34,6 @@ exports.status = async (ctx) => {
 
 /**
  * 检测数据库
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.testDatabase = async (ctx) => {
   ctx.checkBody({
@@ -65,9 +60,9 @@ exports.testDatabase = async (ctx) => {
     db: {
       notEmpty: {
         options: [true],
-        errorMessage: 'database 不能为空',
+        errorMessage: 'db 不能为空',
       },
-      isString: { errorMessage: 'database 需为字符串' },
+      isString: { errorMessage: 'db 需为字符串' },
     },
     user: {
       optional: true,
@@ -75,14 +70,14 @@ exports.testDatabase = async (ctx) => {
     },
     pass: {
       optional: true,
-      isString: { errorMessage: 'password 需为字符串' },
+      isString: { errorMessage: 'pass 需为字符串' },
     },
   })
 
   if (ctx.validationErrors()) return null
 
   try {
-    await database.test(ctx.request.body)
+    await mongodb.test(ctx.request.body)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -91,8 +86,6 @@ exports.testDatabase = async (ctx) => {
 
 /**
  * 检测redis
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.testRedis = async (ctx) => {
   ctx.checkBody({
@@ -138,7 +131,7 @@ exports.testRedis = async (ctx) => {
     },
     pass: {
       optional: true,
-      isString: { errorMessage: 'password 需为字符串' },
+      isString: { errorMessage: 'pass 需为字符串' },
     },
   })
 
@@ -154,8 +147,6 @@ exports.testRedis = async (ctx) => {
 
 /**
  * 安装
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.install = async (ctx) => {
   ctx.checkBody({
@@ -197,46 +188,46 @@ exports.install = async (ctx) => {
     rdHost: {
       notEmpty: {
         options: [true],
-        errorMessage: 'host 不能为空',
+        errorMessage: 'rdHost 不能为空',
       },
       matches: {
         options: [regx.host],
-        errorMessage: 'host 格式不正确',
+        errorMessage: 'rdHost 格式不正确',
       },
     },
     rdPort: {
       notEmpty: {
         options: [true],
-        errorMessage: 'port 不能为空',
+        errorMessage: 'rdPort 不能为空',
       },
       isInt: {
         options: [{ min: 0, max: 65535 }],
-        errorMessage: 'port 需为0-65535之间的整数',
+        errorMessage: 'rdPort 需为0-65535之间的整数',
       },
     },
     rdFamily: {
       notEmpty: {
         options: [true],
-        errorMessage: 'family 不能为空',
+        errorMessage: 'rdFamily 不能为空',
       },
       matches: {
         options: [/^(IPv4|IPv6)$/],
-        errorMessage: 'family 为 IPv4 或 IPv6',
+        errorMessage: 'rdFamily 为 IPv4 或 IPv6',
       },
     },
     rdDb: {
       notEmpty: {
         options: [true],
-        errorMessage: 'db 不能为空',
+        errorMessage: 'rdDb 不能为空',
       },
       isInt: {
         options: [{ min: 0, max: 10 }],
-        errorMessage: 'db 需为0-10之间的整数',
+        errorMessage: 'rdDb 需为0-10之间的整数',
       },
     },
     rdPass: {
       optional: true,
-      isString: { errorMessage: 'password 需为字符串' },
+      isString: { errorMessage: 'rdPass 需为字符串' },
     },
     title: {
       notEmpty: {
@@ -253,6 +244,13 @@ exports.install = async (ctx) => {
       matches: {
         options: [regx.email],
         errorMessage: 'email 格式不正确',
+      },
+    },
+    mobile: {
+      optional: true,
+      matches: {
+        options: [regx.mobile],
+        errorMessage: 'mobile 格式不正确',
       },
     },
     password: {
@@ -273,7 +271,7 @@ exports.install = async (ctx) => {
     dbHost, dbPort, db, dbUser, dbPassword,
     rdHost, rdPort, rdFamily, rdDb, rdPass,
     title,
-    email, password,
+    email, mobile, password,
   } = ctx.request.body
 
   try {
@@ -295,7 +293,11 @@ exports.install = async (ctx) => {
         pass: rdPass,
       },
       siteInfoData: { title },
-      adminUserData: { email, password },
+      adminUserData: {
+        email,
+        mobile: mobile || random(),
+        password,
+      },
     })
 
     ctx.pipeDone()

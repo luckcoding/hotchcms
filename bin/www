@@ -5,7 +5,7 @@ const path = require('path');
 const app = require('../server/app');
 const portlib = require('../server/lib/port.lib');
 const logger = require('../server/lib/logger.lib');
-const database = require('../server/lib/database.lib');
+const mongodb = require('../server/lib/mongodb.lib');
 const redis = require('../server/lib/redis.lib');
 const installService = require('../server/services/install.service');
 
@@ -40,8 +40,8 @@ const logDir = path.join(appDir, 'logs');
     // 检查安装锁
     const hasInstall = await installService.status();
     if (hasInstall) {
-      // 连接 mongodb
-      await database.connect();
+      // 连接 mongodb redis
+      await mongodb.connect();
       await redis.connect();
     }
 
