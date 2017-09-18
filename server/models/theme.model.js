@@ -35,9 +35,15 @@ ThemeSchema.plugin(Validator)
 
 ThemeSchema.statics = {
   async _install (options) {
+    const theme = await this.findOne({ alias: options.alias })
+    if (theme) throw new Error('已存在此模板')
     const call = await ThemeTemplate.create(options.template)
     options.template = _.map(call, '_id')
     return this.create(options)
+  },
+
+  async _uninstall (_id) {
+    await this.findById(_id)
   },
 
   /**

@@ -4,7 +4,7 @@ import jsonp from 'jsonp'
 import lodash from 'lodash'
 import pathToRegexp from 'path-to-regexp'
 import { message } from 'antd'
-import { YQL, CORS, prefix } from './config'
+import { YQL, CORS, getToken } from './config'
 
 const fetch = (options) => {
   let { data, url } = options
@@ -53,7 +53,7 @@ const fetch = (options) => {
     withCredentials: true,
     headers: {
       ...headers,
-      authorization: `Bearer ${localStorage.getItem(`${prefix}token`)}`,
+      authorization: getToken(),
     },
   }
 

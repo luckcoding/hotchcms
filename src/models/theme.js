@@ -1,21 +1,27 @@
-import { query, save } from '../services/setting'
+import { _query, create, remove } from '../services/theme'
 
 export default {
   namespace: 'theme',
 
-  state: {},
+  state: {
+    themeList: [],
+  },
 
   subscriptions: {
-    setup ({ dispatch }) {
-      dispatch({
-        type: 'query',
+    setup ({ dispatch, history }) {
+      history.listen((location) => {
+        if (location.pathname === '/theme') {
+          dispatch({
+            type: 'query',
+          })
+        }
       })
     },
   },
 
   effects: {
     * query ({ payload }, { call, put }) {
-      const data = yield call(query, payload)
+      const data = yield call(_query, payload)
       if (data.code === '0000') {
         yield put({
           type: 'querySuccess',
@@ -26,8 +32,17 @@ export default {
       }
     },
 
-    * save ({ payload }, { call, put }) {
-      const data = yield call(save, payload)
+    * enable ({ payload }, { call, put }) {
+      const data = yield call(create, payload)
+      if (data.code === '0000') {
+        yield put({ type: 'query' })
+      } else {
+        throw data
+      }
+    },
+
+    * uninstall ({ payload }, { call, put }) {
+      const data = yield call(remove, payload)
       if (data.code === '0000') {
         yield put({ type: 'query' })
       } else {
@@ -38,10 +53,10 @@ export default {
   },
 
   reducers: {
-    querySuccess (state, { payload: siteInfo }) {
+    querySuccess (state, { payload: themeList }) {
       return {
         ...state,
-        siteInfo,
+        themeList,
       }
     },
 

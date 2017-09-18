@@ -5,8 +5,8 @@ const { theme } = api
 
 export async function create (params) {
   return request({
-    url: theme.replace('/:_id', ''),
-    method: 'post',
+    url: theme,
+    method: 'put',
     data: params,
   })
 }

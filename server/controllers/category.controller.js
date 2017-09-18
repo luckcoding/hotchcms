@@ -150,7 +150,6 @@ exports.multi = async (ctx) => {
 
   try {
     const { multi, type } = ctx.request.body
-
     if (type === 'remove') {
       await Category._remove(multi)
       ctx.pipeDone()

@@ -7,7 +7,7 @@ import { message } from 'antd'
 import { config } from './utils'
 import './index.html'
 
-const { routePrefix } = config
+const { routePrefix, failToken } = config
 
 const ERROR_DURATION = 2
 
@@ -19,7 +19,11 @@ const app = dva({
   // initialState: {},
   history: useRouterHistory(createBrowserHistory)({ basename: routePrefix }),
   onError (error) {
-    message.error(error.msg || error.message, ERROR_DURATION)
+    if (error.code === 'TK99') {
+      failToken()
+    } else {
+      message.error(error.msg || error.message, ERROR_DURATION)
+    }
   },
 })
 

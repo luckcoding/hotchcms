@@ -5,6 +5,7 @@ const config = {
   prefix: 'HotchCMS',
   footerText: 'Ant Design Admin  © 2017 zuiidea',
   logo: '/logo.png',
+  cover: '/cover.png',
   iconFontCSS: '/iconfont.css',
   iconFontJS: '/iconfont.js',
   YQL: ['http://www.zuimeitianqi.com'],
@@ -29,6 +30,13 @@ const config = {
     testDatabase: `${APIV1}/install/test-database`, // 检测数据裤
     testRedis: `${APIV1}/install/test-redis`, // 检测redis
   },
+}
+
+// token
+config.getToken = () => `Bearer ${localStorage.getItem(`${config.prefix}token`)}`
+config.failToken = () => {
+  let from = location.pathname
+  window.location = `${location.origin}${config.routePrefix}/login?from=${from}`
 }
 
 if (process.env.NODE_ENV === 'production') {

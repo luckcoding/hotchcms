@@ -1,3 +1,4 @@
+import md5 from 'blueimp-md5'
 import { routerRedux } from 'dva/router'
 import { login } from '../services/login'
 
@@ -17,6 +18,7 @@ export default {
   effects: {
     * login ({ payload }, { put, call }) {
       yield put({ type: 'showLoginLoading' })
+      payload.password = md5(payload.password)
       const data = yield call(login, payload)
       yield put({ type: 'hideLoginLoading' })
       if (data.code === '0000') {

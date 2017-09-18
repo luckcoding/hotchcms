@@ -3,7 +3,7 @@ import { parse } from 'qs'
 import { config } from '../utils'
 import { logout, query } from '../services/app'
 
-const { prefix, routePrefix } = config
+const { prefix, failToken } = config
 
 export default {
   namespace: 'app',
@@ -43,8 +43,7 @@ export default {
           yield put(routerRedux.push('/dashboard'))
         }
       } else if (config.openPages && config.openPages.indexOf(location.pathname) < 0) {
-        let from = location.pathname
-        window.location = `${location.origin}${routePrefix}/login?from=${from}`
+        failToken()
       }
     },
 

@@ -8,9 +8,13 @@ export default {
   },
 
   subscriptions: {
-    setup ({ dispatch }) {
-      dispatch({
-        type: 'query',
+    setup ({ dispatch, history }) {
+      history.listen((location) => {
+        if (location.pathname === '/setting') {
+          dispatch({
+            type: 'query',
+          })
+        }
       })
     },
   },

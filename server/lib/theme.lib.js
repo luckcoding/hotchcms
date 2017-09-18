@@ -11,10 +11,10 @@ exports.install = file => new Promise((resolve, reject) => {
   const entry = zip.getEntry(`${name}/info.json`)
   if (!entry) throw Error('非法主题')
   const info = JSON.parse(entry.getData())
-  if (!info.alias) throw Error('非法主题配置')
+  if (!info.alias || (info.alias !== name)) throw Error('非法配置')
   const themePath = path.join(__dirname, `../../publish/themes/${info.alias}`)
   fs.exists(themePath, (exists) => {
-    if (exists) return reject('已安装主题')
+    if (exists) return reject('主题已存在')
     zip.extractAllTo(path.join(__dirname, '../../publish/themes/'), true)
     resolve(info)
   })

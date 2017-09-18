@@ -22,11 +22,9 @@ module.exports = () => koaValidator({
     isJson: value => Object.prototype.toString.call(value).toLowerCase() === '[object object]',
     isArray: value => _.isArray(value),
     inArray (param, ...args) {
-      const argumentsArray = [].slice.apply(args)
-      const validatorName = argumentsArray[1]
-
+      const validatorName = args[0]
       return _.every(param, (item) => {
-        let validatorOptions = _.tail(argumentsArray)
+        let validatorOptions = args
         validatorOptions.unshift(item)
         switch (validatorOptions[1]) {
           case 'isEmail': return /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(item)
