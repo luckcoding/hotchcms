@@ -1,3 +1,4 @@
+import md5 from 'blueimp-md5'
 import { redis, database, create } from '../services/install'
 
 export default {
@@ -56,6 +57,8 @@ export default {
       if (redisData.db) payload.rdDb = redisData.db
       if (redisData.family) payload.rdFamily = redisData.family
       if (redisData.pass) payload.rdPass = redisData.pass
+
+      payload.password = md5(payload.password)
 
       const data = yield call(create, payload)
       yield put({ type: 'hideLoginLoading' })

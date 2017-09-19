@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken')
 const koaAuthority = require('koa-authority')
+const config = require('../config/system.config')
 const AdminUser = require('../models/admin-user.model')
 
-const verify = (token, secret) => new Promise((resolve, reject) => {
-  jwt.verify(token, secret, (err, decoded) => {
-    err ? reject(err) : resolve(decoded)
+const { secret } = config
+
+const verify = (token, secretStr) => new Promise((resolve) => {
+  jwt.verify(token, secretStr, (err, decoded) => {
+    err ? resolve({}) : resolve(decoded)
   })
 })
 
@@ -18,7 +21,7 @@ module.exports = route => koaAuthority({
     if (authorization) {
       const parts = authorization.split(' ')
       if (parts.length === 2 && /^Bearer$/i.test(parts[0])) {
-        const decoded = await verify(parts[1], 'hotchcms')
+        const decoded = await verify(parts[1], secret)
         ctx.state.user = decoded
         _id = ctx.state.user.data
       }

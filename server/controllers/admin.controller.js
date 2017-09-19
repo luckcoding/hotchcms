@@ -8,6 +8,5 @@ const path = require('path')
  */
 module.exports = async (ctx) => {
   ctx.type = 'html'
-  console.log('===========>')
   ctx.body = fs.createReadStream(path.join(__dirname, '../../publish/admin/index.html'))
 }
