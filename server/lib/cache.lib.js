@@ -26,7 +26,7 @@ exports.set = (key, value, maxAge) => new Promise(async (resolve, reject) => {
     if (!maxAge) {
       client.set(key, value, err => (err ? reject(err) : resolve()))
     } else {
-      client.setex(key, parseInt(maxAge / 1000, 10), value, (err) => {
+      client.set(key, value, 'EX', maxAge, (err) => {
         return err ? reject(err) : resolve()
       }) // 秒为单位
     }
