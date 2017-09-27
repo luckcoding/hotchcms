@@ -68,6 +68,17 @@ module.exports = {
       },
     },
 
+    '/content': {
+      post: ['content.create'], // 创建文章
+      get: ['content.list'],
+
+      '/:_id': {
+        put: ['content.update'],
+        get: ['content.one'],
+        delete: ['content.delete'],
+      },
+    },
+
     '/theme': {
       get: ['theme.list'],
       post: ['theme.install'], // 安装主题

@@ -103,6 +103,16 @@ const Routers = ({ history, app }) => {
         },
 
         {
+          path: 'content',
+          getComponent (nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/content'))
+              cb(null, require('./routes/content/'))
+            }, 'content')
+          },
+        },
+
+        {
           path: 'install',
           getComponent (nextState, cb) {
             require.ensure([], (require) => {

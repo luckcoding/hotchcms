@@ -70,4 +70,12 @@ module.exports = [
     icon: 'filter',
     router: '/category',
   },
+  {
+    id: 32,
+    bpid: 3,
+    mpid: 3,
+    name: '文章',
+    icon: 'file-text',
+    router: 'content',
+  },
 ]
