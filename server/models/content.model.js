@@ -8,6 +8,7 @@ const ContentSchema = new mongoose.Schema({
   // 标题
   title: { type: String, required: true },
 
+  // 概述
   subtitle: { type: String },
 
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
@@ -17,9 +18,9 @@ const ContentSchema = new mongoose.Schema({
 
   tags: [{ type: String }],
 
-  keywords: [{ type: String }],
+  keywords: [{ type: String }], // seo
 
-  discription: { type: String },
+  discription: { type: String }, // seo
 
   content: String, // 内容
 

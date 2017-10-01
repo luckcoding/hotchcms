@@ -66,7 +66,7 @@ class modal extends React.Component {
   render () {
     const {
       modalType,
-      tree = {},
+      tree = [],
       item = {},
       onOk,
       form: {

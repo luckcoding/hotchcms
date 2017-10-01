@@ -12,10 +12,14 @@ export default {
   },
 
   subscriptions: {
-    setup ({ dispatch }) {
-      dispatch({
-        type: 'query',
-        payload: location.query,
+    setup ({ dispatch, history }) {
+      history.listen((location) => {
+        if (location.pathname === '/category') {
+          dispatch({
+            type: 'query',
+            payload: location.query,
+          })
+        }
       })
     },
   },

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
-import { Tabs, Icon } from 'antd'
+import { Tabs, Icon, Button } from 'antd'
 import { routerRedux } from 'dva/router'
 import lodash from 'lodash'
 import List from './List'
@@ -53,9 +53,17 @@ const Index = ({ post, dispatch, loading, location }) => {
     }))
   }
 
+  const onEdit = (_id) => {
+    dispatch(routerRedux.push({
+      pathname: 'content-edit',
+      query: { _id },
+    }))
+  }
+
+  const operations = <Button type="primary" onClick={() => onEdit()}>新建</Button>
 
   return (<div className="content-inner">
-    <Tabs activeKey={queryActive(query.status)} onTabClick={handleTabClick}>
+    <Tabs activeKey={queryActive(query.status)} onTabClick={handleTabClick} tabBarExtraContent={operations}>
       <TabPane tab={<span><Icon type="book" />已发布</span>} key={String(EnumPostStatus.PUBLISHED)}>
         <List {...listProps} />
       </TabPane>
