@@ -4,9 +4,17 @@ const { _validator } = Content.schema
 
 exports.create = async (ctx) => {
   ctx.checkBody(_validator([
-    '*title', '*content', 'subtitle', '*category', 'cover', 'tags',
-    'keywords', 'discription', 'isTop', 'from',
-  ]))
+    '*title', 'subtitle', 'category', 'cover', 'tags',
+    'keywords', 'description', 'isTop', 'from',
+  ]), {
+    content: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'content 不能为空',
+      },
+      isJson: { errorMessage: 'content  需为 Json' },
+    },
+  })
 
   if (ctx.validationErrors()) return null
 

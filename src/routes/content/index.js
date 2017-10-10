@@ -53,14 +53,11 @@ const Index = ({ post, dispatch, loading, location }) => {
     }))
   }
 
-  const onEdit = (_id) => {
-    dispatch(routerRedux.push({
-      pathname: 'content-edit',
-      query: { _id },
-    }))
+  const onEdit = () => {
+    dispatch(routerRedux.push('content-edit'))
   }
 
-  const operations = <Button type="primary" onClick={() => onEdit()}>新建</Button>
+  const operations = <Button type="primary" onClick={onEdit}>新建</Button>
 
   return (<div className="content-inner">
     <Tabs activeKey={queryActive(query.status)} onTabClick={handleTabClick} tabBarExtraContent={operations}>

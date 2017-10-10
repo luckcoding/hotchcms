@@ -11,9 +11,7 @@ export default {
     setup ({ dispatch, history }) {
       history.listen((location) => {
         if (location.pathname === '/setting') {
-          dispatch({
-            type: 'query',
-          })
+          dispatch({ type: 'query' })
         }
       })
     },

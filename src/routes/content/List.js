@@ -1,5 +1,6 @@
 import React from 'react'
 import { Table } from 'antd'
+import { Link } from 'dva/router'
 import styles from './List.less'
 
 const List = ({ ...tableProps }) => {
@@ -13,6 +14,7 @@ const List = ({ ...tableProps }) => {
     }, {
       title: '标题',
       dataIndex: 'title',
+      render: (text, record) => <Link to={`content-edit/${record._id}`}>{text}</Link>,
     }, {
       title: '作者',
       dataIndex: 'author',

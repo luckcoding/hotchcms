@@ -19,7 +19,7 @@ class Setting extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      tags: props.setting.siteInfo.keywords || [],
+      tags: [],
       inputVisible: false,
       inputValue: '',
     }

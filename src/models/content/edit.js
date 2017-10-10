@@ -1,9 +1,8 @@
+import { message } from 'antd'
 import pathToRegexp from 'path-to-regexp'
-import { query } from '../../services/content'
+import { routerRedux } from 'dva/router'
+import { query, create } from '../../services/content'
 import * as category from '../../services/category'
-import { config } from '../../utils'
-
-const { routePrefix } = config
 
 export default {
 
@@ -18,12 +17,13 @@ export default {
     setup ({ dispatch, history }) {
       history.listen((location) => {
         if (location.pathname === '/content-edit') {
+          dispatch({ type: 'clear' })
           dispatch({
             type: 'queryCategory',
             payload: location.query,
           })
         }
-        const match = pathToRegexp(`${routePrefix}/admin-user/:_id`).exec(location.pathname)
+        const match = pathToRegexp('/content-edit/:_id').exec(location.pathname)
         if (match) {
           dispatch({ type: 'query', payload: { _id: match[1] } })
         }
@@ -59,6 +59,17 @@ export default {
         throw data
       }
     },
+
+    * save ({ payload }, { call, put }) {
+      const data = yield call(create, payload)
+      const { code } = data
+      if (code === '0000') {
+        message.success('新建成功')
+        yield put(routerRedux.goBack())
+      } else {
+        throw data
+      }
+    },
   },
 
   reducers: {
@@ -66,7 +77,7 @@ export default {
       const { data } = payload
       return {
         ...state,
-        data,
+        content: data,
       }
     },
 
@@ -74,6 +85,14 @@ export default {
       return {
         ...state,
         tree,
+      }
+    },
+
+    clear (state) {
+      return {
+        ...state,
+        content: {},
+        tree: [],
       }
     },
   },

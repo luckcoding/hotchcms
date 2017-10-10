@@ -20,9 +20,9 @@ const ContentSchema = new mongoose.Schema({
 
   keywords: [{ type: String }], // seo
 
-  discription: { type: String }, // seo
+  description: { type: String }, // seo
 
-  content: String, // 内容
+  content: { type: Object }, // 内容
 
   date: { type: Date, default: Date.now },
 
@@ -33,7 +33,7 @@ const ContentSchema = new mongoose.Schema({
   isTop: { type: Number, enum: [0, 1], default: 0 },  // 是否推荐，默认不推荐 0为不推荐，1为推荐
 
   // 浏览数量
-  viewNum: { type: Number, default: 1 },
+  viewNum: { type: Number, default: 0 },
 
   comments: {},
 

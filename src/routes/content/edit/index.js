@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'dva'
 import PropTypes from 'prop-types'
-// import { convertToRaw } from 'draft-js'
+import lodash from 'lodash'
+import { convertToRaw, convertFromRaw, EditorState } from 'draft-js'
 import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect } from 'antd'
 import { Editor } from '../../../components'
 
@@ -24,32 +25,47 @@ const textAreaSize = {
   maxRows: 4,
 }
 
+const editorLayout = {
+  wrapperStyle: {
+    minHeight: 500,
+  },
+  editorStyle: {
+    minHeight: 376,
+  },
+}
+
 class Edit extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      tags: props.content.keywords || [],
+      tags: [],
       inputVisible: false,
       inputValue: '',
-      editorContent: null,
-      category: props.content.category,
+      editorState: null,
+      category: [],
     }
   }
 
-  // componentWillReceiveProps (nextProps) {
-  //   if (props.contentDetail.content.keywords) {
-  //     this.setState({ tags: nextProps.contentDetail.content.keywords })
-  //   }
-  // }
+  componentWillReceiveProps (nextProps) {
+    if (!lodash.isEmpty(nextProps.content)) {
+      const { keywords, category, content } = nextProps.content
+      this.setState({
+        tags: keywords || [],
+        category: category || [],
+        editorState: EditorState.createWithContent(convertFromRaw({
+          entityMap: {},
+          ...content,
+        })),
+      })
+    }
+  }
 
   onChange = (category) => {
     this.setState({ category })
   }
 
-  onEditorStateChange = (editorContent) => {
-    this.setState({
-      editorContent,
-    })
+  onEditorStateChange = (editorState) => {
+    this.setState({ editorState })
   }
 
   handleClose = (removedTag) => {
@@ -86,7 +102,6 @@ class Edit extends React.Component {
 
   render () {
     const {
-      // contentDetail = {},
       form: {
         getFieldDecorator,
         validateFieldsAndScroll,
@@ -95,18 +110,17 @@ class Edit extends React.Component {
       tree = [],
     } = this.props
 
-    // const { tree, content } = contentDetail
-
-    const { tags, inputVisible, inputValue, editorContent } = this.state
+    const { tags, inputVisible, inputValue, editorState } = this.state
 
     const handleOk = () => {
       validateFieldsAndScroll((errors, values) => {
         if (errors) return null
         return this.props.dispatch({
-          type: 'setting/save',
+          type: 'contentDetail/save',
           payload: {
             ...values,
             keywords: tags,
+            content: convertToRaw(editorState.getCurrentContent()),
           },
         })
       })
@@ -202,9 +216,8 @@ class Edit extends React.Component {
           </FormItem>
           <Card title="文章内容">
             <Editor
-              wrapperStyle={{ minHeight: 500 }}
-              editorStyle={{ minHeight: 376 }}
-              editorState={editorContent}
+              {...editorLayout}
+              editorState={editorState}
               onEditorStateChange={this.onEditorStateChange}
             />
           </Card>
