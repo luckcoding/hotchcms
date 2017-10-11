@@ -5,7 +5,7 @@ const { _validator } = Content.schema
 exports.create = async (ctx) => {
   ctx.checkBody(_validator([
     '*title', 'subtitle', 'category', 'cover', 'tags',
-    'keywords', 'description', 'isTop', 'from',
+    'isTop', 'original', 'from', 'status',
   ]), {
     content: {
       notEmpty: {
@@ -27,7 +27,18 @@ exports.create = async (ctx) => {
 }
 
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator(['password', 'nickname', 'avatar', 'group']))
+  ctx.checkBody(_validator([
+    '*title', 'subtitle', 'category', 'cover', 'tags',
+    'isTop', 'original', 'from', 'status',
+  ]), {
+    content: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'content 不能为空',
+      },
+      isJson: { errorMessage: 'content  需为 Json' },
+    },
+  })
 
   ctx.checkParams({
     _id: {

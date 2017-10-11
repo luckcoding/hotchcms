@@ -6,37 +6,30 @@ const Validator = require('../lib/mongoose-validator-schema')
  * 文章内容
  */
 const ContentSchema = new mongoose.Schema({
-  // 标题
-  title: { type: String, required: true },
 
-  // 概述
-  subtitle: { type: String },
+  title: { type: String, required: true }, // 标题
 
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+  subtitle: { type: String }, // 概述
 
-  // 封面
-  cover: { type: String },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' }, // 类别
 
-  tags: [{ type: String }],
+  cover: { type: String }, // 封面
 
-  keywords: [{ type: String }], // seo
-
-  description: { type: String }, // seo
+  tags: [{ type: String }], // 标签
 
   content: { type: Object }, // 内容
 
-  date: { type: Date, default: Date.now },
+  date: { type: Date, default: Date.now }, // 创建时间
 
-  updateDate: { type: Date, default: Date.now },
+  updateDate: { type: Date, default: Date.now }, // 最后更新时间
 
-  author: { type: mongoose.Schema.Types.ObjectId },
+  author: { type: mongoose.Schema.Types.ObjectId }, // 作者
 
-  isTop: { type: Number, enum: [0, 1], default: 0 },  // 是否推荐，默认不推荐 0为不推荐，1为推荐
+  isTop: { type: Boolean, default: false }, // 是否置顶
 
-  // 浏览数量
-  viewNum: { type: Number, default: 0 },
+  viewNum: { type: Number, default: 0 }, // 浏览数量
 
-  comments: {},
+  comments: {}, // 评论
 
   commentNum: { type: Number, default: 0 }, // 评论数
 
@@ -44,9 +37,14 @@ const ContentSchema = new mongoose.Schema({
 
   likeUserIds: String, // 喜欢该文章的用户ID集合
 
-  from: { type: Number, enum: [0, 1], default: 0 }, // 来源 0为原创 1为转载
+  // 是否原创 0为原创 1为转载
+  original: { type: Boolean, default: true },
 
-  status: { type: Number, enum: [0, 1, 2], default: 0 }, // 0为草稿 1为上线 2为下线
+  from: { type: String }, // 原地址
+
+  // 0为草稿 1为上线 2为下线
+  status: { type: Number, enum: [0, 1, 2], default: 0 },
+
 }, {
   collection: 'content',
   id: false,

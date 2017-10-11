@@ -3,13 +3,19 @@ import { connect } from 'dva'
 import PropTypes from 'prop-types'
 import lodash from 'lodash'
 import { convertToRaw, convertFromRaw, EditorState } from 'draft-js'
-import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect } from 'antd'
+import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect, Switch } from 'antd'
 import { Editor } from '../../../components'
 
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
 const TreeNode = TreeSelect.TreeNode
 const { TextArea } = Input
+
+const EnumPostStatus = {
+  UNPUBLISH: 0,
+  PUBLISHED: 1,
+  DELETED: 2,
+}
 
 const formItemLayout = {
   labelCol: {
@@ -41,17 +47,17 @@ class Edit extends React.Component {
       tags: [],
       inputVisible: false,
       inputValue: '',
-      editorState: null,
-      category: [],
+      editorState: EditorState.createEmpty(),
+      category: undefined,
     }
   }
 
   componentWillReceiveProps (nextProps) {
     if (!lodash.isEmpty(nextProps.content)) {
-      const { keywords, category, content } = nextProps.content
+      const { tags, category, content } = nextProps.content
       this.setState({
-        tags: keywords || [],
-        category: category || [],
+        tags,
+        category,
         editorState: EditorState.createWithContent(convertFromRaw({
           entityMap: {},
           ...content,
@@ -110,17 +116,21 @@ class Edit extends React.Component {
       tree = [],
     } = this.props
 
-    const { tags, inputVisible, inputValue, editorState } = this.state
+    const _id = content._id
 
-    const handleOk = () => {
+    const { tags, inputVisible, inputValue, editorState, category } = this.state
+
+    const handleOk = (status) => {
       validateFieldsAndScroll((errors, values) => {
-        if (errors) return null
+        if (status && errors) return null
         return this.props.dispatch({
           type: 'contentDetail/save',
           payload: {
-            ...content,
+            _id,
             ...values,
-            keywords: tags,
+            category,
+            status,
+            tags,
             content: convertToRaw(editorState.getCurrentContent()),
           },
         })
@@ -155,18 +165,17 @@ class Edit extends React.Component {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label="所属" hasFeedback {...formItemLayout}>
+          <FormItem label="类别" hasFeedback {...formItemLayout}>
             <TreeSelect
-              value={this.state.category}
+              value={category}
               allowClear
               treeDefaultExpandAll
-              placeholder="不选代表顶级分类"
               onChange={this.onChange}
             >
               {loop(tree)}
             </TreeSelect>
           </FormItem>
-          <FormItem label="关键词" hasFeedback {...formItemLayout}>
+          <FormItem label="标签" hasFeedback {...formItemLayout}>
             {tags.map((tag) => {
               const isLongTag = tag.length > 20
               const tagElem = (
@@ -190,30 +199,22 @@ class Edit extends React.Component {
           )}
             {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
           </FormItem>
-          <FormItem label="网站描述" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('description', {
-              initialValue: content.description,
-              rules: [
-                {
-                  required: true,
-                },
-              ],
-            })(<TextArea autosize={textAreaSize} />)}
-          </FormItem>
-          <FormItem label="顶部代码块" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('headerCode', {
-              initialValue: content.headerCode,
-            })(<TextArea autosize={textAreaSize} />)}
-          </FormItem>
           <FormItem label="概述" hasFeedback {...formItemLayout}>
             {getFieldDecorator('subtitle', {
               initialValue: content.subtitle,
             })(<TextArea autosize={textAreaSize} />)}
           </FormItem>
-          <FormItem label="概述" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('subtitle', {
-              initialValue: content.subtitle,
-            })(<TextArea autosize={textAreaSize} />)}
+          <FormItem label="是否原创" hasFeedback {...formItemLayout}>
+            {getFieldDecorator('original', {
+              valuePropName: 'checked',
+              initialValue: content.original,
+            })(<Switch />)}
+          </FormItem>
+          <FormItem label="是否置顶" hasFeedback {...formItemLayout}>
+            {getFieldDecorator('isTop', {
+              valuePropName: 'checked',
+              initialValue: content.isTop,
+            })(<Switch />)}
           </FormItem>
           <Card title="文章内容">
             <Editor
@@ -223,8 +224,8 @@ class Edit extends React.Component {
             />
           </Card>
           <ButtonGroup size="large" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-            <Button type="primary" icon="upload" onClick={handleOk}>发布</Button>
-            <Button type="danger" icon="cloud-download-o" onClick={handleOk}>草稿</Button>
+            <Button type="primary" icon="upload" onClick={() => handleOk(EnumPostStatus.PUBLISHED)}>发布</Button>
+            <Button type="danger" icon="cloud-download-o" onClick={() => handleOk(EnumPostStatus.UNPUBLISH)}>草稿</Button>
           </ButtonGroup>
         </Form>
       </div>

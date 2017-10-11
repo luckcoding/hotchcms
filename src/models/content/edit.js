@@ -19,13 +19,11 @@ export default {
       history.listen((location) => {
         if (location.pathname === '/content-edit') {
           dispatch({ type: 'clear' })
-          dispatch({
-            type: 'queryCategory',
-            payload: location.query,
-          })
+          dispatch({ type: 'queryCategory', payload: location.query })
         }
         const match = pathToRegexp('/content-edit/:_id').exec(location.pathname)
         if (match) {
+          dispatch({ type: 'queryCategory', payload: location.query })
           dispatch({ type: 'query', payload: { _id: match[1] } })
         }
       })
