@@ -129,15 +129,15 @@ const AdminUser = ({ location, dispatch, adminUser, loading }) => {
     <div className="content-inner">
       <Filter {...filterProps} />
       {
-         selectedRowKeys.length > 0 &&
-           <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
-             <Col>
-               {`选中 ${selectedRowKeys.length} 目标 `}
-               <Popconfirm title={'确定删除这些目标?'} placement="left" onConfirm={handleDeleteItems}>
-                 <Button type="danger" size="large" style={{ marginLeft: 8 }}>删除</Button>
-               </Popconfirm>
-             </Col>
-           </Row>
+        selectedRowKeys.length > 0 &&
+        <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
+          <Col>
+            {`选中 ${selectedRowKeys.length} 目标 `}
+            <Popconfirm title={'确定删除这些目标?'} placement="left" onConfirm={handleDeleteItems}>
+              <Button type="danger" size="large" style={{ marginLeft: 8 }}>删除</Button>
+            </Popconfirm>
+          </Col>
+        </Row>
       }
       <List {...listProps} />
       {modalVisible && <Modal {...modalProps} />}

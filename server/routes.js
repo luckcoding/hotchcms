@@ -64,7 +64,7 @@ module.exports = {
       },
 
       '/multi': {
-        post: ['category.multi'], // 删除分类
+        post: ['category.multi'], // 多条操作
       },
     },
 
@@ -76,6 +76,10 @@ module.exports = {
         put: ['content.update'],
         get: ['content.one'],
         delete: ['content.delete'],
+      },
+
+      '/multi': {
+        post: ['content.multi'],
       },
     },
 

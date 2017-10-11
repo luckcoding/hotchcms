@@ -1,10 +1,14 @@
 import modelExtend from 'dva-model-extend'
-import { _query } from '../services/content'
+import { _query, multi } from '../services/content'
 import { pageModel } from './common'
 
 export default modelExtend(pageModel, {
 
   namespace: 'post',
+
+  state: {
+    selectedRowKeys: [],
+  },
 
   subscriptions: {
     setup ({ dispatch, history }) {
@@ -21,9 +25,7 @@ export default modelExtend(pageModel, {
   },
 
   effects: {
-    * query ({
-      payload,
-    }, { call, put }) {
+    * query ({ payload = {} }, { call, put }) {
       const data = yield call(_query, payload)
       if (data.code === '0000') {
         yield put({
@@ -37,6 +39,16 @@ export default modelExtend(pageModel, {
             },
           },
         })
+      } else {
+        throw data
+      }
+    },
+
+    * multiDelete ({ payload }, { call, put }) {
+      const data = yield call(multi, { type: 'remove', multi: payload })
+      if (data.code === '0000') {
+        yield put({ type: 'updateState', payload: { selectedRowKeys: [] } })
+        yield put({ type: 'query' })
       } else {
         throw data
       }

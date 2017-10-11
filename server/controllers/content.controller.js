@@ -131,3 +131,39 @@ exports.delete = async (ctx) => {
     ctx.pipeFail(e)
   }
 }
+
+exports.multi = async (ctx) => {
+  ctx.checkBody({
+    type: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'type 不能为空',
+      },
+      isIn: {
+        options: [['remove', 'add', 'update']],
+        errorMessage: 'type 必须为 remove/add/update',
+      },
+    },
+    multi: {
+      optional: true,
+      inArray: {
+        options: ['isMongoId'],
+        errorMessage: 'multi 内需为 mongoId',
+      },
+    },
+  })
+
+  if (ctx.validationErrors()) return null
+
+  try {
+    const { multi, type } = ctx.request.body
+    if (type === 'remove') {
+      await Content._remove(multi)
+      ctx.pipeDone()
+    } else {
+      ctx.pipeFail(`暂无${type}操作`, 'BN99')
+    }
+  } catch (e) {
+    ctx.pipeFail(e)
+  }
+}

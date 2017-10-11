@@ -24,6 +24,7 @@ const config = {
     category: `${APIV1}/category/:_id`, // 分类
     categories: `${APIV1}/category/multi`, // 分类
     content: `${APIV1}/content/:_id`, // 内容
+    contents: `${APIV1}/content/multi`, // 内容
     siteInfo: `${APIV1}/site-info`, // 站点信息
     theme: `${APIV1}/theme/:_id`, // 主题
 

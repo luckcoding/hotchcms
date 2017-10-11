@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
-import { Tabs, Icon, Button } from 'antd'
+import { Tabs, Icon, Button, Row, Col, Popconfirm } from 'antd'
 import { routerRedux } from 'dva/router'
 import lodash from 'lodash'
 import List from './List'
@@ -25,7 +25,7 @@ const queryActive = function (status) {
 }
 
 const Index = ({ post, dispatch, loading, location }) => {
-  const { list, pagination } = post
+  const { list, pagination, selectedRowKeys } = post
   const { query = {}, pathname } = location
 
   const listProps = {
@@ -42,6 +42,17 @@ const Index = ({ post, dispatch, loading, location }) => {
         },
       }))
     },
+    rowSelection: {
+      selectedRowKeys,
+      onChange: (keys) => {
+        dispatch({
+          type: 'post/updateState',
+          payload: {
+            selectedRowKeys: keys,
+          },
+        })
+      },
+    },
   }
 
   const handleTabClick = (key) => {
@@ -57,9 +68,27 @@ const Index = ({ post, dispatch, loading, location }) => {
     dispatch(routerRedux.push('content-edit'))
   }
 
+  const handleDeleteItems = () => {
+    dispatch({
+      type: 'post/multiDelete',
+      payload: selectedRowKeys,
+    })
+  }
+
   const operations = <Button type="primary" onClick={onEdit}>新建</Button>
 
   return (<div className="content-inner">
+    {
+      selectedRowKeys.length > 0 &&
+      <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
+        <Col>
+          {`选中 ${selectedRowKeys.length} 目标 `}
+          <Popconfirm title={'确定删除这些目标?'} placement="left" onConfirm={handleDeleteItems}>
+            <Button type="danger" size="large" style={{ marginLeft: 8 }}>删除</Button>
+          </Popconfirm>
+        </Col>
+      </Row>
+    }
     <Tabs activeKey={queryActive(query.status)} onTabClick={handleTabClick} tabBarExtraContent={operations}>
       <TabPane tab={<span><Icon type="book" />已发布</span>} key={String(EnumPostStatus.PUBLISHED)}>
         <List {...listProps} />

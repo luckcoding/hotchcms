@@ -118,6 +118,7 @@ class Edit extends React.Component {
         return this.props.dispatch({
           type: 'contentDetail/save',
           payload: {
+            ...content,
             ...values,
             keywords: tags,
             content: convertToRaw(editorState.getCurrentContent()),

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const _ = require('lodash')
 const Validator = require('../lib/mongoose-validator-schema')
 
 /**
@@ -67,6 +68,11 @@ ContentSchema.statics = {
       .select({})
       .lean()
     return { count, page, size, list }
+  },
+
+  async _remove (input) {
+    const _in = _.isArray(input) ? { $in: input } : input
+    return this.remove({ _id: _in })
   },
 
   _count () {

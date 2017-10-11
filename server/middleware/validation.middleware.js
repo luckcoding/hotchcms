@@ -21,7 +21,7 @@ module.exports = () => koaValidator({
     isObject: value => _.isObject(value),
     isJson: value => Object.prototype.toString.call(value).toLowerCase() === '[object object]',
     isArray: value => _.isArray(value),
-    inArray (param, ...args) {
+    inArray: (param, ...args) => {
       const validatorName = args[0]
       return _.every(param, (item) => {
         switch (validatorName) {
@@ -38,7 +38,7 @@ module.exports = () => koaValidator({
               default: return false
             }
           default:
-            return validator[validatorName].apply(this, item)
+            return validator[validatorName].call(this, item)
         }
       })
     },

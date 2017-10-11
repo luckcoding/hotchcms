@@ -1,7 +1,8 @@
 import { message } from 'antd'
 import pathToRegexp from 'path-to-regexp'
 import { routerRedux } from 'dva/router'
-import { query, create } from '../../services/content'
+import lodash from 'lodash'
+import { query, create, update } from '../../services/content'
 import * as category from '../../services/category'
 
 export default {
@@ -60,16 +61,21 @@ export default {
       }
     },
 
-    * save ({ payload }, { call, put }) {
-      const data = yield call(create, payload)
+    * save ({ payload }, { select, call, put }) {
+      const { contentDetail } = yield select(_ => _)
+      const { content } = contentDetail
+
+      const action = lodash.isEmpty(content) ? create : update
+      const data = yield call(action, payload)
       const { code } = data
       if (code === '0000') {
-        message.success('新建成功')
+        message.success('编辑完成')
         yield put(routerRedux.goBack())
       } else {
         throw data
       }
     },
+
   },
 
   reducers: {

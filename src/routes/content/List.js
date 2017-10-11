@@ -48,7 +48,7 @@ const List = ({ ...tableProps }) => {
         columns={columns}
         simple
         className={styles.table}
-        rowKey={record => record.id}
+        rowKey={record => record._id}
       />
     </div>
   )

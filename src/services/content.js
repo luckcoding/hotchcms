@@ -1,7 +1,7 @@
 import { request, config } from '../utils'
 
 const { api } = config
-const { content } = api
+const { content, contents } = api
 
 export async function query (params) {
   return request({
@@ -47,10 +47,10 @@ export async function _query (params) {
   })
 }
 
-export async function _remove (params) {
+export async function multi (params) {
   return request({
-    url: content.replace('/:_id', ''),
-    method: 'delete',
+    url: contents,
+    method: 'post',
     data: params,
   })
 }
