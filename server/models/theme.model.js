@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
-const _ = require('lodash')
 const cache = require('../lib/cache.lib')
 const Validator = require('../lib/mongoose-validator-schema')
-const ThemeTemplate = require('./theme-template.model')
 
 const ThemeSchema = new mongoose.Schema({
 
@@ -24,8 +22,6 @@ const ThemeSchema = new mongoose.Schema({
 
   create: { type: Date, default: Date.now }, // 创建时间
 
-  template: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ThemeTemplate' }], // 模版
-
 }, {
   collection: 'theme',
   id: false,
@@ -37,8 +33,6 @@ ThemeSchema.statics = {
   async _install (options) {
     const theme = await this.findOne({ alias: options.alias })
     if (theme) throw new Error('已存在此模板')
-    const call = await ThemeTemplate.create(options.template)
-    options.template = _.map(call, '_id')
     return this.create(options)
   },
 

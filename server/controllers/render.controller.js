@@ -32,40 +32,49 @@ module.exports = async (ctx) => {
       return null
     }
 
+    // 主题文件夹名
     const { alias } = theme
+
+    // 前端加载路径
+    const source = `/themes/${alias}`
 
     const navigation = await Category._navigation()
 
-
     if (!filter(target)) {
-      return await ctx.render(`${alias}/default-0/404`, {
-        siteInfo: {
-          title: '404',
-        },
+      return await ctx.render(`${alias}/module/404`, {
+        siteInfo: { title: '404' },
         current: '/404',
-        alias: '/themes/default',
+        source,
       })
     }
 
     // 获取网站信息
     const siteInfo = await SiteInfo().get()
 
+    // const categories = _.map(navigation, 'path')
+    const categoryRaw = _.keyBy(navigation, 'path')
+
     // 首页
     if (_.includes([undefined, 'index.html', 'index.htm'], target)) {
       let current = '/'
-      navigation.forEach((item) => {
-        if (item.isHome) {
-          current = item.path
-        }
+      _.forEach(navigation, (item) => {
+        if (item.isHome) current = item.path
       })
 
-
-      return await ctx.render('default/default-0/home', {
+      return await ctx.render(`${alias}/module/home`, {
         siteInfo,
-        categories: {},
+        // categories: {},
         navigation,
         current,
-        alias: '/themes/default',
+        source,
+      })
+    } else if (categoryRaw[target]) {
+      return await ctx.render(`${alias}/module/home`, {
+        siteInfo,
+        // categories: {},
+        navigation,
+        current: target,
+        source,
       })
     }
 

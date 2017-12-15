@@ -1,10 +1,10 @@
 *.log
 .DS_Store
+dump.rdb
 .idea
 Thumbs.db
 npm-debug.log*
 install.lock
-config/database.config.js
 !.gitkeep
 
 node_modules
@@ -12,5 +12,4 @@ logs/*/*
 !logs/*/*.gitkeep
 tmp/*
 !tmp/*.gitkeep
-dist
 publish/*

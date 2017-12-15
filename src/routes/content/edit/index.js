@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'dva'
 import PropTypes from 'prop-types'
 import lodash from 'lodash'
-import { convertToRaw, convertFromRaw, EditorState } from 'draft-js'
+// import { convertToRaw, convertFromRaw, EditorState } from 'draft-js'
 import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect, Switch } from 'antd'
 import { Editor } from '../../../components'
 
@@ -31,15 +31,6 @@ const textAreaSize = {
   maxRows: 4,
 }
 
-const editorLayout = {
-  wrapperStyle: {
-    minHeight: 500,
-  },
-  editorStyle: {
-    minHeight: 376,
-  },
-}
-
 class Edit extends React.Component {
   constructor (props) {
     super(props)
@@ -47,7 +38,8 @@ class Edit extends React.Component {
       tags: [],
       inputVisible: false,
       inputValue: '',
-      editorState: EditorState.createEmpty(),
+      editorState: null,
+      // editorState: EditorState.createEmpty(),
       category: undefined,
     }
   }
@@ -58,10 +50,11 @@ class Edit extends React.Component {
       this.setState({
         tags,
         category,
-        editorState: EditorState.createWithContent(convertFromRaw({
-          entityMap: {},
-          ...content,
-        })),
+        editorState: content,
+        // editorState: EditorState.createWithContent(convertFromRaw({
+        //   entityMap: {},
+        //   ...content,
+        // })),
       })
     }
   }
@@ -131,7 +124,8 @@ class Edit extends React.Component {
             category,
             status,
             tags,
-            content: convertToRaw(editorState.getCurrentContent()),
+            content: editorState,
+            // content: convertToRaw(editorState.getCurrentContent()),
           },
         })
       })
@@ -218,9 +212,8 @@ class Edit extends React.Component {
           </FormItem>
           <Card title="文章内容">
             <Editor
-              {...editorLayout}
-              editorState={editorState}
-              onEditorStateChange={this.onEditorStateChange}
+              initialContent={editorState}
+              onRawChange={this.onEditorStateChange}
             />
           </Card>
           <ButtonGroup size="large" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
