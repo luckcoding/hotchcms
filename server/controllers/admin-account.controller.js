@@ -27,7 +27,6 @@ exports.signIn = async (ctx) => {
     const { email, password, autoSignIn } = ctx.request.body
 
     const call = await AdminUser.findOne({ email })
-
     if (call && sha1(password) === call.password) {
       let expires = autoSignIn ? expiresInLong : expiresIn // token 时间
 

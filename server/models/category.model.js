@@ -33,9 +33,6 @@ const CategorySchema = new mongoose.Schema({
   // 排序
   sort: { type: Number, default: 0, unique: true },
 
-  // 内容模板
-  template: { type: mongoose.Schema.Types.ObjectId, ref: 'ThemeTemplate' },
-
   // 关键字
   keywords: [{ type: String }],
 
@@ -56,9 +53,8 @@ CategorySchema.statics = {
     const categories = await cache.get('SYSTEM_CATEGORIES')
     if (categories) return _.cloneDeep(categories)
     const call = await this.find({})
-      .select('uid isHome name path state sort template keywords description')
+      .select('uid isHome name path state sort keywords description')
       .sort('sort')
-      .populate('template')
       .lean()
     await cache.set('SYSTEM_CATEGORIES', call, 1000 * 60 * 60 * 24)
     return call
