@@ -1,5 +1,7 @@
-const AdminGroup = require('../models/admin-group.model')
-const AdminUser = require('../models/admin-user.model')
+const {
+  AdminGroup,
+  AdminUser,
+} = require('../models')
 
 const { _validator } = AdminGroup.schema
 

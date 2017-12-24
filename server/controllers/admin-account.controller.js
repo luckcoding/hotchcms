@@ -2,7 +2,7 @@ const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const cache = require('../lib/cache.lib')
 const sha1 = require('../lib/sha1.lib')
-const AdminUser = require('../models/admin-user.model')
+const { AdminUser } = require('../models')
 const config = require('../config/system.config')
 
 const { expiresInLong, expiresIn, secret } = config
@@ -63,7 +63,7 @@ exports.signOut = async (ctx) => {
 exports.current = async (ctx) => {
   try {
     const _id = ctx.state.user.data
-    const user = await AdminUser._one(_id)
+    const user = await AdminUser.findById(_id).populate('group')
     ctx.pipeDone(user)
   } catch (e) {
     ctx.pipeFail(e)

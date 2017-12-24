@@ -19,5 +19,4 @@ const partakeSchema = new mongoose.Schema({
   id: false,
 })
 
-// export default mongoose.model('Partake', partakeSchema);
 module.exports = mongoose.model('Partake', partakeSchema)

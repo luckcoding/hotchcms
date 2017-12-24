@@ -2,9 +2,11 @@ const path = require('path')
 const fs = require('fs')
 const redis = require('../lib/redis.lib')
 const mongodb = require('../lib/mongodb.lib')
-const Options = require('../models/options.model')
-const AdminGroup = require('../models/admin-group.model')
-const AdminUser = require('../models/admin-user.model')
+const {
+  Options,
+  AdminGroup,
+  AdminUser,
+} = require('../models')
 
 // 缓存安装状态
 let hasInstall = false

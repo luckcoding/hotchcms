@@ -1,5 +1,7 @@
-const Options = require('../models/options.model')
-const Theme = require('../models/theme.model')
+const {
+  Options,
+  Theme,
+} = require('../models')
 const cache = require('../lib/cache.lib')
 
 exports.ThemeInfo = () => {

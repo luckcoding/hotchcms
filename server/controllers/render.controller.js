@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const validator = require('validator')
-const Category = require('../models/category.model')
+const { Category } = require('../models')
 
 const { SiteInfo, ThemeInfo } = require('../services/site.service')
 

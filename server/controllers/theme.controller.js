@@ -1,5 +1,5 @@
 const ThemeLib = require('../lib/theme.lib')
-const Theme = require('../models/theme.model')
+const { Theme } = require('../models')
 
 exports.install = async (ctx) => {
   ctx.checkHeaders({

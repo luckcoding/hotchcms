@@ -1,4 +1,4 @@
-const Content = require('../models/content.model')
+const { Content } = require('../models')
 
 const { _validator } = Content.schema
 

@@ -1,6 +1,6 @@
 const regx = require('../lib/regx.lib')
 const random = require('../lib/random.lib')
-const AdminUser = require('../models/admin-user.model')
+const { AdminUser } = require('../models')
 
 const { _validator } = AdminUser.schema
 
