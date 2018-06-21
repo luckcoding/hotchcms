@@ -132,7 +132,7 @@ module.exports = exports = function (schema, options) {
     _.forEach(values, (value) => {
       let required = _.includes(value, '*')
       value = _.trimStart(value, '*')
-      _validatorSchema[value] = validatorSchema[value]
+      _validatorSchema[value] = validatorSchema[value] || {}
       if (required) {
         delete _validatorSchema[value].optional
         if (!_validatorSchema[value].notEmpty) {

@@ -1,7 +1,23 @@
 const { Category } = require('../models')
+const mongoose = require('mongoose')
+const schema = require('../models/category.model')
 
 const { _validator } = Category.schema
 
+// let apple = new Category({
+//     category:'1',
+//     name:null
+// });
+
+// apple.validate(function (error) {
+//   console.log(error)
+// })
+// Category.schema.paths
+// var doc = new mongoose.Document({}, schema)
+
+// doc.validate(function(error) {
+//   console.log(error)
+// })
 /**
  * 创建分类
  */
@@ -11,7 +27,6 @@ exports.create = async (ctx) => {
   ]))
 
   if (ctx.validationErrors()) return null
-
   try {
     await Category._save({ input: ctx.request.body })
     ctx.pipeDone()

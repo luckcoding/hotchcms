@@ -40,6 +40,10 @@ module.exports = {
         get: ['admin-group.one'], // 查询用户组
         delete: ['admin-group.delete'], // 删除用户组
       },
+
+      '/multi': {
+        post: ['admin-group.multi'], // 多条操作
+      },
     },
 
     '/admin-user': {
@@ -50,6 +54,10 @@ module.exports = {
         put: ['admin-user.update'], // 更新账号
         get: ['admin-user.one'], // 查询账号
         delete: ['admin-user.delete'], // 删除账号
+      },
+
+      '/multi': {
+        post: ['admin-user.multi'], // 多条操作
       },
     },
 
@@ -106,7 +114,7 @@ module.exports = {
 
   // '/:category*': { get: 'render' }, // 404
 
-  '/admin*': { get: 'admin' }, // 后台
+  // '/backstage*': { get: 'admin' }, // 后台
 
   '*': { get: 'install.access' }, // 查询安装状态
 

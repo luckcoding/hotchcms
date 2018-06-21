@@ -11,9 +11,9 @@ const AdminUserSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
+    sparse: true,
     trim: true,
     lowercase: true,
-    required: true,
     match: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
   },
 
@@ -21,7 +21,12 @@ const AdminUserSchema = new mongoose.Schema({
   password: { type: String, set: sha1, required: true },
 
   // 手机
-  mobile: { type: Number, required: true, unique: true },
+  mobile: {
+    type: Number,
+    unique: true,
+    sparse: true,
+    match: /^1[3|4|5|7|8]\d{9}$/,
+  },
 
   // 昵称
   nickname: { type: String, trim: true, minlength: 2, maxlength: 20 },

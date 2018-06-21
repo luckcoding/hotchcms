@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const redis = require('redis')
 
-const configFile = () => path.join(__dirname, '../config/redis.config.json')
+const configFile = () => path.join(__dirname, '../config/redis.config')
 
 let redisClient
 
@@ -26,7 +26,7 @@ exports.connect = () => new Promise((resolve, reject) => {
   fs.readFile(configFile(), async (err, file) => {
     if (err) {
       if (err.code === 'ENOENT') {
-        err.message = 'redis.config.json 文件不存在'
+        err.message = 'redis.config 文件不存在'
       }
       return reject(err)
     }

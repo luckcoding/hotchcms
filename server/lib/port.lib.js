@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const config = require('../config')
 
 /**
  * 格式化端口
@@ -15,7 +16,7 @@ module.exports = () => {
     PORT = process.argv[portIndex + 1]
   }
 
-  const val = PORT || process.env.PORT || '3030'
+  const val = PORT || process.env.PORT || config.server_port
   const port = parseInt(val, 10)
 
   if (isNaN(port)) return val // named pipe

@@ -1,17 +1,49 @@
-const log4js = require('koa-log4')
-const config = require('../config/log4js.config')
+const fs = require('fs')
+const path = require('path')
+const tracer = require('tracer')
 
-/**
- * 载入配置
- */
-log4js.configure(config)
+// 日志
+const dailyfile = tracer.dailyfile({
+  root: path.join(__dirname, '../logs'),
+  maxLogFiles: 10,
+  // level: 'warn',
+  format: '{{timestamp}} {{message}}',
+  dateformat: 'mm-dd HH:MM:ss'
+})
 
-/**
- * 导出日志接口
- */
-module.exports = {
-  app: () => log4js.getLogger('app'),
-  http: () => log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }),
-  system: () => log4js.getLogger('system'),
-  database: () => log4js.getLogger('database'),
+// 打印
+const colorConsole = tracer.colorConsole();
+
+// 简单绑定功能
+// 可读性👍
+function logger() {
+  return {
+    log: colorConsole.log,
+    trace: colorConsole.trace,
+    debug: colorConsole.debug,
+    info: colorConsole.info,
+    warn () {
+      colorConsole.warn.apply(null, arguments)
+      dailyfile.warn.apply(null, arguments)
+    },
+    error () {
+      colorConsole.error.apply(null, arguments)
+      dailyfile.error.apply(null, arguments)
+    },
+  }
 }
+
+/**
+ * 网络监听日志
+ * @param  {Number} effect 阈值
+ */
+const httpEffectMiddle = (effect = 1000) => async (ctx, next) => {
+  const start = new Date()
+  await next()
+  const ms = new Date() - start
+  const loggerType = ms > effect ? 'warn' : 'info'
+  logger()[loggerType](`${ctx.method} ${ctx.url} - ${ms}ms`)
+}
+
+module.exports = logger
+module.exports.httpEffectMiddle = httpEffectMiddle

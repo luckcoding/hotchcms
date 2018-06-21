@@ -89,7 +89,7 @@ exports.list = async (ctx) => {
       ...query
     } = ctx.request.query
 
-    if (query.name) query.name = new RegExp(query.name, 'i')
+    if (query.nickname) query.nickname = new RegExp(query.nickname, 'i')
 
     const total = await AdminGroup.count(query)
     const list = await AdminGroup.find(query)
@@ -125,6 +125,42 @@ exports.delete = async (ctx) => {
     await AdminGroup.remove({ _id: ctx.params._id })
     await AdminUser.update({ group: ctx.params._id }, { $unset: { group: true } })
     ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e)
+  }
+}
+
+exports.multi = async (ctx) => {
+  ctx.checkBody({
+    type: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'type 不能为空',
+      },
+      isIn: {
+        options: [['remove', 'add', 'update']],
+        errorMessage: 'type 必须为 remove/add/update',
+      },
+    },
+    multi: {
+      optional: true,
+      inArray: {
+        options: ['isMongoId'],
+        errorMessage: 'multi 内需为 mongoId',
+      },
+    },
+  })
+
+  if (ctx.validationErrors()) return null
+
+  try {
+    const { multi, type } = ctx.request.body
+    if (type === 'remove') {
+      await AdminGroup.remove({ _id: { $in: multi } })
+      ctx.pipeDone()
+    } else {
+      ctx.pipeFail(`暂无${type}操作`, 'BN99')
+    }
   } catch (e) {
     ctx.pipeFail(e)
   }

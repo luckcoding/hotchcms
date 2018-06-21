@@ -1,4 +1,4 @@
-import lodash from 'lodash'
+const lodash = require('lodash')
 
 /**
  * 数组格式转树状结构

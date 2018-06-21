@@ -21,10 +21,6 @@ exports.create = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    if (!ctx.request.body.mobile) {
-      ctx.request.body.mobile = random()
-    }
-
     await AdminUser.create(ctx.request.body)
     ctx.pipeDone()
   } catch (e) {
@@ -59,10 +55,6 @@ exports.update = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    if (!ctx.request.body.mobile) {
-      ctx.request.body.mobile = random()
-    }
-
     await AdminUser.update({ _id: ctx.params._id }, ctx.request.body)
     ctx.pipeDone()
   } catch (e) {
@@ -165,6 +157,42 @@ exports.delete = async (ctx) => {
   try {
     await AdminUser.remove({ _id: ctx.params._id })
     ctx.pipeDone()
+  } catch (e) {
+    ctx.pipeFail(e)
+  }
+}
+
+exports.multi = async (ctx) => {
+  ctx.checkBody({
+    type: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'type 不能为空',
+      },
+      isIn: {
+        options: [['remove', 'add', 'update']],
+        errorMessage: 'type 必须为 remove/add/update',
+      },
+    },
+    multi: {
+      optional: true,
+      inArray: {
+        options: ['isMongoId'],
+        errorMessage: 'multi 内需为 mongoId',
+      },
+    },
+  })
+
+  if (ctx.validationErrors()) return null
+
+  try {
+    const { multi, type } = ctx.request.body
+    if (type === 'remove') {
+      await AdminUser.remove({ _id: { $in: multi } })
+      ctx.pipeDone()
+    } else {
+      ctx.pipeFail(`暂无${type}操作`, 'BN99')
+    }
   } catch (e) {
     ctx.pipeFail(e)
   }

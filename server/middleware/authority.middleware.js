@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const koaAuthority = require('koa-authority')
-const config = require('../config/system.config')
+const config = require('../config')
 const AdminUser = require('../models/admin-user.model')
 
 const { secret } = config

@@ -2,8 +2,8 @@ const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const cache = require('../lib/cache.lib')
 const sha1 = require('../lib/sha1.lib')
-const { AdminUser } = require('../models')
-const config = require('../config/system.config')
+const AdminUser = require('../models/admin-user.model')
+const config = require('../config')
 
 const { expiresInLong, expiresIn, secret } = config
 const { _validator } = AdminUser.schema
@@ -25,7 +25,6 @@ exports.signIn = async (ctx) => {
 
   try {
     const { email, password, autoSignIn } = ctx.request.body
-
     const call = await AdminUser.findOne({ email })
     if (call && sha1(password) === call.password) {
       let expires = autoSignIn ? expiresInLong : expiresIn // token 时间

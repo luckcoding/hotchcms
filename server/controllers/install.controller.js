@@ -1,7 +1,6 @@
 const regx = require('../lib/regx.lib')
 const mongodb = require('../lib/mongodb.lib')
 const redis = require('../lib/redis.lib')
-const random = require('../lib/random.lib')
 const installService = require('../services/install.service')
 
 /**
@@ -13,7 +12,7 @@ exports.access = async (ctx, next) => {
     if (hasInstall) {
       await next()
     } else {
-      ctx.redirect('/admin/install')
+      ctx.redirect('/backstage/install')
     }
   } catch (e) {
     ctx.pipeFail(e)
@@ -295,7 +294,7 @@ exports.install = async (ctx) => {
       siteInfoData: { title },
       adminUserData: {
         email,
-        mobile: mobile || random(),
+        mobile,
         password,
       },
     })

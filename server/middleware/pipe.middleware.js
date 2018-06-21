@@ -11,7 +11,6 @@
  */
 const _ = require('lodash')
 const logger = require('../lib/logger.lib')
-const categorys = require('../config/log4js.config').categorys
 
 module.exports = () => async (ctx, next) => {
   try {
@@ -32,8 +31,8 @@ module.exports = () => async (ctx, next) => {
       const stack = _.get(input, 'stack') || undefined
       ctx._pipeFailData = { code, message }
 
-      const errorType = _.includes(categorys, _.get(input, 'type')) ? input.type : 'system'
-      logger[errorType]().error(__dirname, '失败原因: ', stack || message)
+      // const errorType = _.includes(categorys, _.get(input, 'type')) ? input.type : 'system'
+      logger().error('失败原因: ', stack || message)
     }
 
     await next()
@@ -46,7 +45,7 @@ module.exports = () => async (ctx, next) => {
         message: '参数验证失败',
         stack: validationErrors,
       }
-      return logger.system().error(__filename, '参数验证失败', validationErrors)
+      return logger().error('参数验证失败', validationErrors)
     }
 
     // 拦截返回

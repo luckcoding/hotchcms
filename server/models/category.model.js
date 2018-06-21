@@ -107,4 +107,6 @@ CategorySchema.statics = {
   },
 }
 
+module.exports.schema = CategorySchema
+
 module.exports = mongoose.model('Category', CategorySchema)

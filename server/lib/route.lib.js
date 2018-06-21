@@ -17,9 +17,6 @@ const controllers = requireAll({
 
 /**
  * 递归绑定控制器
- * @param  {[type]} map   [description]
- * @param  {[type]} route [description]
- * @return {[type]}       [description]
  */
 (function loop (map, route) {
   route = route || ''

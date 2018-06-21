@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const mongoose = require('mongoose')
 
-const configFile = () => path.join(__dirname, '../config/mongodb.config.json')
+const configFile = () => path.join(__dirname, '../config/mongodb.config')
 
 /**
  * 使用 bluebird 诺言库
@@ -15,6 +15,7 @@ mongoose.Promise = global.Promise
  */
 exports.test = (options = {}) => new Promise((resolve, reject) => {
   const DB = mongoose.createConnection()
+  console.log(Object.keys(DB))
   const { host, port, db, user, pass } = options
   DB.open(host, db, port, { user, pass }, (err) => {
     if (err) {
@@ -44,14 +45,14 @@ exports.connect = () => new Promise((resolve, reject) => {
   fs.readFile(configFile(), async (err, file) => {
     if (err) {
       if (err.code === 'ENOENT') {
-        err.message = 'database.config.json 文件不存在'
+        err.message = 'database.config 文件不存在'
       }
       return reject(err)
     }
 
     try {
-      const { host, port, db, user, pass } = JSON.parse(file)
-      await mongoose.connect(`mongodb://${host}:${port}/${db}`, { user, pass })
+      const { host, port, db, user = '', pass = '' } = JSON.parse(file)
+      await mongoose.connect(`${user ? `${user}:${pass}@` : ''}mongodb://${host}:${port}/${db}`, { useMongoClient: true })
       resolve()
     } catch (e) {
       reject(e)

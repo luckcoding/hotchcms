@@ -1,0 +1,36 @@
+{
+  "name": "hotchcms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "dev": "nodemon index.js -e js,json"
+  },
+  "author": "luckcoding",
+  "license": "ISC",
+  "dependencies": {
+    "adm-zip": "^0.4.11",
+    "bluebird": "^3.5.1",
+    "jsonwebtoken": "^8.2.2",
+    "kcors": "^2.2.1",
+    "koa": "^2.5.1",
+    "koa-authority": "^0.2.2",
+    "koa-body": "^4.0.1",
+    "koa-convert": "^1.2.0",
+    "koa-middle-validator": "^1.0.0",
+    "koa-router": "^7.4.0",
+    "koa-static": "^4.0.3",
+    "koa-views": "^6.1.4",
+    "lodash": "^4.17.10",
+    "mongoose": "4.11.13",
+    "redis": "^2.8.0",
+    "require-all": "^2.2.0",
+    "tracer": "^0.8.15"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.5"
+  }
+}
