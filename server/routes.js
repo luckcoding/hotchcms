@@ -102,6 +102,11 @@ module.exports = {
     '/authority': {
       get: ['authority.list'], // 权限列表
     },
+
+    '/media': {
+      post: ['media.create'], //文件上传
+      get: ['media.list'],
+    }
   },
 
   // '(\^/|^\/index.html|^\/index.htm)': { get: 'render.home' }, // 首页

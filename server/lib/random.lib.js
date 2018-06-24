@@ -1,5 +1,7 @@
-/**
- * 随机数
- * @return {Number} [时间戳 + random]
- */
-module.exports = () => `${new Date().getTime()}${Math.floor(Math.random() * 10000000)}`
+exports.random = function () {
+  return `${Math.floor(Math.random() * 10000000)}`
+}
+
+exports.timeRandom = function () {
+  return `${new Date().getTime()}${exports.random()}`
+}

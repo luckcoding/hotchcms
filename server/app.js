@@ -30,6 +30,9 @@ app.use(cors({
 app.use(convert(koaBody({
   multipart: true,
   formLimit: '5mb',
+  formidable: {
+    uploadDir: path.join(__dirname + '/temp'),
+  }
 })))
 
 // 处理query空值情况

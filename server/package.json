@@ -25,6 +25,8 @@
     "koa-static": "^4.0.3",
     "koa-views": "^6.1.4",
     "lodash": "^4.17.10",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.22.2",
     "mongoose": "4.11.13",
     "redis": "^2.8.0",
     "require-all": "^2.2.0",
