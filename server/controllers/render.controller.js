@@ -80,6 +80,6 @@ module.exports = async (ctx) => {
 
     // const categories = await Category._path()
   } catch (e) {
-    ctx.pipeFail(e, '9999')
+    ctx.pipeFail(e)
   }
 }

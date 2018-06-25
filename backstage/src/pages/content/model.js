@@ -1,6 +1,8 @@
 /* global window */
 import modelExtend from 'dva-model-extend'
+import { routerRedux } from 'dva/router'
 import * as contentsService from './services/contents'
+import { create } from './services/content'
 import { pageModel } from 'utils/model'
 
 const { query, multi } = contentsService
@@ -11,7 +13,6 @@ export default modelExtend(pageModel, {
   state: {
     currentItem: {},
     modalVisible: false,
-    modalType: 'create',
     selectedRowKeys: [],
   },
 
@@ -70,15 +71,16 @@ export default modelExtend(pageModel, {
       }
     },
 
-    // * create ({ payload }, { call, put }) {
-    //   const data = yield call(create, payload)
-    //   if (data.code === '0000') {
-    //     yield put({ type: 'hideModal' })
-    //     yield put({ type: 'query' })
-    //   } else {
-    //     throw data
-    //   }
-    // },
+    * create ({ payload }, { call, put }) {
+      const data = yield call(create, payload)
+      if (data.code === '0000') {
+        yield put(routerRedux.push({
+          pathname: `/content/${data.result._id}`,
+        }))
+      } else {
+        throw data
+      }
+    },
 
     // * update ({ payload }, { select, call, put }) {
     //   const _id = yield select(({ content }) => content.currentItem._id)

@@ -78,7 +78,9 @@ const Content = ({
   }
 
   const onEdit = () => {
-    dispatch(routerRedux.push('content/edit'))
+    dispatch({
+      type: 'content/create',
+    })
   }
 
   const handleDeleteItems = () => {

@@ -145,13 +145,13 @@ class modal extends React.Component {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label="是否首页" hasFeedback {...formItemLayout}>
+          <FormItem label="是否首页" {...formItemLayout}>
             {getFieldDecorator('isHome', {
               valuePropName: 'checked',
               initialValue: item.isHome,
             })(<Switch />)}
           </FormItem>
-          <FormItem label="导航显示" hasFeedback {...formItemLayout}>
+          <FormItem label="导航显示" {...formItemLayout}>
             {getFieldDecorator('state', {
               valuePropName: 'checked',
               initialValue: item.state,

@@ -154,11 +154,6 @@ class Edit extends React.Component {
         <FormItem label="文章标题" hasFeedback {...formItemLayout}>
           {getFieldDecorator('title', {
             initialValue: content.title,
-            rules: [
-              {
-                required: true,
-              },
-            ],
           })(<Input />)}
         </FormItem>
         <FormItem label="类别" hasFeedback {...formItemLayout}>

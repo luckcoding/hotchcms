@@ -3,24 +3,9 @@ const { Content } = require('../models')
 const { _validator } = Content.schema
 
 exports.create = async (ctx) => {
-  ctx.checkBody(_validator([
-    '*title', 'subtitle', 'category', 'cover', 'tags',
-    'isTop', 'original', 'from', 'status',
-  ]), {
-    content: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'content 不能为空',
-      },
-      isJson: { errorMessage: 'content  需为 Json' },
-    },
-  })
-
-  if (ctx.validationErrors()) return null
-
   try {
-    await Content.create(ctx.request.body)
-    ctx.pipeDone()
+    const call = await Content.create({})
+    ctx.pipeDone(call)
   } catch (e) {
     ctx.pipeFail(e)
   }

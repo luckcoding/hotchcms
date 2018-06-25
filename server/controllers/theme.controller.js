@@ -18,12 +18,12 @@ exports.install = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    let { file } = ctx.request.body.files
+    let { file } = ctx.request.files
     const info = await ThemeLib.install(file)
     await Theme._install(info)
     ctx.pipeDone()
   } catch (e) {
-    ctx.pipeFail(e, '9999')
+    ctx.pipeFail(e)
   }
 }
 
@@ -32,7 +32,7 @@ exports.list = async (ctx) => {
     const call = await Theme._list()
     ctx.pipeDone(call)
   } catch (e) {
-    ctx.pipeFail(e, '9999')
+    ctx.pipeFail(e)
   }
 }
 
@@ -53,7 +53,7 @@ exports.set = async (ctx) => {
     await Theme._set(ctx.params._id)
     ctx.pipeDone()
   } catch (e) {
-    ctx.pipeFail(e, '9999')
+    ctx.pipeFail(e)
   }
 }
 
@@ -74,6 +74,6 @@ exports.uninstall = async (ctx) => {
     await Theme._uninstall(ctx.params._id)
     ctx.pipeDone()
   } catch (e) {
-    ctx.pipeFail(e, '9999')
+    ctx.pipeFail(e)
   }
 }

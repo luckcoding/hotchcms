@@ -14,3 +14,4 @@ static/upload
 temp/*
 !temp/*.gitkeep
 install.lock
+dump.rdb

@@ -86,14 +86,14 @@ export function query () {
           mpid: '3',
           name: '文章',
           icon: 'file-text',
-          route: 'content',
+          route: '/content',
         },
         {
           id: '33',
           bpid: '3',
           mpid: '-1',
           name: '文章编辑',
-          route: 'content/:id',
+          route: '/content/:id',
         },
       ],
     })

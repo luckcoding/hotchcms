@@ -15,16 +15,12 @@ export default {
   },
 
   subscriptions: {
-    setup ({ dispatch, location, history }) {
-      history.listen(({ pathname }) => {
-        const match = pathToRegexp('/content/:_id').exec(pathname)
+    setup ({ dispatch, history }) {
+      history.listen((location) => {
+        const match = pathToRegexp('/content/:_id').exec(location.pathname)
         if (match) {
           dispatch({ type: 'queryCategory', payload: location.query })
-          if (match[1] === 'edit') {
-            dispatch({ type: 'querySuccess', payload: { content: [] } })
-          } else {
-             dispatch({ type: 'query', payload: { _id: match[1] } })
-          }
+          dispatch({ type: 'query', payload: { _id: match[1] } })
         }
       })
     },

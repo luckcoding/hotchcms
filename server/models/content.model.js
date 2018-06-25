@@ -7,7 +7,7 @@ const Validator = require('../lib/mongoose-validator-schema')
  */
 const ContentSchema = new mongoose.Schema({
 
-  title: { type: String, required: true }, // 标题
+  title: { type: String }, // 标题
 
   subtitle: { type: String }, // 概述
 

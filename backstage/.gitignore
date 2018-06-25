@@ -14,3 +14,6 @@ npm-debug.log
 # umi
 .umi
 .umi-production
+
+dump.rdb
+.DS_Store
