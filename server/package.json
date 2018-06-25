@@ -7,13 +7,15 @@
     "lib": "lib"
   },
   "scripts": {
-    "dev": "nodemon index.js -e js,json"
+    "dev": "nodemon index.js -e js,json",
+    "start": "cross-env NODE_ENV=production node index.js"
   },
   "author": "luckcoding",
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.4.11",
     "bluebird": "^3.5.1",
+    "cross-env": "^5.2.0",
     "jsonwebtoken": "^8.2.2",
     "kcors": "^2.2.1",
     "koa": "^2.5.1",

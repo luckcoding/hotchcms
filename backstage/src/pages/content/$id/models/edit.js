@@ -15,7 +15,7 @@ export default {
   },
 
   subscriptions: {
-    setup ({ dispatch, history }) {
+    setup ({ dispatch, location, history }) {
       history.listen(({ pathname }) => {
         const match = pathToRegexp('/content/:_id').exec(pathname)
         if (match) {

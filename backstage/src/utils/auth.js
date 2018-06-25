@@ -8,7 +8,7 @@ export default {
     return `Bearer ${localStorage.getItem(`${config.prefix}token`)}`
   },
   jump () {
-    let from = location.pathname
-    window.location = `${location.origin}/login?from=${from}`
-  }
+    let from = window.location.pathname
+    window.location = `${window.location.origin}/login?from=${from}`
+  },
 }

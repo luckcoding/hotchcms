@@ -25,7 +25,7 @@ class Setting extends React.Component {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     if (nextProps.setting.siteInfo.keywords) {
       this.setState({ tags: nextProps.setting.siteInfo.keywords })
     }

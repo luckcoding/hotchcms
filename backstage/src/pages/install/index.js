@@ -31,7 +31,7 @@ const Install = ({
   }
 
   function handleOk () {
-    window.location = `${location.origin}/login`
+    window.location = `${window.location.origin}/login`
   }
 
   return (

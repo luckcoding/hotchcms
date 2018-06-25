@@ -27,7 +27,6 @@ const Login = ({
   return (
     <div className={styles.form}>
       <div className={styles.logo}>
-        <img alt="logo" src={config.logo} />
         <span>{config.name}</span>
       </div>
       <form>
