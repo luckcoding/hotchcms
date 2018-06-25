@@ -1,7 +1,6 @@
 {
-  "private": true,
-  "name": "antd-admin",
-  "version": "5.0.0-beta",
+  "name": "hotchcms",
+  "version": "1.0.0",
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.49",
     "antd": "^3.5.4",
@@ -10,18 +9,8 @@
     "braft-editor": "^1.9.7",
     "classnames": "^2.2.5",
     "compression": "^1.7.2",
-    "d3-shape": "^1.2.0",
-    "draftjs-to-html": "^0.8.4",
-    "draftjs-to-markdown": "^0.5.1",
     "dva-model-extend": "^0.1.2",
-    "echarts": "^4.1.0",
-    "echarts-for-react": "^2.0.11",
-    "echarts-gl": "^1.1.1",
-    "echarts-liquidfill": "^2.0.0",
     "express": "^4.16.3",
-    "highcharts-exporting": "^0.1.7",
-    "highcharts-more": "^0.1.7",
-    "jsonp": "^0.2.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
     "nprogress": "^0.2.0",
@@ -30,12 +19,9 @@
     "qs": "^6.5.2",
     "query-string": "^5.1.1",
     "rc-tween-one": "^1.8.1",
-    "react-adsense": "^0.0.5",
     "react-countup": "^3.0.3",
-    "react-draft-wysiwyg": "^1.12.13",
     "react-helmet": "^5.2.0",
-    "react-highcharts": "^16.0.2",
-    "recharts": "^1.0.0-beta.10"
+    "react-highcharts": "^16.0.2"
   },
   "devDependencies": {
     "babel-plugin-dev-expression": "^0.2.1",

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import isEmpty from 'lodash/isEmpty'
 // import { convertToRaw, convertFromRaw, EditorState } from 'draft-js'
 import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect, Switch } from 'antd'
-import { BraftEditor } from 'components'
+import { Editor } from 'components'
 
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
@@ -40,7 +40,6 @@ class Edit extends React.Component {
       inputValue: '',
       editorState: null,
       // editorState: EditorState.createEmpty(),
-      category: undefined,
     }
   }
 
@@ -59,10 +58,6 @@ class Edit extends React.Component {
     } else {
       return null
     }
-  }
-
-  onChange = (category) => {
-    this.setState({ category })
   }
 
   onEditorStateChange = (editorState) => {
@@ -114,7 +109,7 @@ class Edit extends React.Component {
 
     const _id = content._id
 
-    const { tags, inputVisible, inputValue, editorState, category } = this.state
+    const { tags, inputVisible, inputValue, editorState } = this.state
 
     const handleOk = (status) => {
       validateFieldsAndScroll((errors, values) => {
@@ -124,7 +119,6 @@ class Edit extends React.Component {
           payload: {
             _id,
             ...values,
-            category,
             status,
             tags,
             content: editorState,
@@ -136,17 +130,11 @@ class Edit extends React.Component {
 
     const loop = data => data.map((i) => {
       const title = <span style={{ textDecoration: !i.state && 'line-through' }}>{i.name}</span>
-
-      // const disabled = i._id === item._id
-      const disabled = false
-      if (i.children) {
-        return (
-          <TreeNode key={i._id} title={title} disabled={disabled} value={i._id}>
-            {loop(i.children)}
-          </TreeNode>
-        )
-      }
-      return <TreeNode key={i._id} title={title} disabled={disabled} value={i._id} />
+      return (
+        <TreeNode key={i._id} title={title} value={i._id}>
+          {i.children && loop(i.children)}
+        </TreeNode>
+      )
     })
 
     return (
@@ -157,14 +145,17 @@ class Edit extends React.Component {
           })(<Input />)}
         </FormItem>
         <FormItem label="类别" hasFeedback {...formItemLayout}>
-          <TreeSelect
-            value={category}
-            allowClear
-            treeDefaultExpandAll
-            onChange={this.onChange}
-          >
-            {loop(tree)}
-          </TreeSelect>
+          {getFieldDecorator('category', {
+            initialValue: content.category,
+          })(
+            <TreeSelect
+              allowClear
+              treeDefaultExpandAll
+              onChange={this.onChange}
+            >
+              {loop(tree)}
+            </TreeSelect>
+          )}
         </FormItem>
         <FormItem label="标签" hasFeedback {...formItemLayout}>
           {tags.map((tag) => {
@@ -208,7 +199,7 @@ class Edit extends React.Component {
           })(<Switch />)}
         </FormItem>
         <Card title="文章内容">
-          <BraftEditor
+          <Editor
             initialContent={editorState}
             onRawChange={this.onEditorStateChange}
           />
@@ -229,12 +220,6 @@ Edit.propTypes = {
   tree: PropTypes.array,
 }
 
-const mapStateToProps = ({ contentEdit }) => {
-  const { content, tree } = contentEdit
-  return {
-    content,
-    tree,
-  }
-}
-
-export default connect(mapStateToProps)(Form.create()(Edit))
+export default connect(({ contentEdit }) => ({
+  ...contentEdit,
+}))(Form.create()(Edit))
