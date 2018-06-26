@@ -36,7 +36,7 @@ module.exports = async (ctx) => {
     const { alias } = theme
 
     // 前端加载路径
-    const source = `/themes/${alias}`
+    const source = `/theme/${alias}`
 
     const navigation = await Category._navigation()
 
@@ -60,7 +60,6 @@ module.exports = async (ctx) => {
       _.forEach(navigation, (item) => {
         if (item.isHome) current = item.path
       })
-
       return await ctx.render(`${alias}/module/home`, {
         siteInfo,
         // categories: {},

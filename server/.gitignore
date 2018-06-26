@@ -7,8 +7,8 @@ npm-debug.log*
 node_modules
 logs/*
 !logs/*.gitkeep
-static/themes
-!static/themes/*.gitkeep
+static/theme
+!static/theme/*.gitkeep
 static/upload
 !static/upload/*.gitkeep
 temp/*

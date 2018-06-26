@@ -54,10 +54,10 @@ app.use(convert.compose(
 ))
 
 // 静态文件
-app.use(convert(koaStatic(path.join(__dirname, './theme'))))
+app.use(convert(koaStatic(path.join(__dirname, './static/'))))
 
 // 渲染引擎
-app.use(views(path.join(__dirname, './theme'), {
+app.use(views(path.join(__dirname, './static/theme/'), {
   extension: 'ejs',
 }))
 
