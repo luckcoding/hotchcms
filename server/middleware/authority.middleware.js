@@ -11,8 +11,8 @@ const verify = (token, secretStr) => new Promise((resolve) => {
   })
 })
 
-module.exports = route => koaAuthority({
-  routes: route.auth,
+module.exports = authRoute => koaAuthority({
+  routes: authRoute,
   middleware: async (ctx, auth) => {
     let _id = null
     let authorities = []
@@ -37,6 +37,8 @@ module.exports = route => koaAuthority({
         }
       }
     }
+
+    ctx.authorities = authorities
     return Promise.resolve(authorities)
   },
 })

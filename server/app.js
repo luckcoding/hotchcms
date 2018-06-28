@@ -16,6 +16,7 @@ const config = require('./config')
 
 global.Promise = require('bluebird')
 global.Throw = Throw
+global.Route = route // 处理lib自执行函数内绑定controller时传值问题
 
 const app = new Koa()
 app.jsonSpaces = 0 // 压缩json返回中的空格
@@ -31,7 +32,7 @@ app.use(convert(koaBody({
   multipart: true,
   formLimit: '5mb',
   formidable: {
-    uploadDir: path.join(__dirname + '/temp'),
+    uploadDir: path.join(__dirname + '/tmp'),
   }
 })))
 
@@ -48,7 +49,7 @@ app.use(async (ctx, next) => {
 
 // middleware
 app.use(convert.compose(
-  authority(route), // 权限验证
+  authority(route.auth), // 权限验证
   validation(), // 验证参数
   pipe() // 通讯
 ))

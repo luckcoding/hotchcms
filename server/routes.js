@@ -14,98 +14,98 @@ module.exports = {
     },
 
     '/site-info': {
-      get: ['site-info.get'], // 获取站点信息
-      put: ['site-info.save'], // 存储站点信息
+      get: '*site-info.get#【网站】获取信息',
+      put: '*site-info.save#【网站】保存信息',
     },
 
     '/admin-account': {
-      get: ['admin-account.current'], // 查询当前账号
-      put: ['admin-account.update'], // 更新当前账号
+      get: '*admin-account.current#【当前账号】查询',
+      put: '*admin-account.update#当前账号】更新',
 
       '/sign-in': {
         put: 'admin-account.signIn', // 登录
       },
 
       '/sign-out': {
-        put: ['admin-account.signOut'], // 退出
+        put: '*admin-account.signOut#退出',
       },
     },
 
     '/admin-group': {
-      post: ['admin-group.create'], // 新增用户组
-      get: ['admin-group.list'], // 查询所有用户组
+      post: '*admin-group.create#【管理组】新增',
+      get: '*admin-group.list#【管理组】查询',
 
       '/:_id': {
-        put: ['admin-group.update'], // 更新用户组
-        get: ['admin-group.one'], // 查询用户组
-        delete: ['admin-group.delete'], // 删除用户组
+        put: '*admin-group.update#【管理组】更新',
+        get: '*admin-group.one#【管理组】列表',
+        delete: '*admin-group.delete#【管理组】删除',
       },
 
       '/multi': {
-        post: ['admin-group.multi'], // 多条操作
+        post: '*admin-group.multi#【用户组】多项操作',
       },
     },
 
     '/admin-user': {
-      post: ['admin-user.create'], // 新增账号
-      get: ['admin-user.list'], // 查询所有账号
+      post: '*admin-user.create#【管理员】新增',
+      get: '*admin-user.list#【管理员】列表',
 
       '/:_id': {
-        put: ['admin-user.update'], // 更新账号
-        get: ['admin-user.one'], // 查询账号
-        delete: ['admin-user.delete'], // 删除账号
+        put: '*admin-user.update#【管理员】更新',
+        get: '*admin-user.one#【管理员】查询',
+        delete: '*admin-user.delete#【管理员】删除',
       },
 
       '/multi': {
-        post: ['admin-user.multi'], // 多条操作
+        post: '*admin-user.multi#【管理员】多条操作',
       },
     },
 
     '/category': {
-      post: ['category.create'], // 新增分类
-      get: ['category.tree'], // 查询分类树
+      post: '*category.create#【分类】新增',
+      get: '*category.tree#【分类】查询',
 
       '/:_id': {
-        put: ['category.update'], // 更新分类
-        get: ['category.one'], // 查询分类
-        delete: ['category.delete'], // 删除分类
+        put: '*category.update#【分类】更新',
+        get: '*category.one#【分类】列表',
+        delete: '*category.delete#【分类】删除',
       },
 
       '/multi': {
-        post: ['category.multi'], // 多条操作
+        post: '*category.multi#【分类】多条操作',
       },
     },
 
     '/content': {
-      post: ['content.create'], // 创建文章
-      get: ['content.list'],
+      post: '*content.create#【文章】创建',
+      get: '*content.list#【文章】列表',
 
       '/:_id': {
-        put: ['content.update'],
-        get: ['content.one'],
-        delete: ['content.delete'],
+        put: '*content.update#【文章】更新',
+        get: '*content.one#【文章】详情',
+        delete: '*content.delete#【文章】删除',
       },
 
       '/multi': {
-        post: ['content.multi'],
+        post: '*content.multi#【文章】多项操作',
       },
     },
 
     '/theme': {
-      get: ['theme.list'],
-      post: ['theme.install'], // 安装主题
+      get: '*theme.list#【主题】列表',
+      post: '*theme.install#【主题】安装',
       '/:_id': {
-        put: ['theme.set'], // 设置默认主题
+        put: '*theme.set#【主题】设置默认',
       },
     },
 
     '/authority': {
-      get: ['authority.list'], // 权限列表
+      get: '*authority.list#【权限】列表',
     },
 
     '/media': {
-      post: ['media.create'], //文件上传
-      get: ['media.list'],
+      post: '*media.create#【文件】上传',
+      get: '*media.list#【文件】列表',
     }
   },
 

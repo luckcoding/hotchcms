@@ -11,7 +11,7 @@ static/theme
 !static/theme/*.gitkeep
 static/upload
 !static/upload/*.gitkeep
-temp/*
-!temp/*.gitkeep
+tmp/*
+!tmp/*.gitkeep
 install.lock
 dump.rdb
