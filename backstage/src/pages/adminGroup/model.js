@@ -2,6 +2,7 @@
 import modelExtend from 'dva-model-extend'
 import { create, remove, update } from './services/adminGroup'
 import * as adminGroupsService from './services/adminGroups'
+import * as authorityService from './services/authority'
 import { pageModel } from 'utils/model'
 
 const { query, multi } = adminGroupsService
@@ -11,6 +12,7 @@ export default modelExtend(pageModel, {
 
   state: {
     currentItem: {},
+    authority: [],
     modalVisible: false,
     modalType: 'create',
     selectedRowKeys: [],
@@ -44,6 +46,20 @@ export default modelExtend(pageModel, {
               pageSize: Number(payload.pageSize) || 10,
               total: data.result.total,
             },
+          },
+        })
+      } else {
+        throw data
+      }
+    },
+
+    * queryAuthority ({ payload = {} }, { call, put }) {
+      const data = yield call(authorityService.query, payload)
+      if (data.code === '0000') {
+        yield put({
+          type: 'updateState',
+          payload: {
+            authority: data.result,
           },
         })
       } else {

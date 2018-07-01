@@ -6,7 +6,6 @@ const configFile = () => path.join(__dirname, '../config/mongodb.config')
 
 /**
  * 使用 bluebird 诺言库
- * @type {[type]}
  */
 mongoose.Promise = global.Promise
 
@@ -15,17 +14,18 @@ mongoose.Promise = global.Promise
  */
 exports.test = (options = {}) => new Promise((resolve, reject) => {
   const DB = mongoose.createConnection()
-  console.log(Object.keys(DB))
   const { host, port, db, user, pass } = options
-  DB.open(host, db, port, { user, pass }, (err) => {
-    if (err) {
-      reject(err)
-    } else {
-      // 关闭后返回
-      DB.close()
-      resolve()
-    }
+
+  DB.openUri(`mongodb://${host}:${port}/${db}`, {
+    user,
+    pass,
+    promiseLibrary: global.Promise,
   })
+    .once('open', async () => {
+      await DB.close()
+      resolve()
+    })
+    .on('error', (err) => reject(err))
 })
 
 
@@ -52,7 +52,12 @@ exports.connect = () => new Promise((resolve, reject) => {
 
     try {
       const { host, port, db, user = '', pass = '' } = JSON.parse(file)
-      await mongoose.connect(`${user ? `${user}:${pass}@` : ''}mongodb://${host}:${port}/${db}`, { useMongoClient: true })
+
+      await mongoose.connect(`mongodb://${host}:${port}/${db}`, {
+        user,
+        pass,
+      })
+
       resolve()
     } catch (e) {
       reject(e)

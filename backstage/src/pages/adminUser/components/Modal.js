@@ -16,6 +16,7 @@ const formItemLayout = {
 
 const modal = ({
   item = {},
+  groupList = [],
   onOk,
   form: {
     getFieldDecorator,
@@ -41,10 +42,6 @@ const modal = ({
   const modalOpts = {
     ...modalProps,
     onOk: handleOk,
-  }
-
-  function handleChange (value) {
-    console.log(`selected ${value}`)
   }
 
   return (
@@ -83,16 +80,16 @@ const modal = ({
           })(<Input />)}
         </FormItem>
         <FormItem label="用户组" hasFeedback {...formItemLayout}>
-          <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="disabled" disabled>Disabled</Option>
-            <Option value="Yiminghe">yiminghe</Option>
-          </Select>
+          {getFieldDecorator('group', {
+            initialValue: item.group ? item.group._id : null,
+          })(
+            <Select>
+              {groupList.map((item, key) => <Option key={key} value={item._id}>{item.name}</Option>)}
+            </Select>
+          )}
         </FormItem>
-        <FormItem label="密码" hasFeedback {...formItemLayout}>
+        <FormItem label={modalType === 'update' ? '新密码' : '密码'} hasFeedback {...formItemLayout}>
           {getFieldDecorator('password', {
-            initialValue: item.password,
             rules: [
               {
                 required: modalType !== 'update',

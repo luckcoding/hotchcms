@@ -118,7 +118,7 @@ export default {
       payload,
     }, { call, put }) {
       const data = yield call(logout, parse(payload))
-      if (data.success) {
+      if (data.code === '0000') {
         yield put({ type: 'updateState', payload: {
           user: {},
           permissions: { visit: [] },

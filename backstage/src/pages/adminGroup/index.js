@@ -14,7 +14,7 @@ const AdminGroup = ({
 }) => {
   const { query, pathname } = location
   const {
-    list, pagination, currentItem, modalVisible, modalType, selectedRowKeys,
+    list, pagination, currentItem, authority, modalVisible, modalType, selectedRowKeys,
   } = adminGroup
 
   const handleRefresh = (newQuery) => {
@@ -29,6 +29,7 @@ const AdminGroup = ({
 
   const modalProps = {
     item: modalType === 'create' ? {} : currentItem,
+    authority,
     visible: modalVisible,
     maskClosable: false,
     confirmLoading: loading.effects[`adminGroup/${modalType}`],
@@ -74,12 +75,17 @@ const AdminGroup = ({
     },
     onEditItem (item) {
       dispatch({
-        type: 'adminGroup/showModal',
-        payload: {
-          modalType: 'update',
-          currentItem: item,
-        },
+        type: 'adminGroup/queryAuthority',
       })
+        .then(() => {
+          dispatch({
+            type: 'adminGroup/showModal',
+            payload: {
+              modalType: 'update',
+              currentItem: item,
+            },
+          })
+        })
     },
     rowSelection: {
       selectedRowKeys,

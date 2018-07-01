@@ -43,6 +43,9 @@ const List = ({
       title: '权限',
       dataIndex: 'authorities',
       key: 'authorities',
+      render: (text, record) => {
+        return <span style={{fontSize: '12px'}}>{record.authority.map(_ => _.name).join(',')}</span>
+      }
     }, {
       title: '操作',
       key: 'operation',

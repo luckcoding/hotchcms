@@ -1,7 +1,9 @@
 /* global window */
+import md5 from 'blueimp-md5'
 import modelExtend from 'dva-model-extend'
 import { create, remove, update } from './services/adminUser'
 import * as adminUsersService from './services/adminUsers'
+import * as adminGroupsService from './services/adminGroups'
 import { pageModel } from 'utils/model'
 
 const { query, multi } = adminUsersService
@@ -11,6 +13,7 @@ export default modelExtend(pageModel, {
 
   state: {
     currentItem: {},
+    groupList: [],
     modalVisible: false,
     modalType: 'create',
     selectedRowKeys: [],
@@ -51,6 +54,20 @@ export default modelExtend(pageModel, {
       }
     },
 
+    * queryGroup ({ payload }, { call, put }) {
+      const data = yield call(adminGroupsService.query, payload)
+      if (data.code === '0000') {
+        yield put({
+          type: 'updateState',
+          payload: {
+            groupList: data.result,
+          },
+        })
+      } else {
+        throw data
+      }
+    },
+
     * delete ({ payload }, { call, put, select }) {
       const data = yield call(remove, { _id: payload })
       const { selectedRowKeys } = yield select(_ => _.adminUser)
@@ -72,6 +89,7 @@ export default modelExtend(pageModel, {
     },
 
     * create ({ payload }, { call, put }) {
+      payload.password = md5(payload.password)
       const data = yield call(create, payload)
       if (data.code === '0000') {
         yield put({ type: 'hideModal' })
@@ -82,6 +100,7 @@ export default modelExtend(pageModel, {
     },
 
     * update ({ payload }, { select, call, put }) {
+      payload.password = md5(payload.password)
       const _id = yield select(({ adminUser }) => adminUser.currentItem._id)
       const newadminUser = { ...payload, _id }
       const data = yield call(update, newadminUser)

@@ -1,8 +1,10 @@
 import React from 'react'
+import keyBy from 'lodash/keyBy'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal } from 'antd'
+import { Form, Input, Modal, Select } from 'antd'
 
 const FormItem = Form.Item
+const Option = Select.Option
 
 const formItemLayout = {
   labelCol: {
@@ -15,6 +17,7 @@ const formItemLayout = {
 
 const modal = ({
   item = {},
+  authority = [],
   onOk,
   form: {
     getFieldDecorator,
@@ -24,15 +27,29 @@ const modal = ({
   modalType,
   ...modalProps
 }) => {
+
+  // 解析权限对应传值
+  const decode = (authorities) => {
+    let output = []
+    const authPrefix = keyBy(authority, 'prefix')
+    authorities.forEach(function (item) {
+      output.push(authPrefix[item].value)
+    })
+    return output
+  }
+
   const handleOk = () => {
     validateFields((errors) => {
       if (errors) {
         return
       }
+
       const data = {
         ...getFieldsValue(),
         key: item.key,
       }
+
+      data.authorities = decode(data.authorities)
       onOk(data)
     })
   }
@@ -77,8 +94,14 @@ const modal = ({
         </FormItem>
         <FormItem label="权限" hasFeedback {...formItemLayout}>
           {getFieldDecorator('authorities', {
-            initialValue: item.authorities,
-          })(<Input />)}
+            initialValue: item.authority.map(_ => _.prefix),
+          })(
+            <Select mode="multiple">
+              {authority.map((item, key) => (
+                <Option key={key} value={item.prefix}>{item.name}</Option>
+              ))}
+            </Select>
+          )}
         </FormItem>
       </Form>
     </Modal>

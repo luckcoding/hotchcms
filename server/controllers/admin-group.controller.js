@@ -1,3 +1,4 @@
+const lodash = require('lodash')
 const {
   AdminGroup,
   AdminUser,
@@ -96,10 +97,25 @@ exports.list = async (ctx) => {
       .sort('-gradation')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select('name description authorities gradation')
-      .lean()
+      .select()
+      // .lean() // 返回虚拟字段 authority
 
     ctx.pipeDone({ list, total, pageSize, page })
+  } catch (e) {
+    ctx.pipeFail(e)
+  }
+}
+
+/**
+ * 查询所有
+ */
+exports.all = async (ctx) => {
+  try {
+    const list = await AdminGroup.find({})
+      .sort('-gradation')
+      .select('name')
+      .lean()
+    ctx.pipeDone(list)
   } catch (e) {
     ctx.pipeFail(e)
   }
@@ -131,6 +147,7 @@ exports.delete = async (ctx) => {
 }
 
 exports.multi = async (ctx) => {
+  console.log('1231321')
   ctx.checkBody({
     type: {
       notEmpty: {
@@ -143,7 +160,10 @@ exports.multi = async (ctx) => {
       },
     },
     multi: {
-      optional: true,
+      notEmpty: {
+        options: [true],
+        errorMessage: 'multi 不能为空',
+      },
       inArray: {
         options: ['isMongoId'],
         errorMessage: 'multi 内需为 mongoId',

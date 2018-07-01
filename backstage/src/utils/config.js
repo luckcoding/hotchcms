@@ -17,6 +17,7 @@ module.exports = {
     content: `${API_URL}/content/:_id`, // 内容
     siteInfo: `${API_URL}/site-info`, // 站点信息
     theme: `${API_URL}/theme/:_id`, // 主题
+    authority: `${API_URL}/authority`, // 权限
 
     install: `${API_URL}/install`, // 安装
     testDatabase: `${API_URL}/install/test-database`, // 检测数据裤

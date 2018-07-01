@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { parse } = require('../lib/authority.lib')
 const Validator = require('../lib/mongoose-validator-schema')
 
 /**
@@ -18,7 +19,13 @@ const AdminGroupSchema = new mongoose.Schema({
   authorities: { type: Array, default: [] },
 }, {
   collection: 'adminGroup',
+  toObject: { virtuals: true},
+  toJSON: { virtuals: true},
   id: false,
+})
+
+AdminGroupSchema.virtual('authority').get(function () {
+  return parse(this.authorities)
 })
 
 AdminGroupSchema.plugin(Validator)
