@@ -24,6 +24,8 @@ module.exports = authRoute => koaAuthority({
         const decoded = await verify(parts[1], secret)
         ctx.state.user = decoded
         _id = ctx.state.user.data
+
+        console.log(ctx.state.user)
       }
     }
 

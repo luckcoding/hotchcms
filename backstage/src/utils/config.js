@@ -5,6 +5,12 @@ module.exports = {
   prefix: 'hotchcms',
   footerText: 'Hotchcms',
   openPages: ['/login', '/install'],
+  get inAuth () {
+    return `${this.prefix}InAuth`
+  },
+  get jwt () {
+    return `${this.prefix}JWT`
+  },
   api: {
     signIn: `${API_URL}/admin-account/sign-in`, // 登录
     signOut: `${API_URL}/admin-account/sign-out`, // 注册

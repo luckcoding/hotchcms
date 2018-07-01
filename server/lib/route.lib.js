@@ -38,6 +38,7 @@ const controllers = requireAll({
           , action
           , description
           , inAuthed
+          , fn
 
         // 是否需要验权限
         inAuthed = value.indexOf('*') !== -1
@@ -56,18 +57,15 @@ const controllers = requireAll({
         // 路由描述
         notes[`${route}[${key}]`] = description
 
-        // 绑定
-        if (action) {
-          router[key](route, controllers[controller][action])
-          if (inAuthed) {
-            auth[key](route, controllers[controller][action])
-          }
-        } else if (controller) {
-          router[key](route, controllers[controller])
-          if (inAuthed) {
-            auth[key](route, controllers[controller][action])
-          }
+        // 获取控制器函数
+        fn = action ? controllers[controller][action] : controllers[controller]
+
+        // 路由绑定函数
+        if (inAuthed) {
+          router[key](route, controllers.check()) // 验证状态
+          auth[key](route, fn)
         }
+        router[key](route, fn)
       }
     }
   })

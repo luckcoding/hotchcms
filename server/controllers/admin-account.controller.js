@@ -31,7 +31,7 @@ exports.signIn = async (ctx) => {
 
       const _id = call._id.toString()
       const token = jwt.sign({ data: _id }, secret, { expiresIn: expires })
-      await cache.set(token, _id, expires) // 以 token 为key
+      // await cache.set(token, _id, expires) // 以 token 为key
       ctx.pipeDone(token)
     } else {
       ctx.pipeFail('用户名或密码错误', 'BN99')
@@ -46,8 +46,12 @@ exports.signIn = async (ctx) => {
  */
 exports.signOut = async (ctx) => {
   try {
+    const { data: _id, exp } = ctx.state.user
+    const expires = exp * 1000 - Date.now()
+
     const auth = ctx.request.headers.authorization.split(' ')[1]
-    await cache.del(auth)
+    // await cache.del(auth)
+    await cache.set(auth, _id, expires)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
