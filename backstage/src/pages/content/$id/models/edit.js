@@ -1,13 +1,14 @@
 import { message } from 'antd'
+import modelExtend from 'dva-model-extend'
 import pathToRegexp from 'path-to-regexp'
 import { routerRedux } from 'dva/router'
-import lodash from 'lodash'
-import { query, create, update } from '../../services/content'
+import { model } from 'utils/model'
+import { query, update } from '../../services/content'
 import * as categorysService from '../../../category/services/categorys'
 
-export default {
+export default modelExtend(model, {
 
-  namespace: 'contentEdit',
+  namespace: 'contentDetail',
 
   state: {
     content: {},
@@ -32,7 +33,7 @@ export default {
       const { code, result } = data
       if (code === '0000') {
         yield put({
-          type: 'querySuccess',
+          type: 'updateState',
           payload: {
             content: result,
           },
@@ -47,23 +48,29 @@ export default {
       const { code, result } = data
       if (code === '0000') {
         yield put({
-          type: 'queryCategorySuccess',
-          payload: result,
+          type: 'updateState',
+          payload: {
+            tree: result,
+          },
         })
       } else {
         throw data
       }
     },
 
-    * save ({ payload }, { select, call, put }) {
-      const { contentEdit } = yield select(_ => _)
-      const { content } = contentEdit
-
-      const action = lodash.isEmpty(content) ? create : update
-      const data = yield call(action, payload)
+    * update ({ payload }, { call, put }) {
+      const data = yield call(update, payload)
       const { code } = data
       if (code === '0000') {
         message.success('编辑完成')
+        // 处理 edit 缓存
+        yield put({
+          type: 'updateState',
+          payload: {
+            tree: [],
+            content: {},
+          },
+        })
         yield put(routerRedux.goBack())
       } else {
         throw data
@@ -71,20 +78,4 @@ export default {
     },
 
   },
-
-  reducers: {
-    querySuccess (state, { payload }) {
-      return {
-        ...state,
-        ...payload,
-      }
-    },
-
-    queryCategorySuccess (state, { payload: tree }) {
-      return {
-        ...state,
-        tree,
-      }
-    },
-  },
-}
+})

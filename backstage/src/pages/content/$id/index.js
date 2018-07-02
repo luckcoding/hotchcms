@@ -2,7 +2,6 @@ import React from 'react'
 import { connect } from 'dva'
 import PropTypes from 'prop-types'
 import isEmpty from 'lodash/isEmpty'
-// import { convertToRaw, convertFromRaw, EditorState } from 'draft-js'
 import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect, Switch } from 'antd'
 import { Editor } from 'components'
 
@@ -38,31 +37,20 @@ class Edit extends React.Component {
       tags: [],
       inputVisible: false,
       inputValue: '',
-      editorState: null,
-      // editorState: EditorState.createEmpty(),
+      editorState: '',
     }
+    this.editorInstance = null
   }
 
   static getDerivedStateFromProps (nextProps) {
     if (!isEmpty(nextProps.content)) {
-      const { tags, category, content } = nextProps.content
+      const { tags } = nextProps.content
       return {
         tags,
-        category,
-        editorState: content,
-        // editorState: EditorState.createWithContent(convertFromRaw({
-        //   entityMap: {},
-        //   ...content,
-        // })),
       }
     } else {
       return null
     }
-  }
-
-  onEditorStateChange = (editorState) => {
-    console.log(editorState)
-    this.setState({ editorState })
   }
 
   handleClose = (removedTag) => {
@@ -105,24 +93,22 @@ class Edit extends React.Component {
       },
       content = {},
       tree = [],
+      dispatch,
     } = this.props
 
-    const _id = content._id
-
-    const { tags, inputVisible, inputValue, editorState } = this.state
+    const { tags, inputVisible, inputValue } = this.state
 
     const handleOk = (status) => {
       validateFieldsAndScroll((errors, values) => {
         if (status && errors) return null
-        return this.props.dispatch({
-          type: 'contentEdit/save',
+        dispatch({
+          type: 'contentDetail/update',
           payload: {
-            _id,
+            _id: content._id,
             ...values,
             status,
             tags,
-            content: editorState,
-            // content: convertToRaw(editorState.getCurrentContent()),
+            content: this.editorInstance.getHTMLContent(),
           },
         })
       })
@@ -200,8 +186,9 @@ class Edit extends React.Component {
         </FormItem>
         <Card title="文章内容">
           <Editor
-            initialContent={editorState}
-            onRawChange={this.onEditorStateChange}
+            ref={instance => this.editorInstance = instance}
+            contentFormat="html"
+            initialContent={content.content}
           />
         </Card>
         <ButtonGroup size="large" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
@@ -215,11 +202,12 @@ class Edit extends React.Component {
 
 Edit.propTypes = {
   form: PropTypes.object.isRequired,
-  dispatch: PropTypes.func,
+  dispatch: PropTypes.func.isRequired,
   content: PropTypes.object,
   tree: PropTypes.array,
 }
 
-export default connect(({ contentEdit }) => ({
-  ...contentEdit,
+export default connect(({ contentDetail }) => ({
+  content: contentDetail.content,
+  tree: contentDetail.tree,
 }))(Form.create()(Edit))

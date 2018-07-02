@@ -17,7 +17,7 @@ const ContentSchema = new mongoose.Schema({
 
   tags: [{ type: String }], // 标签
 
-  content: { type: Object }, // 内容
+  content: { type: String }, // 内容，存储 html 字符串，不再存储json格式
 
   date: { type: Date, default: Date.now }, // 创建时间
 

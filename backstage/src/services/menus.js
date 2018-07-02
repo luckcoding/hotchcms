@@ -44,14 +44,6 @@ export function query () {
           route: '/adminGroup/:id',
         },
         {
-          id: '24',
-          bpid: '2',
-          mpid: '2',
-          name: '权限',
-          icon: 'solution',
-          route: '/authory',
-        },
-        {
           id: '25',
           bpid: '2',
           mpid: '2',
