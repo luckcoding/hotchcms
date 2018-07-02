@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:3030/api'
+const BASE_URL = 'http://localhost:3030'
+const API_URL = `${BASE_URL}/api`
 
 module.exports = {
   name: 'Hotchcms',
@@ -10,6 +11,9 @@ module.exports = {
   },
   get jwt () {
     return `${this.prefix}JWT`
+  },
+  getImgUrl (path) {
+    return `${BASE_URL}/upload/${path}`
   },
   api: {
     signIn: `${API_URL}/admin-account/sign-in`, // 登录
@@ -24,6 +28,7 @@ module.exports = {
     siteInfo: `${API_URL}/site-info`, // 站点信息
     theme: `${API_URL}/theme/:_id`, // 主题
     authority: `${API_URL}/authority`, // 权限
+    media: `${API_URL}/media`, // 多媒体
 
     install: `${API_URL}/install`, // 安装
     testDatabase: `${API_URL}/install/test-database`, // 检测数据裤

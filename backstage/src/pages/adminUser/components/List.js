@@ -4,8 +4,10 @@ import { Table, Modal } from 'antd'
 import classnames from 'classnames'
 import { DropOption } from 'components'
 import { Link } from 'react-router-dom'
+import { config } from 'utils'
 import styles from './List.less'
 
+const { getImgUrl } = config
 const { confirm } = Modal
 
 const List = ({
@@ -32,7 +34,7 @@ const List = ({
       key: 'avatar',
       width: 64,
       className: styles.avatar,
-      render: text => <img alt="avatar" width={24} src={text} />,
+      render: text => <img alt="avatar" width={24} src={getImgUrl(text)} />,
     }, {
       title: '邮箱',
       dataIndex: 'email',

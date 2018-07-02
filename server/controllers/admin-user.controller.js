@@ -79,7 +79,7 @@ exports.one = async (ctx) => {
 
   try {
     const call = await AdminUser.findById(ctx.params._id)
-      .select('email mobile nickname create group')
+      .select()
       .populate('group', 'name description authorities gradation')
       .lean()
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99')
@@ -127,8 +127,8 @@ exports.list = async (ctx) => {
       .sort('-create.date')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select('email mobile nickname create group')
-      .populate('group', 'name description authorities gradation')
+      .select()
+      .populate('group', 'name')
       .lean()
 
     ctx.pipeDone({ list, total, pageSize, page })

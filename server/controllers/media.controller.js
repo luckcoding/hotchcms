@@ -60,7 +60,7 @@ exports.create = async (ctx) => {
     // 数据库存储
     const medias = await Media.create(info)
 
-    ctx.pipeDone(info)
+    ctx.pipeDone(medias)
   } catch (e) {
     ctx.pipeFail(e)
   }
