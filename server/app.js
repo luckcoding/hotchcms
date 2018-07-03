@@ -36,20 +36,9 @@ app.use(convert(koaBody({
   }
 })))
 
-// 处理query空值情况
-app.use(async (ctx, next) => {
-  const { query } = ctx.request
-  for (let key in query) {
-    if (typeof query[key] === 'undefined' || query[key] === '') {
-      delete query[key]
-    }
-  }
-  await next()
-})
-
 // middleware
 app.use(convert.compose(
-  authority(route.auth), // 权限验证
+  authority(route.authRoutes), // 权限验证
   validation(), // 验证参数
   pipe() // 通讯
 ))

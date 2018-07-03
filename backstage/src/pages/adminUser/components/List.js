@@ -34,7 +34,7 @@ const List = ({
       key: 'avatar',
       width: 64,
       className: styles.avatar,
-      render: text => <img alt="avatar" width={24} src={getImgUrl(text)} />,
+      render: text => text && <img alt="avatar" width={24} src={getImgUrl(text)} />,
     }, {
       title: '邮箱',
       dataIndex: 'email',
