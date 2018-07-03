@@ -1038,9 +1038,9 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
 
-koa-authority@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/koa-authority/-/koa-authority-0.2.2.tgz#fbe6f54881cedf9e3e0a51917ce9c807563cc343"
+koa-authority@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/koa-authority/-/koa-authority-0.3.0.tgz#8557f07d99a6af6d4478cf840ada8e2bb9498de7"
   dependencies:
     lodash "^4.17.4"
     path-to-regexp "^1.7.0"

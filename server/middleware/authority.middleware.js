@@ -13,7 +13,8 @@ const verify = (token, secretStr) => new Promise((resolve) => {
 
 module.exports = authRoute => koaAuthority({
   routes: authRoute,
-  middleware: async (ctx, auth) => {
+  useKoaRouter: true,
+  middleware: async (ctx, { routes }) => {
     let _id = null
     let authorities = []
 
@@ -24,8 +25,6 @@ module.exports = authRoute => koaAuthority({
         const decoded = await verify(parts[1], secret)
         ctx.state.user = decoded
         _id = ctx.state.user.data
-
-        console.log(ctx.state.user)
       }
     }
 
@@ -33,7 +32,7 @@ module.exports = authRoute => koaAuthority({
       const user = await AdminUser.findById(_id).populate('group').lean()
       if (user && user.group) {
         if (user.group.gradation === 100) {
-          authorities = auth.scatter
+          authorities = routes
         } else {
           authorities = user.group.authorities
         }

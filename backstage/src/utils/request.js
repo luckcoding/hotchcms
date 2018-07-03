@@ -28,6 +28,11 @@ const fetch = (options) => {
         delete cloneData[item.name]
       }
     }
+    for (let key in cloneData) {
+      if (cloneData[key] === null || cloneData[key] === undefined) {
+        delete cloneData[key]
+      }
+    }
     url = domain + url
   } catch (e) {
     message.error(e.message)

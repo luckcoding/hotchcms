@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const lodash = require('lodash')
 const jwt = require('jsonwebtoken')
 const cache = require('../lib/cache.lib')
 const sha1 = require('../lib/sha1.lib')
@@ -13,7 +13,7 @@ const { _validator } = AdminUser.schema
  */
 exports.signIn = async (ctx) => {
   ctx.checkBody(_validator([
-    '*email', '*password',
+    'email', '*password', 'mobile'
   ], {
     autoSignIn: {
       optional: true,
@@ -24,8 +24,16 @@ exports.signIn = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    const { email, password, autoSignIn } = ctx.request.body
-    const call = await AdminUser.findOne({ email })
+    const { email, mobile, password, autoSignIn } = ctx.request.body
+
+    let query = {}
+
+    if (email) query.email = email
+    if (mobile) query.mobile = mobile
+
+    if (lodash.isEmpty(query)) return ctx.pipeFail('缺少账户信息', 'BN99')
+
+    const call = await AdminUser.findOne(query)
     if (call && sha1(password) === call.password) {
       let expires = autoSignIn ? expiresInLong : expiresIn // token 时间
 
@@ -60,8 +68,6 @@ exports.signOut = async (ctx) => {
 
 /**
  * 查询当前账号
- * @param  {[type]} ctx [description]
- * @return {[type]}     [description]
  */
 exports.current = async (ctx) => {
   try {
@@ -77,14 +83,14 @@ exports.current = async (ctx) => {
  * 更新当前账号
  */
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator(['nickname', 'mobile', 'password', 'avatar']))
+  ctx.checkBody(_validator(['nickname', 'mobile', 'email', 'password', 'avatar']))
 
   if (ctx.validationErrors()) return null
 
   try {
     const _id = ctx.state.user.data
 
-    const input = _.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
+    const input = lodash.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
     if (input.password) input.password = sha1(input.password)
 
     await AdminUser.update({ _id }, input, { runValidators: true })
