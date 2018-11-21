@@ -2,17 +2,41 @@
 
 使用koa、mongoose、redis、react、antd、dva开发一套一键安装式的cms系统。
 
-## Run
+## 预览
+
+### 管理平台
+
+![](source/view01.png)
+
+### 主题
+
+![](source/view02.png)
+
+> 主题文件仅供学习参考
+
+## 启动
 
 `$ git clone https://github.com/luckcoding/hotchcms.git`
 
 ### 服务端
+
+`$ mongod && redis-server`
 
 `$ cd server && npm install && npm start`
 
 ### 管理平台
 
 `$ cd backstage && npm install && npm run build && npm start`
+
+### 安装
+
+浏览器打开管理平台安装地址*(默认: `http://localhost:8000/install`)*，进入安装界面，如下图
+
+![](source/view03.png)
+
+### 主题安装
+
+管理平台导入 `source/default.zip` 文件即可
 
 ## Update
 
