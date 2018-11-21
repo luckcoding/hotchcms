@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const validator = require('validator')
-const { Category } = require('../models')
+const { Category, Content } = require('../models')
 
 const { SiteInfo, ThemeInfo } = require('../services/site.service')
 
@@ -54,6 +54,12 @@ module.exports = async (ctx) => {
     // const categories = _.map(navigation, 'path')
     const categoryRaw = _.keyBy(navigation, 'path')
 
+    // 获取文章列表
+    const article = await Content._list({
+      page: 1,
+      size: 20,
+    })
+
     // 首页
     if (_.includes([undefined, 'index.html', 'index.htm'], target)) {
       let current = '/'
@@ -66,6 +72,7 @@ module.exports = async (ctx) => {
         navigation,
         current,
         source,
+        article,
       })
     } else if (categoryRaw[target]) {
       return await ctx.render(`${alias}/module/home`, {
@@ -74,6 +81,7 @@ module.exports = async (ctx) => {
         navigation,
         current: target,
         source,
+        article,
       })
     }
 
