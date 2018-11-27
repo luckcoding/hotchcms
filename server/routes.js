@@ -108,6 +108,19 @@ module.exports = {
     '/media': {
       post: '*media.create#【文件】上传',
       get: '*media.list#【文件】列表',
+    },
+
+
+    '/v1': {
+      '/site-info': {
+        get: 'v1.getSiteInfo#【网站】获取信息',
+      },
+      '/categories': {
+        get: 'v1.getCategories#【网站】获取分类',
+      },
+      '/contents': {
+        get: 'v1.getContents#【网站】获取文章列表'
+      }
     }
   },
 
@@ -125,5 +138,5 @@ module.exports = {
 
   '*': { get: 'install.access' }, // 查询安装状态
 
-  '/:target*': { get: 'render' },
+  // '/:target*': { get: 'render' },
 }

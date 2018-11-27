@@ -12,7 +12,7 @@ exports.access = async (ctx, next) => {
     if (hasInstall) {
       await next()
     } else {
-      ctx.redirect('/backstage/install')
+      ctx.pipeFail('Please install the system first!')
     }
   } catch (e) {
     ctx.pipeFail(e)

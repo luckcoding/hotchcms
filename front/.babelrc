@@ -1,0 +1,45 @@
+{
+  "presets": [
+    "next/babel"
+  ],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./"
+        ],
+        "alias": {
+          "helpers": "./helpers",
+          "components": "./components",
+          "hocs": "./hocs",
+          "pages": "./pages",
+          "static": "./static"
+        }
+      }
+    ],
+    [
+      "styled-components",
+      {
+        "ssr": true,
+        "displayName": true,
+        "preprocess": false
+      }
+    ],
+    [
+      "transform-assets",
+      {
+        "extensions": ["txt", "svg", "png"],
+        "regExp": ".*/static/(.+)",
+        "name": "/static/[1]?[sha512:hash:base64:7]"
+      }
+    ],
+    [
+      "transform-assets-import-to-string",
+      {
+        "baseDir": "static",
+        "baseUri": "/"
+      }
+    ]
+  ]
+}
