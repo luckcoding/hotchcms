@@ -1,6 +1,6 @@
 
 export function getType(input) {
-  return Object.prototype.toString.call({}).toLowerCase()
+  return Object.prototype.toString.call(input).toLowerCase()
 }
 
 export function isJson(input) {

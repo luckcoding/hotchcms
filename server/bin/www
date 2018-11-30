@@ -3,13 +3,13 @@
 const http = require('http');
 const path = require('path');
 const app = require('../app');
-const portlib = require('../lib/port.lib');
+const portLib = require('../lib/port.lib');
 const logger = require('../lib/logger.lib');
 const mongodb = require('../lib/mongodb.lib');
 const redis = require('../lib/redis.lib');
-const installService = require('../services/install.service');
+const installLib = require('../lib/install.lib');
 
-const port = portlib();
+const port = portLib();
 
 // appDir 项目基础目录
 const appDir = path.resolve(__dirname, '..');
@@ -17,8 +17,7 @@ const appDir = path.resolve(__dirname, '..');
 // logDir 日志目录
 const logDir = path.join(appDir, 'logs');
 
-
-(async () => {
+(async (resolve, reject) => {
 
   /**
    * 1 ===================================
@@ -38,7 +37,7 @@ const logDir = path.join(appDir, 'logs');
    */
   try {
     // 检查安装锁
-    const hasInstall = await installService.status();
+    const hasInstall = await installLib.status();
     if (hasInstall) {
       // 连接 mongodb redis
       await mongodb.connect();
@@ -74,11 +73,9 @@ const logDir = path.join(appDir, 'logs');
     server.on('listening', () => {
       const addr = server.address();
       const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-      
       logger().info('服务启动, 端口: ' + bind);
     });
   } catch (e) {
     logger().error('启动失败, 原因: ', JSON.stringify(e));
   }
-
 })();

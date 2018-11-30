@@ -93,14 +93,6 @@ module.exports = {
       },
     },
 
-    '/theme': {
-      get: '*theme.list#【主题】列表',
-      post: '*theme.install#【主题】安装',
-      '/:_id': {
-        put: '*theme.set#【主题】设置默认',
-      },
-    },
-
     '/authority': {
       get: '*authority.list#【权限】列表',
     },
@@ -123,20 +115,4 @@ module.exports = {
       }
     }
   },
-
-  // '(\^/|^\/index.html|^\/index.htm)': { get: 'render.home' }, // 首页
-
-  // '/page-(.*).htm(l*)': { get: 'render.page' }, // 单页
-
-  // '/category-*': { get: 'render.category' }, // 分类列表
-
-  // '/category/:_id/content/:_id': { get: 'render.content' }, // 分类详情
-
-  // '/:category*': { get: 'render' }, // 404
-
-  // '/backstage*': { get: 'admin' }, // 后台
-
-  '*': { get: 'install.access' }, // 查询安装状态
-
-  // '/:target*': { get: 'render' },
 }

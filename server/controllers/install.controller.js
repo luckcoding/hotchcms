@@ -1,30 +1,14 @@
 const regx = require('../lib/regx.lib')
 const mongodb = require('../lib/mongodb.lib')
 const redis = require('../lib/redis.lib')
-const installService = require('../services/install.service')
-
-/**
- * 安装状态
- */
-exports.access = async (ctx, next) => {
-  try {
-    const hasInstall = await installService.status()
-    if (hasInstall) {
-      await next()
-    } else {
-      ctx.pipeFail('Please install the system first!')
-    }
-  } catch (e) {
-    ctx.pipeFail(e)
-  }
-}
+const installLib = require('../lib/install.lib')
 
 /**
  * 查询安装状态
  */
 exports.status = async (ctx) => {
   try {
-    const hasInstall = await installService.status()
+    const hasInstall = await installLib.status()
     hasInstall ? ctx.pipeFail('已安装') : ctx.pipeDone('可安装')
   } catch (e) {
     ctx.pipeFail(e)
@@ -274,9 +258,9 @@ exports.install = async (ctx) => {
   } = ctx.request.body
 
   try {
-    const hasInstall = await installService.status()
+    const hasInstall = await installLib.status()
     if (hasInstall) return ctx.pipeFail('cms已经安装')
-    await installService.install({
+    await installLib.install({
       databaseData: {
         host: dbHost,
         port: dbPort,

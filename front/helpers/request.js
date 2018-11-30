@@ -1,12 +1,30 @@
 import 'isomorphic-unfetch'
-
+import qs from 'qs'
 import { isJson } from './valaditor'
 
 const API_V1 = 'http://localhost:3030/api/v1/'
 
-export default async function request(params) {
+/**
+ * request('user')
+ * 
+ * request('user', {name: 'zhangsan'})
+ * 
+ * request({
+ *   url: 'user',
+ *   options: {
+ *     method: 'post',
+ *     body: {
+ *       password: '123'
+ *     }
+ *   }
+ * })
+ */
+
+export default async function request(params, payload) {
   let url
-  , options = {}
+  , options = {
+    method: 'GET'
+  }
 
   if (typeof params === 'string') {
     url = params
@@ -15,6 +33,10 @@ export default async function request(params) {
     options = params.options
   } else {
     throw TypeError('Request params is error !')
+  }
+
+  if (isJson(payload) && ['get', 'head'].includes(options.method.toLowerCase())) {
+    url = url + '?' + qs.stringify(payload)
   }
 
   const res = await fetch(`${API_V1}${url}`, options)

@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
+    "test": "./node_modules/.bin/mocha --harmony",
     "start": "cross-env NODE_ENV=production node index.js"
   },
   "author": "luckcoding",
@@ -35,6 +36,9 @@
     "tracer": "^0.8.15"
   },
   "devDependencies": {
-    "nodemon": "^1.17.5"
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5",
+    "supertest": "^3.3.0"
   }
 }

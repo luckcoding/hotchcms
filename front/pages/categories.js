@@ -19,7 +19,7 @@ export default class About extends Component {
           <p>categories:</p>
           <ul>
             {categories.map((i, k) => (
-              <li key={k}><a target="_blank" href={`/category/${i.path}`}>{i.name}</a></li>
+              <li key={k}><a target="_blank" href={`/category/${i._id}`}>{i.name}</a></li>
             ))}
           </ul>
         </div>

@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
-const redis = require('../lib/redis.lib')
-const mongodb = require('../lib/mongodb.lib')
+const redis = require('./redis.lib')
+const mongodb = require('./mongodb.lib')
 const {
   Options,
   AdminGroup,

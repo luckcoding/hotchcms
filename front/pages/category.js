@@ -3,8 +3,10 @@ import request from 'helpers/request'
 import Header from 'components/Header'
 
 export default class About extends Component {
-  static async getInitialProps () {
-    const contents = await request('contents')
+  static async getInitialProps ({ query }) {
+    const contents = await request('contents', {
+      category: query._id
+    })
     return {
       contents
     }

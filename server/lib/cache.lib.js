@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const redis = require('./redis.lib')
 
 function isJson (input) {
@@ -18,7 +17,7 @@ exports.get = key => new Promise(async (resolve, reject) => {
 })
 
 exports.set = (key, value, maxAge) => new Promise(async (resolve, reject) => {
-  if (isJson(value) || _.isArray(value)) {
+  if (isJson(value) || Array.isArray(value)) {
     value = JSON.stringify(value)
   }
   try {
