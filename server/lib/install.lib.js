@@ -8,15 +8,10 @@ const {
   AdminUser,
 } = require('../models')
 
-// 缓存安装状态
-let hasInstall = false
-
 /**
  * 查询安装状态
  */
 exports.status = () => new Promise((resolve, reject) => {
-  if (hasInstall) return resolve(true)
-
   // 读取锁文件
   fs.stat(path.join(__dirname, '../install.lock'), (err, stat) => {
     if (err && err.code === 'ENOENT') return resolve(false) // 未安装
@@ -24,7 +19,6 @@ exports.status = () => new Promise((resolve, reject) => {
     if (err) return reject(err) // 出错
 
     if (stat.isFile()) {
-      hasInstall = true
       resolve(true)
     } else {
       reject(Throw('install.lock 非文件，请检查'))

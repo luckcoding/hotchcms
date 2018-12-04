@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const sha1 = require('../lib/sha1.lib')
-const Validator = require('../lib/mongoose-validator-schema')
 
 /**
  * 管理员
@@ -55,7 +54,5 @@ const AdminUserSchema = new mongoose.Schema({
   collection: 'adminUser',
   id: false,
 })
-
-AdminUserSchema.plugin(Validator)
 
 module.exports = mongoose.model('AdminUser', AdminUserSchema)

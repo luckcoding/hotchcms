@@ -4,13 +4,34 @@ const {
   AdminUser,
 } = require('../models')
 
-const { _validator } = AdminGroup.schema
-
 /**
  * 创建管理组
  */
 exports.create = async (ctx) => {
-  ctx.checkBody(_validator(['*name', '*description', 'gradation', 'authorities']))
+  ctx.checkBody({
+    name: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'name 不能为空'
+      },
+      isString: { errorMessage: 'name 需为 String' }
+    },
+    description: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'description 不能为空'
+      },
+      isString: { errorMessage: 'description 需为 String' }
+    },
+    gradation: {
+      optional: true,
+      isNumber: { errorMessage: 'authorities 需为 Number' }
+    },
+    authorities: {
+      optional: true,
+      isArray: { errorMessage: 'authorities 需为 Array' }
+    }
+  })
 
   if (ctx.validationErrors()) return null
 
@@ -26,7 +47,24 @@ exports.create = async (ctx) => {
  * 更新管理组
  */
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator(['name', 'description', 'gradation', 'authorities']))
+  ctx.checkBody({
+    name: {
+      optional: true,
+      isString: { errorMessage: 'name 需为 String' }
+    },
+    description: {
+      optional: true,
+      isString: { errorMessage: 'description 需为 String' }
+    },
+    gradation: {
+      optional: true,
+      isNumber: { errorMessage: 'authorities 需为 Number' }
+    },
+    authorities: {
+      optional: true,
+      isArray: { errorMessage: 'authorities 需为 Array' }
+    }
+  })
 
   ctx.checkParams({
     _id: {
@@ -80,7 +118,16 @@ exports.one = async (ctx) => {
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
-  ctx.checkQuery(_validator(['name', 'gradation']))
+  ctx.checkQuery({
+    name: {
+      optional: true,
+      isString: { errorMessage: 'name  需为 String' }
+    },
+    gradation: {
+      optional: true,
+      isNumber: { errorMessage: 'authorities 需为 Number' }
+    },
+  })
 
   if (ctx.validationErrors()) return null
 
@@ -147,7 +194,6 @@ exports.delete = async (ctx) => {
 }
 
 exports.multi = async (ctx) => {
-  console.log('1231321')
   ctx.checkBody({
     type: {
       notEmpty: {

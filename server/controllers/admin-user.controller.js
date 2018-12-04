@@ -1,21 +1,45 @@
 const regx = require('../lib/regx.lib')
 const { AdminUser } = require('../models')
 
-const { _validator } = AdminUser.schema
-
 /**
  * 创建管理员
  */
 exports.create = async (ctx) => {
-  ctx.checkBody(_validator(['*email', '*password', 'nickname', 'avatar', 'group'], {
-    mobile: {
-      optional: true,
-      matches: {
-        options: [regx.mobile],
-        errorMessage: 'mobile 格式不正确',
+  ctx.checkBody({
+    email: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'email 不能为空'
+      },
+      isEmail: { errorMessage: 'email 格式不正确' }
+    },
+    password: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'password 不能为空'
       },
     },
-  }))
+    mobile: {
+      optional: true,
+      isMobile: { errorMessage: 'mobile 格式不正确' }
+    },
+    nickname: {
+      optional: true,
+      isString: { errorMessage: 'nickname 需为字符串' },
+      isLength: {
+        options: [2,20],
+        errorMessage: 'nickname 为 2-20 位'
+      }
+    },
+    avatar: {
+      optional: true,
+      isString: { errorMessage: 'avatar 需为字符串' },
+    },
+    group: {
+      optional: true,
+      isMongoId: { errIorMessage: 'group 需为 mongoId' },
+    }
+  })
 
   if (ctx.validationErrors()) return null
 
@@ -31,15 +55,28 @@ exports.create = async (ctx) => {
  * 更新管理员
  */
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator(['password', 'nickname', 'avatar', 'group'], {
+  ctx.checkBody({
+    nickname: {
+      optional: true,
+      isString: { errorMessage: 'nickname 需为字符串' },
+    },
     mobile: {
       optional: true,
-      matches: {
-        options: [regx.mobile],
-        errorMessage: 'mobile 格式不正确',
-      },
+      isMobile: { errorMessage: 'mobile 格式不正确' },
     },
-  }))
+    password: {
+      optional: true,
+      isString: { errorMessage: 'password 需为字符串' },
+    },
+    avatar: {
+      optional: true,
+      isString: { errorMessage: 'avatar 需为字符串' },
+    },
+    group: {
+      optional: true,
+      isMongoId: { errIorMessage: 'role 需为 mongoId' },
+    }
+  })
 
   ctx.checkParams({
     _id: {
@@ -94,13 +131,22 @@ exports.one = async (ctx) => {
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
-  ctx.checkQuery(_validator(['email', 'nickname', 'group'], {
+  ctx.checkQuery({
+    email: {
+      optional: true,
+      isEmail: { errorMessage: 'email 格式不正确' }
+    },
     mobile: {
       optional: true,
-      matches: {
-        options: [regx.mobile],
-        errorMessage: 'mobile 格式不正确',
-      },
+      isMobile: { errorMessage: 'mobile 格式不正确' }
+    },
+    nickname: {
+      optional: true,
+      isString: { errorMessage: 'nickname  需为 String' }
+    },
+    group: {
+      optional: true,
+      isMongoId: { errorMessage: 'group  需为 mongoId' }
     },
     page: {
       optional: true,
@@ -110,7 +156,7 @@ exports.list = async (ctx) => {
       optional: true,
       isNumber: { errorMessage: 'pageSize  需为 Number' },
     },
-  }))
+  })
 
   if (ctx.validationErrors()) return null
 

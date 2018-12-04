@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const mongoose = require('mongoose')
 const cache = require('../lib/cache.lib')
-const Validator = require('../lib/mongoose-validator-schema')
 const { arrayToTree } = require('../utils')
 
 /**
@@ -45,8 +44,6 @@ const CategorySchema = new mongoose.Schema({
   collection: 'category',
   id: false,
 })
-
-CategorySchema.plugin(Validator)
 
 CategorySchema.statics = {
   async _list () {

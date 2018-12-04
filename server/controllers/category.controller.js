@@ -2,29 +2,60 @@ const { Category } = require('../models')
 const mongoose = require('mongoose')
 const schema = require('../models/category.model')
 
-const { _validator } = Category.schema
-
-// let apple = new Category({
-//     category:'1',
-//     name:null
-// });
-
-// apple.validate(function (error) {
-//   console.log(error)
-// })
-// Category.schema.paths
-// var doc = new mongoose.Document({}, schema)
-
-// doc.validate(function(error) {
-//   console.log(error)
-// })
 /**
  * 创建分类
  */
 exports.create = async (ctx) => {
-  ctx.checkBody(_validator([
-    'uid', 'isHome', '*name', '*path', 'state', 'sort', 'template', 'keywords', 'description',
-  ]))
+  ctx.checkBody({
+    uid: {
+      optional: true,
+      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
+    },
+    isHome: {
+      optional: true,
+      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
+    },
+    name: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'name 不能为空'
+      },
+      isString: { errorMessage: 'name 需为 String' },
+    },
+    path: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'path 不能为空'
+      },
+      matches: {
+        options: [/^[A-z]+$/],
+        errorMessage: 'path 格式不正确'
+      }
+    },
+    state: {
+      optional: true,
+      isBoolean: { errorMessage: 'state 需为 Boolean' }
+    },
+    sort: {
+      optional: true,
+      isNumber: { errorMessage: 'sort 为 Number' }
+    },
+    template: {
+      optional: true,
+      isMongoId: { errIorMessage: 'template 需为 mongoId' },
+    },
+    keywords: {
+      optional: true,
+      inArray: {
+        options: ['isString'],
+        errorMessage: 'keywords 内需为 string'
+      },
+    },
+    description: {
+      optional: true,
+      isString: { errorMessage: 'description 需为 String' },
+    }
+  })
 
   if (ctx.validationErrors()) return null
   try {
@@ -39,9 +70,43 @@ exports.create = async (ctx) => {
  * 更新分类
  */
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator([
-    'uid', 'isHome', 'name', 'state', 'sort', 'template', 'keywords', 'description',
-  ]))
+  ctx.checkBody({
+    uid: {
+      optional: true,
+      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
+    },
+    isHome: {
+      optional: true,
+      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
+    },
+    name: {
+      optional: true,
+      isString: { errorMessage: 'name 需为 String' },
+    },
+    state: {
+      optional: true,
+      isBoolean: { errorMessage: 'state 需为 Boolean' }
+    },
+    sort: {
+      optional: true,
+      isNumber: { errorMessage: 'sort 为 Number' }
+    },
+    template: {
+      optional: true,
+      isMongoId: { errIorMessage: 'template 需为 mongoId' },
+    },
+    keywords: {
+      optional: true,
+      inArray: {
+        options: ['isString'],
+        errorMessage: 'keywords 内需为 string'
+      },
+    },
+    description: {
+      optional: true,
+      isString: { errorMessage: 'description 需为 String' },
+    }
+  })
 
   ctx.checkParams({
     _id: {

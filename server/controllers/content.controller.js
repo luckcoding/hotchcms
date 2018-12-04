@@ -1,7 +1,5 @@
 const { Content } = require('../models')
 
-const { _validator } = Content.schema
-
 exports.create = async (ctx) => {
   try {
     const call = await Content.create({})
@@ -12,10 +10,52 @@ exports.create = async (ctx) => {
 }
 
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator([
-    '*title', 'subtitle', 'category', 'cover', 'tags',
-    'isTop', 'original', 'from', 'status',
-  ]), {
+  ctx.checkBody({
+    title: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'title 不能为空'
+      },
+      isString: { errorMessage: 'title 需为 String' },
+    },
+    subtitle: {
+      optional: true,
+      isString: { errorMessage: 'subtitle 需为 String' },
+    },
+    category: {
+      optional: true,
+      isMongoId: { errIorMessage: 'category 需为 mongoId' },
+    },
+    cover: {
+      optional: true,
+      isString: { errorMessage: 'cover 需为 String' },
+    },
+    tags: {
+      optional: true,
+      inArray: {
+        options: ['isString'],
+        errorMessage: 'tags 内需为 string'
+      },
+    },
+    isTop: {
+      optional: true,
+      isBoolean: { errorMessage: 'isTop 需为 Boolean' }
+    },
+    original: {
+      optional: true,
+      isBoolean: { errorMessage: 'original 需为 Boolean' }
+    },
+    from: {
+      optional: true,
+      isString: { errorMessage: 'cover 需为 String' },
+    },
+    status: {
+      optional: true,
+      isIn: {
+        options: [[0, 1, 2]],
+        errorMessage: 'type 必须为 0/1/2',
+      },
+    },
     content: {
       notEmpty: {
         options: [true],
@@ -71,7 +111,15 @@ exports.one = async (ctx) => {
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
-  ctx.checkQuery(_validator(['title', 'category'], {
+  ctx.checkQuery({
+    title: {
+      optional: true,
+      isString: { errorMessage: 'title 需为 String' },
+    },
+    category: {
+      optional: true,
+      isMongoId: { errIorMessage: 'category 需为 mongoId' },
+    },
     page: {
       optional: true,
       isNumber: { errorMessage: 'page  需为 Number' },
@@ -80,7 +128,7 @@ exports.list = async (ctx) => {
       optional: true,
       isNumber: { errorMessage: 'pageSize  需为 Number' },
     },
-  }))
+  })
 
   if (ctx.validationErrors()) return null
 

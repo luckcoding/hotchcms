@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const { parse } = require('../lib/authority.lib')
-const Validator = require('../lib/mongoose-validator-schema')
 
 /**
  * 管理员用户组
@@ -27,7 +26,5 @@ const AdminGroupSchema = new mongoose.Schema({
 AdminGroupSchema.virtual('authority').get(function () {
   return parse(this.authorities)
 })
-
-AdminGroupSchema.plugin(Validator)
 
 module.exports = mongoose.model('AdminGroup', AdminGroupSchema)

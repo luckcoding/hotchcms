@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
+    "init": "node ./bin/install",
     "test": "./node_modules/.bin/mocha --harmony",
     "start": "cross-env NODE_ENV=production node index.js"
   },
@@ -15,6 +16,7 @@
   "dependencies": {
     "adm-zip": "^0.4.11",
     "bluebird": "^3.5.1",
+    "colors": "^1.3.2",
     "cross-env": "^5.2.0",
     "ejs": "^2.6.1",
     "jsonwebtoken": "^8.2.2",

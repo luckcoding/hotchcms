@@ -1,6 +1,4 @@
 const mongoose = require('mongoose')
-const _ = require('lodash')
-const Validator = require('../lib/mongoose-validator-schema')
 
 /**
  * 文章内容
@@ -50,7 +48,6 @@ const ContentSchema = new mongoose.Schema({
   id: false,
 })
 
-ContentSchema.plugin(Validator)
 
 ContentSchema.statics = {
   _one (_id) {
@@ -69,7 +66,7 @@ ContentSchema.statics = {
   },
 
   async _remove (input) {
-    const _in = _.isArray(input) ? { $in: input } : input
+    const _in = Array.isArray(input) ? { $in: input } : input
     return this.remove({ _id: _in })
   },
 

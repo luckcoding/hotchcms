@@ -6,20 +6,31 @@ const AdminUser = require('../models/admin-user.model')
 const config = require('../config')
 
 const { expiresInLong, expiresIn, secret } = config
-const { _validator } = AdminUser.schema
 
 /**
  * 登陆
  */
 exports.signIn = async (ctx) => {
-  ctx.checkBody(_validator([
-    'email', '*password', 'mobile'
-  ], {
+  ctx.checkBody({
+    email: {
+      optional: true,
+      isEmail: { errorMessage: 'email 格式不正确' }
+    },
+    mobile: {
+      optional: true,
+      isMobile: { errorMessage: 'mobile 格式不正确' },
+    },
+    password: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'password 不能为空'
+      },
+    },
     autoSignIn: {
       optional: true,
-      isBoolean: { errorMessage: 'autoSignIn 需为布尔值' },
-    },
-  }))
+      isBoolean: { errorMessage: 'autoSignIn 需为布尔值' }
+    }
+  });
 
   if (ctx.validationErrors()) return null
 
@@ -83,7 +94,28 @@ exports.current = async (ctx) => {
  * 更新当前账号
  */
 exports.update = async (ctx) => {
-  ctx.checkBody(_validator(['nickname', 'mobile', 'email', 'password', 'avatar']))
+  ctx.checkBody({
+    email: {
+      optional: true,
+      isEmail: { errorMessage: 'email 格式不正确' }
+    },
+    mobile: {
+      optional: true,
+      isMobile: { errorMessage: 'mobile 格式不正确' },
+    },
+    nickname: {
+      optional: true,
+      isString: { errorMessage: 'nickname 需为字符串' }
+    },
+    password: {
+      optional: true,
+      isString: { errorMessage: 'password 需为字符串' },
+    },
+    avatar: {
+      optional: true,
+      isString: { errorMessage: 'avatar 需为字符串' },
+    },
+  })
 
   if (ctx.validationErrors()) return null
 

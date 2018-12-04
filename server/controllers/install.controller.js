@@ -229,21 +229,10 @@ exports.install = async (ctx) => {
         errorMessage: 'email 格式不正确',
       },
     },
-    mobile: {
-      optional: true,
-      matches: {
-        options: [regx.mobile],
-        errorMessage: 'mobile 格式不正确',
-      },
-    },
     password: {
       notEmpty: {
         options: [true],
         errorMessage: 'password 不能为空',
-      },
-      isLength: {
-        options: [6],
-        errorMessage: 'password 不能小于 6 位',
       },
     },
   })
@@ -254,7 +243,7 @@ exports.install = async (ctx) => {
     dbHost, dbPort, db, dbUser, dbPassword,
     rdHost, rdPort, rdFamily, rdDb, rdPass,
     title,
-    email, mobile, password,
+    email, password,
   } = ctx.request.body
 
   try {
@@ -278,7 +267,6 @@ exports.install = async (ctx) => {
       siteInfoData: { title },
       adminUserData: {
         email,
-        mobile,
         password,
       },
     })

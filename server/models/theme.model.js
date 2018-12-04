@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const cache = require('../lib/cache.lib')
-const Validator = require('../lib/mongoose-validator-schema')
 
 const ThemeSchema = new mongoose.Schema({
 
@@ -26,8 +25,6 @@ const ThemeSchema = new mongoose.Schema({
   collection: 'theme',
   id: false,
 })
-
-ThemeSchema.plugin(Validator)
 
 ThemeSchema.statics = {
   async _install (options) {
