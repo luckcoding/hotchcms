@@ -22,7 +22,8 @@ module.exports = {
   },
 
   /**
-   * 系统配置信息，一般不必修改
+   * =======================================
+   * 系统配置信息
    */
   system: {
     port: 3030, // 服务默认端口
@@ -30,5 +31,12 @@ module.exports = {
     secret: 'hotchcms', // 后台加密盐值
     expiresIn: 24 * 60 * 60, // token 失效时间 一天
     longExpiresIn: 24 * 60 * 60 * 30, // token 失效时间 一月
+  },
+
+  /**
+   * 一些全局静态变量
+   */
+  static: {
+    SYSTEM_CATEGORIES: 'SYSTEM_CATEGORIES',
   }
 }

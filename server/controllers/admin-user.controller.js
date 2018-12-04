@@ -55,6 +55,7 @@ exports.create = async (ctx) => {
  * 更新管理员
  */
 exports.update = async (ctx) => {
+  console.log(ctx.request.body)
   ctx.checkBody({
     nickname: {
       optional: true,

@@ -29,8 +29,8 @@ exports.status = () => new Promise((resolve, reject) => {
 /**
  * 安装
  */
-exports.install = ({ databaseData, redisData, siteInfoData, adminUserData }) => new Promise(async (resolve, reject) => {
-  if (!databaseData || !redisData || !siteInfoData || !adminUserData) {
+exports.install = ({ databaseData, redisData, adminUserData }) => new Promise(async (resolve, reject) => {
+  if (!databaseData || !redisData || !adminUserData) {
     return reject(Throw('缺少参数'))
   }
 
@@ -46,9 +46,6 @@ exports.install = ({ databaseData, redisData, siteInfoData, adminUserData }) => 
     // 链接数据库
     await mongodb.connect()
     await redis.connect()
-
-    // 存储站点信息
-    await new Options({ name: 'siteInfo', value: siteInfoData }).save()
 
     // 创建root用户组
     const adminGroup = await new AdminGroup({

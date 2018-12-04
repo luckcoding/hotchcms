@@ -44,22 +44,6 @@ export function query () {
           route: '/adminGroup/:id',
         },
         {
-          id: '25',
-          bpid: '2',
-          mpid: '2',
-          name: '配置',
-          icon: 'setting',
-          route: '/setting',
-        },
-        {
-          id: '26',
-          bpid: '2',
-          mpid: '2',
-          name: '主题',
-          icon: 'layout',
-          route: '/theme',
-        },
-        {
           id: '3',
           name: '内容',
           icon: 'file-text',

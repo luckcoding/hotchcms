@@ -6,10 +6,10 @@
     "lib": "lib"
   },
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon ./bin/www",
     "init": "node ./bin/install",
     "test": "./node_modules/.bin/mocha --harmony",
-    "start": "cross-env NODE_ENV=production node index.js"
+    "start": "cross-env NODE_ENV=production node ./bin/www"
   },
   "author": "luckcoding",
   "license": "ISC",

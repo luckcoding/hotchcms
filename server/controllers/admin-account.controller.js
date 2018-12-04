@@ -123,7 +123,6 @@ exports.update = async (ctx) => {
     const _id = ctx.state.user.data
 
     const input = lodash.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
-    if (input.password) input.password = sha1(input.password)
 
     await AdminUser.update({ _id }, input, { runValidators: true })
     ctx.pipeDone()

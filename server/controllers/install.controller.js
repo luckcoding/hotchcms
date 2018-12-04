@@ -212,13 +212,6 @@ exports.install = async (ctx) => {
       optional: true,
       isString: { errorMessage: 'rdPass 需为字符串' },
     },
-    title: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'title 不能为空',
-      },
-      isString: { errorMessage: 'title 需为字符串' },
-    },
     email: {
       notEmpty: {
         options: [true],
@@ -242,7 +235,6 @@ exports.install = async (ctx) => {
   const {
     dbHost, dbPort, db, dbUser, dbPassword,
     rdHost, rdPort, rdFamily, rdDb, rdPass,
-    title,
     email, password,
   } = ctx.request.body
 
@@ -264,7 +256,6 @@ exports.install = async (ctx) => {
         family: rdFamily,
         pass: rdPass,
       },
-      siteInfoData: { title },
       adminUserData: {
         email,
         password,

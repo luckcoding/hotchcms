@@ -1,18 +1,15 @@
 const _ = require('lodash')
 const mongoose = require('mongoose')
 const cache = require('../lib/cache.lib')
-const { arrayToTree } = require('../utils')
+const settings = require('../config/settings')
+
+const { static } = settings
 
 /**
  * 文章分类
  */
+// @@取消无限分类
 const CategorySchema = new mongoose.Schema({
-  // 父级
-  uid: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-
-  // 首页
-  isHome: { type: Boolean, default: false },
-
   // 分类名
   name: { type: String, required: true },
 
@@ -47,13 +44,13 @@ const CategorySchema = new mongoose.Schema({
 
 CategorySchema.statics = {
   async _list () {
-    const categories = await cache.get('SYSTEM_CATEGORIES')
+    const categories = await cache.get(static.SYSTEM_CATEGORIES)
     if (categories) return _.cloneDeep(categories)
     const call = await this.find({})
-      .select('uid isHome name path state sort keywords description')
+      .select()
       .sort('sort')
       .lean()
-    await cache.set('SYSTEM_CATEGORIES', call, 1000 * 60 * 60 * 24)
+    await cache.set(static.SYSTEM_CATEGORIES, call, 1000 * 60 * 60 * 24)
     return call
   },
 
@@ -81,20 +78,14 @@ CategorySchema.statics = {
     } else {
       await this.create(input)
     }
-    return cache.del('SYSTEM_CATEGORIES')
+    return cache.del(static.SYSTEM_CATEGORIES)
   },
 
   async _remove (input) {
     const _in = _.isArray(input) ? { $in: input } : input
     await this.remove({ _id: _in })
     await this.update({ _id: _in }, { $unset: { uid: true } })
-    return cache.del('SYSTEM_CATEGORIES')
-  },
-
-  async _tree () {
-    const list = await this._list()
-    const tree = arrayToTree(list, '_id', 'uid')
-    return tree
+    return cache.del(static.SYSTEM_CATEGORIES)
   },
 
   async _navigation () {

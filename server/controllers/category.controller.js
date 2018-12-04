@@ -7,14 +7,6 @@ const schema = require('../models/category.model')
  */
 exports.create = async (ctx) => {
   ctx.checkBody({
-    uid: {
-      optional: true,
-      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
-    },
-    isHome: {
-      optional: true,
-      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
-    },
     name: {
       notEmpty: {
         options: [true],
@@ -39,10 +31,6 @@ exports.create = async (ctx) => {
     sort: {
       optional: true,
       isNumber: { errorMessage: 'sort 为 Number' }
-    },
-    template: {
-      optional: true,
-      isMongoId: { errIorMessage: 'template 需为 mongoId' },
     },
     keywords: {
       optional: true,
@@ -71,14 +59,6 @@ exports.create = async (ctx) => {
  */
 exports.update = async (ctx) => {
   ctx.checkBody({
-    uid: {
-      optional: true,
-      isMongoId: { errIorMessage: 'uid 需为 mongoId' },
-    },
-    isHome: {
-      optional: true,
-      isBoolean: { errorMessage: 'isHome 需为 Boolean' }
-    },
     name: {
       optional: true,
       isString: { errorMessage: 'name 需为 String' },
@@ -90,10 +70,6 @@ exports.update = async (ctx) => {
     sort: {
       optional: true,
       isNumber: { errorMessage: 'sort 为 Number' }
-    },
-    template: {
-      optional: true,
-      isMongoId: { errIorMessage: 'template 需为 mongoId' },
     },
     keywords: {
       optional: true,
@@ -146,7 +122,7 @@ exports.one = async (ctx) => {
 
   try {
     const call = await Category.findById(ctx.params._id)
-      .select('uid name path state sort keywords description')
+      .select()
       .lean()
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99')
   } catch (e) {

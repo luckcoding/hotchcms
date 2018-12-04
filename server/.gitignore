@@ -15,3 +15,4 @@ tmp/*
 !tmp/*.gitkeep
 install.lock
 dump.rdb
+./../.DS_Store

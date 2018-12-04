@@ -44,12 +44,12 @@ app.use(convert.compose(
 ))
 
 // 静态文件
-app.use(convert(koaStatic(path.join(__dirname, './static/'))))
+app.use(convert(koaStatic(path.join(__dirname, '/static'))))
 
 // 渲染引擎
-app.use(views(path.join(__dirname, './static/theme/'), {
-  extension: 'ejs',
-}))
+// app.use(views(path.join(__dirname, './static/theme/'), {
+//   extension: 'ejs',
+// }))
 
 // 网络日志
 app.use(logger.httpEffectMiddle(config.http_effect))

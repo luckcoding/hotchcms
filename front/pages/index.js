@@ -10,7 +10,7 @@ export default class Index extends React.Component {
       <div>
         <Head>
           <title>{siteInfo.title}</title>
-          <meta name="keywords" content={siteInfo.keywords.join(',')} />
+          <meta name="keywords" content={(siteInfo.keywords || []).join(',')} />
           <meta name="description" content={siteInfo.description} />
         </Head>
         <Header />

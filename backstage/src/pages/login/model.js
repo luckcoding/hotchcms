@@ -1,6 +1,5 @@
 import { routerRedux } from 'dva/router'
-import md5 from 'blueimp-md5'
-import { auth } from 'utils'
+import { auth, config } from 'utils'
 import { login } from './service'
 
 export default {
@@ -18,7 +17,7 @@ export default {
         payload.email = payload.account
       }
       delete payload.account
-      payload.password = md5(payload.password)
+      payload.password = config.encrypted(payload.password)
       const data = yield call(login, payload)
       const { locationQuery } = yield select(_ => _.app)
       if (data.code === '0000') {

@@ -13,11 +13,6 @@ module.exports = {
       },
     },
 
-    '/site-info': {
-      get: '*site-info.get#【网站】获取信息',
-      put: '*site-info.save#【网站】保存信息',
-    },
-
     '/admin-account': {
       get: '*admin-account.current#【当前账号】查询',
       put: '*admin-account.update#【当前账号】更新',
@@ -104,9 +99,6 @@ module.exports = {
 
 
     '/v1': {
-      '/site-info': {
-        get: 'v1.getSiteInfo#【网站】获取信息',
-      },
       '/categories': {
         get: 'v1.getCategories#【网站】获取分类',
       },
