@@ -4,7 +4,7 @@ const koaBody = require('koa-body')
 const convert = require('koa-convert')
 const koaStatic = require('koa-static')
 const cors = require('kcors')
-const views = require('koa-views')
+// const views = require('koa-views')
 
 const validation = require('./middleware/validation.middleware')
 const pipe = require('./middleware/pipe.middleware')

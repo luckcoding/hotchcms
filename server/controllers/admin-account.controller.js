@@ -37,6 +37,10 @@ exports.signIn = async (ctx) => {
   try {
     const { email, mobile, password, autoSignIn } = ctx.request.body
 
+    if (!email && !mobile) {
+      throw new Error('email | mobile 必须有一个')
+    }
+
     let query = {}
 
     if (email) query.email = email
@@ -65,7 +69,7 @@ exports.signIn = async (ctx) => {
  */
 exports.signOut = async (ctx) => {
   try {
-    const { data: _id, exp } = ctx.state.user
+    const { _id, exp } = ctx.state.user
     const expires = exp * 1000 - Date.now()
 
     const auth = ctx.request.headers.authorization.split(' ')[1]
@@ -82,7 +86,7 @@ exports.signOut = async (ctx) => {
  */
 exports.current = async (ctx) => {
   try {
-    const _id = ctx.state.user.data
+    const { _id } = ctx.state.user
     const user = await AdminUser.findById(_id).populate('group')
     ctx.pipeDone(user)
   } catch (e) {
@@ -120,9 +124,9 @@ exports.update = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    const _id = ctx.state.user.data
+    const { _id } = ctx.state.user
 
-    const input = lodash.pick(ctx.request.body, ['nickname', 'mobile', 'password', 'avatar'])
+    const input = lodash.pick(ctx.request.body, ['email', 'mobile', 'nickname', 'password', 'avatar'])
 
     await AdminUser.update({ _id }, input, { runValidators: true })
     ctx.pipeDone()

@@ -66,7 +66,6 @@ class modal extends React.Component {
   render () {
     const {
       modalType,
-      tree = [],
       item = {},
       onOk,
       form: {
@@ -77,7 +76,7 @@ class modal extends React.Component {
       ...modalProps
     } = this.props
 
-    const { tags, uid, inputVisible, inputValue } = this.state
+    const { tags, inputVisible, inputValue } = this.state
 
     const handleOk = () => {
       validateFields((errors) => {
@@ -87,7 +86,6 @@ class modal extends React.Component {
         const data = {
           ...getFieldsValue(),
           keywords: tags,
-          uid,
         }
         onOk(data)
       })
@@ -114,7 +112,7 @@ class modal extends React.Component {
     return (
       <Modal {...modalOpts}>
         <Form layout="horizontal">
-          <FormItem label="所属" hasFeedback {...formItemLayout}>
+          {/*<FormItem label="所属" hasFeedback {...formItemLayout}>
             <TreeSelect
               value={this.state.uid}
               allowClear
@@ -124,7 +122,7 @@ class modal extends React.Component {
             >
               {loop(tree)}
             </TreeSelect>
-          </FormItem>
+          </FormItem>*/}
           <FormItem label="名称" hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
@@ -145,12 +143,12 @@ class modal extends React.Component {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label="是否首页" {...formItemLayout}>
+          {/*<FormItem label="是否首页" {...formItemLayout}>
             {getFieldDecorator('isHome', {
               valuePropName: 'checked',
               initialValue: item.isHome,
             })(<Switch />)}
-          </FormItem>
+          </FormItem>*/}
           <FormItem label="导航显示" {...formItemLayout}>
             {getFieldDecorator('state', {
               valuePropName: 'checked',
@@ -207,7 +205,6 @@ modal.propTypes = {
   form: PropTypes.object.isRequired,
   type: PropTypes.string,
   item: PropTypes.object,
-  tree: PropTypes.array,
   onOk: PropTypes.func,
 }
 

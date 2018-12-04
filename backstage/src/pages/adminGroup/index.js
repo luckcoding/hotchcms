@@ -112,10 +112,14 @@ const AdminGroup = ({
     },
     onAdd () {
       dispatch({
-        type: 'adminGroup/showModal',
-        payload: {
-          modalType: 'create',
-        },
+        type: 'adminGroup/queryAuthority',
+      }).then(() => {
+        dispatch({
+          type: 'adminGroup/showModal',
+          payload: {
+            modalType: 'create',
+          },
+        })
       })
     },
   }

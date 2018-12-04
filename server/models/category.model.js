@@ -54,27 +54,21 @@ CategorySchema.statics = {
     return call
   },
 
-  async _path () {
-    const list = await this._list()
-    const output = []
-    _.forEach(list, item => output.push(item.path))
-    return output
-  },
-
   async _save ({ _id, input = {} }) {
     if (input.isHome) {
       await this.update({ isHome: true }, { $set: { isHome: false } }, { multi: true })
     }
     if (_id) {
-      if (input.uid) {
-        const call = await this.find({ uid: _id })
-        const child = []
-        _.forEach(call, i => child.push(String(i._id)))
-        if (_.includes(child, String(input.uid))) throw Error('不能被包含')
-        await this.findByIdAndUpdate({ _id }, { $set: input }, { runValidators: true })
-      } else {
-        await this.findByIdAndUpdate({ _id }, { $set: input, $unset: { uid: true } }, { runValidators: true })
-      }
+      // if (input.uid) {
+      //   const call = await this.find({ uid: _id })
+      //   const child = []
+      //   _.forEach(call, i => child.push(String(i._id)))
+      //   if (_.includes(child, String(input.uid))) throw Error('不能被包含')
+      //   await this.findByIdAndUpdate({ _id }, { $set: input }, { runValidators: true })
+      // } else {
+      //   await this.findByIdAndUpdate({ _id }, { $set: input, $unset: { uid: true } }, { runValidators: true })
+      // }
+      await this.findByIdAndUpdate({ _id }, { $set: input }, { runValidators: true })
     } else {
       await this.create(input)
     }
@@ -84,7 +78,7 @@ CategorySchema.statics = {
   async _remove (input) {
     const _in = _.isArray(input) ? { $in: input } : input
     await this.remove({ _id: _in })
-    await this.update({ _id: _in }, { $unset: { uid: true } })
+    // await this.update({ _id: _in }, { $unset: { uid: true } })
     return cache.del(static.SYSTEM_CATEGORIES)
   },
 

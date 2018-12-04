@@ -72,7 +72,6 @@ export default modelExtend(pageModel, {
       const { selectedRowKeys } = yield select(_ => _.adminGroup)
       if (data.code === '0000') {
         yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
-        yield put({ type: 'query' })
       } else {
         throw data
       }
@@ -91,7 +90,6 @@ export default modelExtend(pageModel, {
       const data = yield call(create, payload)
       if (data.code === '0000') {
         yield put({ type: 'hideModal' })
-        yield put({ type: 'query' })
       } else {
         throw data
       }
@@ -103,7 +101,6 @@ export default modelExtend(pageModel, {
       const data = yield call(update, newAdminGroup)
       if (data.code === '0000') {
         yield put({ type: 'hideModal' })
-        yield put({ type: 'query' })
       } else {
         throw data
       }

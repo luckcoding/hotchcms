@@ -1,37 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { routerRedux } from 'dva/router'
 import { connect } from 'dva'
-import { Tree, Button } from 'antd'
+import { Row, Col, Button, Popconfirm } from 'antd'
 import { Page } from 'components'
-import queryString from 'query-string'
-import isEmpty from 'lodash/isEmpty'
+// import isEmpty from 'lodash/isEmpty'
+import List from './components/List'
+import Filter from './components/Filter'
 import Modal from './components/Modal'
 
-const TreeNode = Tree.TreeNode
-const ButtonGroup = Button.Group
+// const TreeNode = Tree.TreeNode
+// const ButtonGroup = Button.Group
 
 const Category = ({
-  location, dispatch, category, loading,
+  dispatch, category, loading,
 }) => {
-  const { query, pathname } = location
   const {
-    tree, checkItems, currentItem, modalVisible, modalType,
+    list, currentItem, modalVisible, modalType, selectedRowKeys,
   } = category
-
-  const handleRefresh = (newQuery) => {
-    dispatch(routerRedux.push({
-      pathname,
-      search: queryString.stringify({
-        ...query,
-        ...newQuery,
-      }),
-    }))
-  }
 
   const modalProps = {
     modalType,
-    tree,
     item: modalType === 'create' ? {} : currentItem,
     visible: modalVisible,
     maskClosable: false,
@@ -43,9 +31,6 @@ const Category = ({
         type: `category/${modalType}`,
         payload: data,
       })
-        .then(() => {
-          handleRefresh()
-        })
     },
     onCancel () {
       dispatch({
@@ -54,59 +39,110 @@ const Category = ({
     },
   }
 
-  const onAdd = () => {
-    dispatch({
-      type: 'category/showModal',
-      payload: {
-        modalType: 'create',
-      },
-    })
-  }
-
-  const onCheck = (expandedKeys) => {
-    const { checked } = expandedKeys
-    dispatch({
-      type: 'category/onCheckItems',
-      payload: checked,
-    })
-  }
-
-  const onSelect = (selectedKeys, e) => {
-    if (!isEmpty(selectedKeys)) {
+  const listProps = {
+    dataSource: list,
+    loading: loading.effects['category/query'],
+    onDeleteItem (id) {
+      dispatch({
+        type: 'category/delete',
+        payload: id,
+      })
+    },
+    onEditItem (item) {
       dispatch({
         type: 'category/showModal',
         payload: {
           modalType: 'update',
-          currentItem: e.node.props.dataSource,
+          currentItem: item,
         },
       })
-    }
+    },
+    rowSelection: {
+      selectedRowKeys,
+      onChange: (keys) => {
+        dispatch({
+          type: 'category/updateState',
+          payload: {
+            selectedRowKeys: keys,
+          },
+        })
+      },
+    },
   }
 
-  const onRemve = () => {
+  const filterProps = {
+    onAdd () {
+      dispatch({
+        type: 'category/showModal',
+        payload: {
+          modalType: 'create',
+        },
+      })
+    },
+  }
+
+  const handleDeleteItems = () => {
     dispatch({
       type: 'category/multiDelete',
+      payload: {
+        multi: selectedRowKeys,
+      },
     })
   }
 
-  const expandedKeys = []
+  // const onAdd = () => {
+  //   dispatch({
+  //     type: 'category/showModal',
+  //     payload: {
+  //       modalType: 'create',
+  //     },
+  //   })
+  // }
 
-  const loop = data => data.map((item) => {
-    const title = <span style={{ textDecoration: !item.state && 'line-through' }}>{item.name}</span>
-    if (item.children) {
-      expandedKeys.push(item._id)
-      return (
-        <TreeNode key={item._id} title={title} dataSource={item}>
-          {loop(item.children)}
-        </TreeNode>
-      )
-    }
-    return <TreeNode key={item._id} title={title} dataSource={item} />
-  })
+  // const onCheck = (expandedKeys) => {
+  //   const { checked } = expandedKeys
+  //   dispatch({
+  //     type: 'category/onCheckItems',
+  //     payload: checked,
+  //   })
+  // }
+
+  // const onSelect = (selectedKeys, e) => {
+  //   if (!isEmpty(selectedKeys)) {
+  //     dispatch({
+  //       type: 'category/showModal',
+  //       payload: {
+  //         modalType: 'update',
+  //         currentItem: e.node.props.dataSource,
+  //       },
+  //     })
+  //   }
+  // }
+
+  // const onRemve = () => {
+  //   dispatch({
+  //     type: 'category/multiDelete',
+  //   })
+  // }
+
+  // const expandedKeys = []
+
+  // const loop = data => data.map((item) => {
+  //   const title = <span style={{ textDecoration: !item.state && 'line-through' }}>{item.name}</span>
+  //   if (item.children) {
+  //     expandedKeys.push(item._id)
+  //     return (
+  //       <TreeNode key={item._id} title={title} dataSource={item}>
+  //         {loop(item.children)}
+  //       </TreeNode>
+  //     )
+  //   }
+  //   return <TreeNode key={item._id} title={title} dataSource={item} />
+  // })
 
   return (
     <Page inner>
-      <Tree
+      {/*<Tree
         checkable
         checkStrictly
         defaultExpandAll
@@ -114,13 +150,26 @@ const Category = ({
         onCheck={onCheck}
         onSelect={onSelect}
       >
-        {loop(tree)}
+        {loop(categories)}
       </Tree>
 
       <ButtonGroup style={{marginTop: 20}}>
         <Button onClick={onRemve} disabled={isEmpty(checkItems)}>删除所选</Button>
         <Button onClick={onAdd}>添加分类</Button>
-      </ButtonGroup>
+      </ButtonGroup>*/}
+      <Filter {...filterProps} />
+      {
+        selectedRowKeys.length > 0 &&
+        <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
+          <Col>
+            {`选中 ${selectedRowKeys.length} 目标 `}
+            <Popconfirm title={'确定删除这些目标?'} placement="left" onConfirm={handleDeleteItems}>
+               <Button type="danger" size="large" style={{ marginLeft: 8 }}>删除</Button>
+             </Popconfirm>
+          </Col>
+        </Row>
+      }
+      <List {...listProps} />
       {modalVisible && <Modal {...modalProps} />}
     </Page>
   )

@@ -60,7 +60,7 @@ module.exports = {
 
     '/category': {
       post: '*category.create#【分类】新增',
-      get: '*category.tree#【分类】查询',
+      get: '*category.list#【分类】查询',
 
       '/multi': {
         post: '*category.multi#【分类】多条操作',

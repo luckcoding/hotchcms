@@ -1,5 +1,5 @@
 /* global window */
-import { create, update } from './services/category'
+import { create, update, remove } from './services/category'
 import * as categorysService from './services/categorys'
 
 const { query, multi } = categorysService
@@ -8,7 +8,7 @@ export default {
   namespace: 'category',
 
   state: {
-    tree: [],
+    list: [],
     currentItem: {},
     checkItems: [],
     modalVisible: false,
@@ -37,23 +37,25 @@ export default {
       if (data.code === '0000') {
         yield put({
           type: 'querySuccess',
-          payload: data.result,
+          payload: {
+            list: data.result,
+          },
         })
       } else {
         throw data
       }
     },
 
-    // * delete ({ payload }, { call, put, select }) {
-    //   const data = yield call(remove, { _id: payload })
-    //   const { selectedRowKeys } = yield select(_ => _.category)
-    //   if (data.code === '0000') {
-    //     yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
-    //     yield put({ type: 'query' })
-    //   } else {
-    //     throw data
-    //   }
-    // },
+    * delete ({ payload }, { call, put, select }) {
+      const data = yield call(remove, { _id: payload })
+      const { selectedRowKeys } = yield select(_ => _.category)
+      if (data.code === '0000') {
+        yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
+        yield put({ type: 'query' })
+      } else {
+        throw data
+      }
+    },
 
     * multiDelete ({ payload }, { select, call, put }) {
       const { checkItems } = yield select(_ => _.category)
@@ -92,10 +94,17 @@ export default {
 
   reducers: {
 
-    querySuccess (state, { payload: tree }) {
+    querySuccess (state, { payload }) {
       return {
         ...state,
-        tree,
+        ...payload,
+      }
+    },
+
+    updateState (state, { payload }) {
+      return {
+        ...state,
+        ...payload,
       }
     },
 

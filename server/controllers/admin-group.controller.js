@@ -36,7 +36,14 @@ exports.create = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    await AdminGroup.create(ctx.request.body)
+    const { body } = ctx.request
+
+    const { _id } = ctx.state.user
+    const user = await AdminUser.findById(_id).populate('group')
+
+    if (Number(body.gradation) === 100) throw new Error('不允许创建系统管理组')
+
+    await AdminGroup.create(body)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -79,7 +86,11 @@ exports.update = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    await AdminGroup.update({ _id: ctx.params._id }, ctx.request.body)
+    const { _id } = ctx.params
+    const call = await AdminGroup.findById(_id).lean()
+    if (call.gradation === 100) throw new Error('不允许修改系统管理组')
+
+    await AdminGroup.update({ _id }, ctx.request.body)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -145,7 +156,7 @@ exports.list = async (ctx) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .select()
-      // .lean() // 返回虚拟字段 authority
+      // .lean() // 注释，返回虚拟字段 authority
 
     ctx.pipeDone({ list, total, pageSize, page })
   } catch (e) {
@@ -185,8 +196,12 @@ exports.delete = async (ctx) => {
   if (ctx.validationErrors()) return null
 
   try {
-    await AdminGroup.remove({ _id: ctx.params._id })
-    await AdminUser.update({ group: ctx.params._id }, { $unset: { group: true } })
+    const { _id } = ctx.params
+    const call = await AdminGroup.findById(_id).lean()
+    if (call.gradation === 100) throw new Error('不允许删除系统管理组')
+
+    await AdminGroup.remove({ _id })
+    await AdminUser.update({ group: _id }, { $unset: { group: true } })
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -222,6 +237,8 @@ exports.multi = async (ctx) => {
   try {
     const { multi, type } = ctx.request.body
     if (type === 'remove') {
+
+
       await AdminGroup.remove({ _id: { $in: multi } })
       ctx.pipeDone()
     } else {

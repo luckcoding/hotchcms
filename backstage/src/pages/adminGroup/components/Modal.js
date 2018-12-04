@@ -94,7 +94,7 @@ const modal = ({
         </FormItem>
         <FormItem label="权限" hasFeedback {...formItemLayout}>
           {getFieldDecorator('authorities', {
-            initialValue: item.authority.map(_ => _.prefix),
+            initialValue: Array.isArray(item.authority) ? item.authority.map(_ => _.prefix) : [],
           })(
             <Select mode="multiple">
               {authority.map((item, key) => (
