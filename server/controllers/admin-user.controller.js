@@ -1,5 +1,5 @@
 const regx = require('../lib/regx.lib')
-const { AdminUser } = require('../models')
+const { AdminGroup, AdminUser } = require('../models')
 
 /**
  * 创建管理员
@@ -41,10 +41,13 @@ exports.create = async (ctx) => {
     }
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await AdminUser.create(ctx.request.body)
+    const input = await ctx.pipeInput()
+
+    // 判断数据的操作权限
+    await ctx.checkGradation(input.group)
+
+    await AdminUser.create(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -55,7 +58,6 @@ exports.create = async (ctx) => {
  * 更新管理员
  */
 exports.update = async (ctx) => {
-  console.log(ctx.request.body)
   ctx.checkBody({
     nickname: {
       optional: true,
@@ -89,10 +91,19 @@ exports.update = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await AdminUser.update({ _id: ctx.params._id }, ctx.request.body)
+    const { _id, ...input } = await ctx.pipeInput()
+
+    const call = await AdminUser.findById(_id).populate('group')
+    // 判断对用户的操作权限
+    if (call.group) {
+      await ctx.checkGradation(call.group.gradation)
+    }
+
+    // 判断对用户组的操作权限
+    await ctx.checkGradation(input.group)
+
+    // await call.update(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -113,10 +124,10 @@ exports.one = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const call = await AdminUser.findById(ctx.params._id)
+    const { _id } = await ctx.pipeInput()
+
+    const call = await AdminUser.findById(_id)
       .select()
       .populate('group', 'name description authorities gradation')
       .lean()
@@ -159,13 +170,8 @@ exports.list = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const {
-      page = 1, pageSize = 10,
-      ...query
-    } = ctx.request.query
+    const { page = 1, pageSize = 10, ...query } = await ctx.pipeInput()
 
     if (query.nickname) query.nickname = new RegExp(query.nickname, 'i')
 
@@ -198,47 +204,18 @@ exports.delete = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await AdminUser.remove({ _id: ctx.params._id })
-    ctx.pipeDone()
-  } catch (e) {
-    ctx.pipeFail(e)
-  }
-}
+    const { _id } = await ctx.pipeInput()
 
-exports.multi = async (ctx) => {
-  ctx.checkBody({
-    type: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'type 不能为空',
-      },
-      isIn: {
-        options: [['remove', 'add', 'update']],
-        errorMessage: 'type 必须为 remove/add/update',
-      },
-    },
-    multi: {
-      optional: true,
-      inArray: {
-        options: ['isMongoId'],
-        errorMessage: 'multi 内需为 mongoId',
-      },
-    },
-  })
+    const call = await AdminUser.findById(_id).populate('group')
 
-  if (ctx.validationErrors()) return null
-
-  try {
-    const { multi, type } = ctx.request.body
-    if (type === 'remove') {
-      await AdminUser.remove({ _id: { $in: multi } })
-      ctx.pipeDone()
-    } else {
-      ctx.pipeFail(`暂无${type}操作`, 'BN99')
+    // 判断对用户的操作权限
+    if (call.group) {
+      await ctx.checkGradation(call.group.gradation)
     }
+
+    await call.remove()
+    ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
   }

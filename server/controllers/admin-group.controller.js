@@ -33,17 +33,12 @@ exports.create = async (ctx) => {
     }
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const { body } = ctx.request
+    const input = await ctx.pipeInput()
 
-    const { _id } = ctx.state.user
-    const user = await AdminUser.findById(_id).populate('group')
+    await ctx.checkGradation(input.gradation)
 
-    if (Number(body.gradation) === 100) throw new Error('不允许创建系统管理组')
-
-    await AdminGroup.create(body)
+    await AdminGroup.create(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -83,14 +78,20 @@ exports.update = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const { _id } = ctx.params
-    const call = await AdminGroup.findById(_id).lean()
-    if (call.gradation === 100) throw new Error('不允许修改系统管理组')
+    const { _id, ...input } = await ctx.pipeInput()
 
-    await AdminGroup.update({ _id }, ctx.request.body)
+    // 判断操作权限
+    await ctx.checkGradation(input.gradation)
+
+    const call = await AdminGroup.findById(_id)
+
+    if (!call) return ctx.pipeFail('查询失败', 'BN99')
+
+    // 判断数据的操作权限
+    await ctx.checkGradation(call.gradation)
+
+    await call.update(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -111,10 +112,10 @@ exports.one = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const call = await AdminGroup.findById(ctx.params._id)
+    const { _id } = await ctx.pipeInput()
+
+    const call = await AdminGroup.findById(_id)
       .select('name description authorities gradation')
       .lean()
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99')
@@ -140,15 +141,10 @@ exports.list = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const {
-      page = 1, pageSize = 10,
-      ...query
-    } = ctx.request.query
+    const { page = 1, pageSize = 10, ...query } = await ctx.pipeInput()
 
-    if (query.nickname) query.nickname = new RegExp(query.nickname, 'i')
+    if (query.name) query.name = new RegExp(query.name, 'i')
 
     const total = await AdminGroup.count(query)
     const list = await AdminGroup.find(query)
@@ -169,7 +165,8 @@ exports.list = async (ctx) => {
  */
 exports.all = async (ctx) => {
   try {
-    const list = await AdminGroup.find({})
+    const { group } = ctx.state.user
+    const list = await AdminGroup.find() // AdminGroup.find({ gradation: { $lt: group.gradation } })
       .sort('-gradation')
       .select('name')
       .lean()
@@ -193,57 +190,19 @@ exports.delete = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const { _id } = ctx.params
-    const call = await AdminGroup.findById(_id).lean()
-    if (call.gradation === 100) throw new Error('不允许删除系统管理组')
 
-    await AdminGroup.remove({ _id })
+    const { _id } = await ctx.pipeInput()
+
+    const call = await AdminGroup.findById(_id)
+
+    if (!call) return ctx.pipeFail('查询失败', 'BN99')
+
+    await ctx.checkGradation(call.gradation)
+
+    await call.remove({ _id })
     await AdminUser.update({ group: _id }, { $unset: { group: true } })
     ctx.pipeDone()
-  } catch (e) {
-    ctx.pipeFail(e)
-  }
-}
-
-exports.multi = async (ctx) => {
-  ctx.checkBody({
-    type: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'type 不能为空',
-      },
-      isIn: {
-        options: [['remove', 'add', 'update']],
-        errorMessage: 'type 必须为 remove/add/update',
-      },
-    },
-    multi: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'multi 不能为空',
-      },
-      inArray: {
-        options: ['isMongoId'],
-        errorMessage: 'multi 内需为 mongoId',
-      },
-    },
-  })
-
-  if (ctx.validationErrors()) return null
-
-  try {
-    const { multi, type } = ctx.request.body
-    if (type === 'remove') {
-
-
-      await AdminGroup.remove({ _id: { $in: multi } })
-      ctx.pipeDone()
-    } else {
-      ctx.pipeFail(`暂无${type}操作`, 'BN99')
-    }
   } catch (e) {
     ctx.pipeFail(e)
   }

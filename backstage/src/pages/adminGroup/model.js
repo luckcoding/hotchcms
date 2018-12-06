@@ -5,7 +5,7 @@ import * as adminGroupsService from './services/adminGroups'
 import * as authorityService from './services/authority'
 import { pageModel } from 'utils/model'
 
-const { query, multi } = adminGroupsService
+const { query } = adminGroupsService
 
 export default modelExtend(pageModel, {
   namespace: 'adminGroup',
@@ -15,7 +15,6 @@ export default modelExtend(pageModel, {
     authority: [],
     modalVisible: false,
     modalType: 'create',
-    selectedRowKeys: [],
   },
 
   subscriptions: {
@@ -67,21 +66,9 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * delete ({ payload }, { call, put, select }) {
+    * delete ({ payload }, { call }) {
       const data = yield call(remove, { _id: payload })
-      const { selectedRowKeys } = yield select(_ => _.adminGroup)
-      if (data.code === '0000') {
-        yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
-      } else {
-        throw data
-      }
-    },
-
-    * multiDelete ({ payload }, { call, put }) {
-      const data = yield call(multi, { type: 'remove', ...payload })
-      if (data.code === '0000') {
-        yield put({ type: 'updateState', payload: { selectedRowKeys: [] } })
-      } else {
+      if (data.code !== '0000') {
         throw data
       }
     },

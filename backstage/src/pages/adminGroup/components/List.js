@@ -41,10 +41,14 @@ const List = ({
       key: 'gradation',
     }, {
       title: '权限',
-      dataIndex: 'authorities',
-      key: 'authorities',
-      render: (text, record) => {
-        return <span style={{fontSize: '12px'}}>{record.authority.map(_ => _.name).join(',')}</span>
+      dataIndex: 'authority',
+      key: 'authority',
+      render: (text = []) => {
+        return <span style={{
+          fontSize: '12px',
+          display: 'inline-block',
+          maxWidth: '300px',
+        }}>{text.map(_ => _.name).join(',')}</span>
       },
     }, {
       title: '操作',

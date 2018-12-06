@@ -25,7 +25,7 @@
     "koa-authority": "^1.1.0",
     "koa-body": "^4.0.1",
     "koa-convert": "^1.2.0",
-    "koa-middle-validator": "^1.0.0",
+    "koa-middle-validator": "^1.1.0",
     "koa-router": "^7.4.0",
     "koa-static": "^4.0.3",
     "koa-views": "^6.1.4",

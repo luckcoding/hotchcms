@@ -35,6 +35,21 @@ module.exports = () => async (ctx, next) => {
       logger().error('失败原因: ', stack || message)
     }
 
+    ctx.pipeInput = async () => {
+      const validationInput = await ctx.getValidationLegalResult()
+      const sanitizerInput = await ctx.getSanitizerLegalResult()
+      const input = Object.assign({}, validationInput, sanitizerInput)
+
+      // filter undefined data
+      for (let key in input) {
+        if (typeof input[key] === 'undefined') {
+          delete input[key]
+        }
+      }
+
+      return input
+    }
+
     await next()
 
     // 拦截错误验证

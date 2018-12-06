@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken')
 const koaAuthority = require('koa-authority')
+const validator = require('validator')
 const settings = require('../config/settings')
 const AdminUser = require('../models/admin-user.model')
+const AdminGroup = require('../models/admin-group.model')
 const { isJson } = require('../lib/validator.lib')
 
 // decode jwt
@@ -26,10 +28,16 @@ module.exports = authRoutes => koaAuthority({
 
         if (decoded.hasOwnProperty('data')) {
           // query user
-          user = await AdminUser.findById(decoded.data).populate('group').lean()
+          const call = await AdminUser.findById(decoded.data).populate('group').lean()
 
-          // set authorities
-          if (isJson(user) && user.hasOwnProperty('group')) {
+          // set user
+          user = call || {}
+
+          if (user.hasOwnProperty('group')) {
+            // set group
+            group = isJson(user.group) ? user.group : {}
+
+            // set authorities
             authorities = user.group.gradation === 100
               ? routes
               : user.group.authorities
@@ -38,12 +46,31 @@ module.exports = authRoutes => koaAuthority({
       }
     }
 
-    // handle data
-    user = isJson(user) ? user : {}
-    group = isJson(user.group) ? user.group : {}
-
     // bind in the ctx
     ctx.state.user = Object.assign(decoded, user, { group }, { authorities })
+
+    /**
+     * bind check auth levl fn
+     * @param  {Number or MongoId} gradation [需要校验的权限等级]
+     * @return {Boolean}
+     */
+    ctx.checkGradation = async function (gradation) {
+      const hasGradation = group.gradation || 0
+      let checkedGradation = gradation
+
+      if (validator.isMongoId(gradation)) {
+        const call = await AdminGroup.findById(gradation)
+        if (call) {
+          checkedGradation = call.gradation
+        }
+      }
+
+      if (hasGradation > (checkedGradation || 0)) {
+        return true
+      } else {
+        throw Error('Gradation forbidden')
+      }
+    }
 
     return Promise.resolve(authorities)
   },

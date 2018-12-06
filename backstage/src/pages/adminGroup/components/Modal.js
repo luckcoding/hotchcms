@@ -33,7 +33,9 @@ const modal = ({
     let output = []
     const authPrefix = keyBy(authority, 'prefix')
     authorities.forEach(function (item) {
-      output.push(authPrefix[item].value)
+      if (authPrefix[item] && authPrefix[item].value) {
+        output.push(authPrefix[item].value)
+      }
     })
     return output
   }

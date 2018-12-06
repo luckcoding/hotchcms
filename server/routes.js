@@ -30,10 +30,8 @@ module.exports = {
       post: '*admin-group.create#【管理组】新增',
       get: '*admin-group.list#【管理组】查询',
 
-
-      '/multi': {
-        post: '*admin-group.multi#【用户组】多项操作',
-        get: '*admin-group.all#【用户组】查询所有',
+      '/all': {
+        get: '*admin-group.all#【管理组】查询所有',
       },
 
       '/:_id': {
@@ -46,10 +44,6 @@ module.exports = {
     '/admin-user': {
       post: '*admin-user.create#【管理员】新增',
       get: '*admin-user.list#【管理员】列表',
-
-      '/multi': {
-        post: '*admin-user.multi#【管理员】多条操作',
-      },
 
       '/:_id': {
         put: '*admin-user.update#【管理员】更新',

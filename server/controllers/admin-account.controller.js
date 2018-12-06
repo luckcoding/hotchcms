@@ -3,9 +3,9 @@ const jwt = require('jsonwebtoken')
 const cache = require('../lib/cache.lib')
 const sha1 = require('../lib/sha1.lib')
 const AdminUser = require('../models/admin-user.model')
-const config = require('../config')
+const settings = require('../config/settings')
 
-const { expiresInLong, expiresIn, secret } = config
+const { secret, expiresIn, expiresInLong, } = settings.system
 
 /**
  * 登陆
@@ -36,10 +36,6 @@ exports.signIn = async (ctx) => {
 
   try {
     const { email, mobile, password, autoSignIn } = ctx.request.body
-
-    if (!email && !mobile) {
-      throw new Error('email | mobile 必须有一个')
-    }
 
     let query = {}
 

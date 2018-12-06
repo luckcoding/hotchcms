@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { routerRedux } from 'dva/router'
 import { connect } from 'dva'
-import { Row, Col, Button, Popconfirm } from 'antd'
 import { Page } from 'components'
 import queryString from 'query-string'
 import List from './components/List'
@@ -14,7 +13,7 @@ const AdminGroup = ({
 }) => {
   const { query, pathname } = location
   const {
-    list, pagination, currentItem, authority, modalVisible, modalType, selectedRowKeys,
+    list, pagination, currentItem, authority, modalVisible, modalType,
   } = adminGroup
 
   const handleRefresh = (newQuery) => {
@@ -87,17 +86,6 @@ const AdminGroup = ({
           })
         })
     },
-    rowSelection: {
-      selectedRowKeys,
-      onChange: (keys) => {
-        dispatch({
-          type: 'adminGroup/updateState',
-          payload: {
-            selectedRowKeys: keys,
-          },
-        })
-      },
-    },
   }
 
   const filterProps = {
@@ -124,34 +112,9 @@ const AdminGroup = ({
     },
   }
 
-  const handleDeleteItems = () => {
-    dispatch({
-      type: 'adminGroup/multiDelete',
-      payload: {
-        multi: selectedRowKeys,
-      },
-    })
-      .then(() => {
-        handleRefresh({
-          page: (list.length === selectedRowKeys.length && pagination.current > 1) ? pagination.current - 1 : pagination.current,
-        })
-      })
-  }
-
   return (
     <Page inner>
       <Filter {...filterProps} />
-      {
-        selectedRowKeys.length > 0 &&
-        <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
-          <Col>
-            {`选中 ${selectedRowKeys.length} 目标 `}
-            <Popconfirm title={'确定删除这些目标?'} placement="left" onConfirm={handleDeleteItems}>
-               <Button type="danger" size="large" style={{ marginLeft: 8 }}>删除</Button>
-             </Popconfirm>
-          </Col>
-        </Row>
-      }
       <List {...listProps} />
       {modalVisible && <Modal {...modalProps} />}
     </Page>

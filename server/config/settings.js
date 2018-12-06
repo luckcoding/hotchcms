@@ -30,7 +30,7 @@ module.exports = {
     effect: 300, // 请求耗时超过多少写入logger
     secret: 'hotchcms', // 后台加密盐值
     expiresIn: 24 * 60 * 60, // token 失效时间 一天
-    longExpiresIn: 24 * 60 * 60 * 30, // token 失效时间 一月
+    expiresInLong: 24 * 60 * 60 * 30, // token 失效时间 一月
   },
 
   /**
