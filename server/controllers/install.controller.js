@@ -57,10 +57,10 @@ exports.testDatabase = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await mongodb.test(ctx.request.body)
+    const input = await ctx.pipeInput()
+
+    await mongodb.test(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -118,10 +118,9 @@ exports.testRedis = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await redis.test(ctx.request.body)
+    const input = await ctx.pipeInput()
+    await redis.test(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -230,13 +229,11 @@ exports.install = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   const {
     dbHost, dbPort, db, dbUser, dbPassword,
     rdHost, rdPort, rdFamily, rdDb, rdPass,
     email, password,
-  } = ctx.request.body
+  } = await ctx.pipeInput()
 
   try {
     const hasInstall = await installLib.status()

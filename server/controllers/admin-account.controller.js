@@ -32,15 +32,9 @@ exports.signIn = async (ctx) => {
     }
   });
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const { email, mobile, password, autoSignIn } = ctx.request.body
 
-    let query = {}
-
-    if (email) query.email = email
-    if (mobile) query.mobile = mobile
+    const { password, autoSignIn, ...query } = await ctx.pipeInput()
 
     if (lodash.isEmpty(query)) return ctx.pipeFail('缺少账户信息', 'BN99')
 
@@ -117,12 +111,10 @@ exports.update = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const { _id } = ctx.state.user
+    const input = await ctx.pipeInput()
 
-    const input = lodash.pick(ctx.request.body, ['email', 'mobile', 'nickname', 'password', 'avatar'])
+    const { _id } = ctx.state.user
 
     await AdminUser.update({ _id }, input, { runValidators: true })
     ctx.pipeDone()

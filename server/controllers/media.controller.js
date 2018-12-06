@@ -35,15 +35,16 @@ exports.create = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
+
+    const input = await ctx.pipeInput()
+
     let files = ctx.request.files.file
     if (!files) throw Error('上传内容不能为空')
     // 默认多文件上传
     files = _.isArray(files) ? files : new Array(files)
 
-    const mediaType = ctx.request.headers['media-type']
+    const mediaType = input['media-type']
 
     // 解析
     const asyncInfo = files.map(file => {
@@ -83,7 +84,7 @@ exports.list = async (ctx) => {
     const {
       page = 1, pageSize = 10,
       ...query
-    } = ctx.request.query
+    } = await ctx.pipeInput()
 
     const total = await Media.count(query)
     const list = await Media.find(query)

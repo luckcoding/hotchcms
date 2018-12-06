@@ -75,10 +75,10 @@ exports.update = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await Content.update({ _id: ctx.params._id }, ctx.request.body)
+    const { _id, ...input } = await ctx.pipeInput()
+
+    await Content.update({ _id }, input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -96,10 +96,10 @@ exports.one = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const call = await Content.findById(ctx.params._id)
+    const { _id } = await ctx.pipeInput()
+
+    const call = await Content.findById(_id)
       .select({})
       .lean()
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99')
@@ -130,13 +130,12 @@ exports.list = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
+
     const {
       page = 1, pageSize = 10,
       ...query
-    } = ctx.request.query
+    } = await ctx.pipeInput()
 
     if (query.title) query.title = new RegExp(query.title, 'i')
 
@@ -166,10 +165,10 @@ exports.delete = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    await Content.remove({ _id: ctx.params._id })
+    const { _id } = await ctx.pipeInput()
+
+    await Content.remove({ _id })
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -197,10 +196,8 @@ exports.multi = async (ctx) => {
     },
   })
 
-  if (ctx.validationErrors()) return null
-
   try {
-    const { multi, type } = ctx.request.body
+    const { multi, type } = await ctx.pipeInput()
     if (type === 'remove') {
       await Content._remove(multi)
       ctx.pipeDone()

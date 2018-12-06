@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { Form, Input, Modal, Select, Upload, Icon, message } from 'antd'
 import { auth, config } from 'utils'
 
+const { getImgUrl, api } = config
+
 const FormItem = Form.Item
 const Option = Select.Option
 
@@ -16,10 +18,24 @@ const formItemLayout = {
 }
 
 class modal extends React.Component {
-  state = {
-    previewVisible: false,
-    previewImage: '',
-    fileList: [],
+  constructor (props) {
+    super(props)
+
+    let fileList = []
+
+    if (props.item.avatar) {
+      fileList.push({
+        uid: '-1',
+        status: 'done',
+        url: getImgUrl(props.item.avatar),
+      })
+    }
+
+    this.state = {
+      previewVisible: false,
+      previewImage: '',
+      fileList,
+    }
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -94,7 +110,7 @@ class modal extends React.Component {
         <Form layout="horizontal">
           <FormItem label="头像" hasFeedback {...formItemLayout}>
             <Upload
-              action={config.api.media}
+              action={api.media}
               headers={{
                 authorization: auth.get(),
                 'media-type': 'image',

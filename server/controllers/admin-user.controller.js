@@ -103,7 +103,7 @@ exports.update = async (ctx) => {
     // 判断对用户组的操作权限
     await ctx.checkGradation(input.group)
 
-    // await call.update(input)
+    await call.update(input)
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
