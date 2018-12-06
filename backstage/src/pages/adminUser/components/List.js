@@ -51,9 +51,8 @@ const List = ({
       render: text => <span>{text && text.name}</span>,
     }, {
       title: '创建时间',
-      dataIndex: 'create',
-      key: 'create',
-      render: text => <span>{text.date}</span>,
+      dataIndex: 'createDate',
+      key: 'createDate',
     }, {
       title: '手机号',
       dataIndex: 'mobile',

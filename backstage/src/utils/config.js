@@ -29,7 +29,7 @@ export default {
     adminUser: `${API_URL}/admin-user/:_id`, // 管理员
     adminGroup: `${API_URL}/admin-group/:_id`, // 管理组
     category: `${API_URL}/category/:_id`, // 分类
-    content: `${API_URL}/content/:_id`, // 内容
+    article: `${API_URL}/article/:_id`, // 内容
     authority: `${API_URL}/authority`, // 权限
     media: `${API_URL}/media`, // 多媒体
   },

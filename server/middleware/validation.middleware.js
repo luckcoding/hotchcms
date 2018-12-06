@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const validator = require('validator')
 const koaValidator = require('koa-middle-validator')
+const shortid = require('shortid')
 
 /**
  * 自定义验证
@@ -14,6 +15,7 @@ module.exports = () => koaValidator({
     }
   },
   customValidators: {
+    isShortid: value => shortid.isValid(value),
     isEmail: value => /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value),
     isMobile: value => /^1[3|4|5|7|8]\d{9}$/.test(value),
     isString: value => _.isString(value),
@@ -25,6 +27,7 @@ module.exports = () => koaValidator({
       const validatorName = args[0]
       return _.every(param, (item) => {
         switch (validatorName) {
+          case 'isShortid': return shortid.isValid(item)
           case 'isEmail': return /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(item)
           case 'isMobile': return /^1[3|4|5|7|8]\d{9}$/.test(item)
           case 'isString': return _.isString(item)

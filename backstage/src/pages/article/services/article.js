@@ -1,11 +1,11 @@
 import { request, config } from 'utils'
 
 const { api } = config
-const { content } = api
+const { article } = api
 
 export function query (params) {
   return request({
-    url: content,
+    url: article,
     method: 'get',
     data: params,
   })
@@ -13,7 +13,7 @@ export function query (params) {
 
 export function create (params) {
   return request({
-    url: content.replace('/:_id', ''),
+    url: article.replace('/:_id', ''),
     method: 'post',
     data: params,
   })
@@ -21,7 +21,7 @@ export function create (params) {
 
 export function remove (params) {
   return request({
-    url: content,
+    url: article,
     method: 'delete',
     data: params,
   })
@@ -29,7 +29,7 @@ export function remove (params) {
 
 export function update (params) {
   return request({
-    url: content,
+    url: article,
     method: 'put',
     data: params,
   })

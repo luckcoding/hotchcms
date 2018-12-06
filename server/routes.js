@@ -67,18 +67,18 @@ module.exports = {
       },
     },
 
-    '/content': {
-      post: '*content.create#【文章】创建',
-      get: '*content.list#【文章】列表',
+    '/article': {
+      post: '*article.create#【文章】创建',
+      get: '*article.list#【文章】列表',
 
       '/multi': {
-        post: '*content.multi#【文章】多项操作',
+        post: '*article.multi#【文章】多项操作',
       },
 
       '/:_id': {
-        put: '*content.update#【文章】更新',
-        get: '*content.one#【文章】详情',
-        delete: '*content.delete#【文章】删除',
+        put: '*article.update#【文章】更新',
+        get: '*article.one#【文章】详情',
+        delete: '*article.delete#【文章】删除',
       },
     },
 
@@ -96,8 +96,8 @@ module.exports = {
       '/categories': {
         get: 'v1.getCategories#【网站】获取分类',
       },
-      '/contents': {
-        get: 'v1.getContents#【网站】获取文章列表'
+      '/articles': {
+        get: 'v1.getArticles#【网站】获取文章列表'
       }
     }
   },

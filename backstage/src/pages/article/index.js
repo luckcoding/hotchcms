@@ -11,9 +11,10 @@ import List from './components/List'
 const TabPane = Tabs.TabPane
 
 const EnumPostStatus = {
-  UNPUBLISH: 0,
-  PUBLISHED: 1,
-  DELETED: 2,
+  PUBLISHED: 1, // 已发布
+  UNPUBLISH: 2, // 已下线
+  DRAFT: 0, // 草稿
+  TRASH: 9, // 回收站
 }
 
 const queryActive = function (status) {
@@ -26,13 +27,13 @@ const queryActive = function (status) {
   return active
 }
 
-const Content = ({
-  location, dispatch, content, loading,
+const Article = ({
+  location, dispatch, article, loading,
 }) => {
   const { query, pathname } = location
   const {
     list, pagination, selectedRowKeys,
-  } = content
+  } = article
 
   const handleRefresh = (newQuery) => {
     dispatch(routerRedux.push({
@@ -46,7 +47,7 @@ const Content = ({
 
   const listProps = {
     dataSource: list,
-    loading: loading.effects['content/query'],
+    loading: loading.effects['article/query'],
     pagination,
     location,
     onChange (page) {
@@ -59,7 +60,7 @@ const Content = ({
       selectedRowKeys,
       onChange: (keys) => {
         dispatch({
-          type: 'content/updateState',
+          type: 'article/updateState',
           payload: {
             selectedRowKeys: keys,
           },
@@ -79,13 +80,13 @@ const Content = ({
 
   const onEdit = () => {
     dispatch({
-      type: 'content/create',
+      type: 'article/create',
     })
   }
 
   const handleDeleteItems = () => {
     dispatch({
-      type: 'content/multiDelete',
+      type: 'article/multiDelete',
       payload: {
         multi: selectedRowKeys,
       },
@@ -116,10 +117,13 @@ const Content = ({
         <TabPane tab={<span><Icon type="book" />已发布</span>} key={String(EnumPostStatus.PUBLISHED)}>
           <List {...listProps} />
         </TabPane>
-        <TabPane tab={<span><Icon type="edit" />草稿</span>} key={String(EnumPostStatus.UNPUBLISH)}>
+        <TabPane tab={<span><Icon type="lock" />已下线</span>} key={String(EnumPostStatus.UNPUBLISH)}>
           <List {...listProps} />
         </TabPane>
-        <TabPane tab={<span><Icon type="delete" />回收站</span>} key={String(EnumPostStatus.DELETED)}>
+        <TabPane tab={<span><Icon type="edit" />草稿</span>} key={String(EnumPostStatus.DRAFT)}>
+          <List {...listProps} />
+        </TabPane>
+        <TabPane tab={<span><Icon type="delete" />回收站</span>} key={String(EnumPostStatus.TRASH)}>
           <List {...listProps} />
         </TabPane>
       </Tabs>
@@ -127,11 +131,11 @@ const Content = ({
   )
 }
 
-Content.propTypes = {
-  content: PropTypes.object,
+Article.propTypes = {
+  article: PropTypes.object,
   location: PropTypes.object,
   dispatch: PropTypes.func,
   loading: PropTypes.object,
 }
 
-export default connect(({ content, loading }) => ({ content, loading }))(Content)
+export default connect(({ article, loading }) => ({ article, loading }))(Article)

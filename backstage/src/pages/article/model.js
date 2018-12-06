@@ -1,14 +1,14 @@
 /* global window */
 import modelExtend from 'dva-model-extend'
 import { routerRedux } from 'dva/router'
-import * as contentsService from './services/contents'
-import { create } from './services/content'
+import * as articlesService from './services/articles'
+import { create } from './services/article'
 import { pageModel } from 'utils/model'
 
-const { query, multi } = contentsService
+const { query, multi } = articlesService
 
 export default modelExtend(pageModel, {
-  namespace: 'content',
+  namespace: 'article',
 
   state: {
     currentItem: {},
@@ -19,7 +19,7 @@ export default modelExtend(pageModel, {
   subscriptions: {
     setup ({ dispatch, history }) {
       history.listen((location) => {
-        if (location.pathname === '/content') {
+        if (location.pathname === '/article') {
           const payload = location.query || { page: 1, pageSize: 10 }
           dispatch({
             type: 'query',
@@ -53,7 +53,7 @@ export default modelExtend(pageModel, {
 
     // * delete ({ payload }, { call, put, select }) {
     //   const data = yield call(remove, { _id: payload })
-    //   const { selectedRowKeys } = yield select(_ => _.content)
+    //   const { selectedRowKeys } = yield select(_ => _.article)
     //   if (data.code === '0000') {
     //     yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
     //     yield put({ type: 'query' })
@@ -75,7 +75,7 @@ export default modelExtend(pageModel, {
       const data = yield call(create, payload)
       if (data.code === '0000') {
         yield put(routerRedux.push({
-          pathname: `/content/${data.result._id}`,
+          pathname: `/article/${data.result._id}`,
         }))
       } else {
         throw data
@@ -83,9 +83,9 @@ export default modelExtend(pageModel, {
     },
 
     // * update ({ payload }, { select, call, put }) {
-    //   const _id = yield select(({ content }) => content.currentItem._id)
-    //   const newcontent = { ...payload, _id }
-    //   const data = yield call(update, newcontent)
+    //   const _id = yield select(({ article }) => article.currentItem._id)
+    //   const newArticle = { ...payload, _id }
+    //   const data = yield call(update, newArticle)
     //   if (data.code === '0000') {
     //     yield put({ type: 'hideModal' })
     //     yield put({ type: 'query' })

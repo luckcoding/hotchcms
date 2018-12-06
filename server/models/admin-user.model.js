@@ -33,19 +33,8 @@ const AdminUserSchema = new mongoose.Schema({
   // 头像
   avatar: { type: String, trim: true },
 
-  // 注册信息
-  create: {
-    // 时间
-    date: { type: Date, default: Date.now },
-    // 地点
-    address: { type: String, trim: true },
-    // IP
-    ip: { type: String, trim: true, match: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/ },
-    // 平台
-    platform: { type: String, trim: true },
-    // 其他
-    collection: { type: Object },
-  },
+  // 注册时间
+  createDate: { type: Date, default: Date.now },
 
   // 用户组
   group: { type: mongoose.Schema.Types.ObjectId, ref: 'AdminGroup' },

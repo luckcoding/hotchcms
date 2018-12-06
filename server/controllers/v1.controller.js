@@ -1,5 +1,5 @@
 const { Category } = require('../models')
-const { list } = require('../controllers/content.controller')
+const { list } = require('../controllers/article.controller')
 
 exports.getSiteInfo = async (ctx) => {
   try {
@@ -19,4 +19,4 @@ exports.getCategories = async (ctx) => {
   }
 }
 
-exports.getContents = list
+exports.getArticles = list

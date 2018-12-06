@@ -1,14 +1,20 @@
-const { Content } = require('../models')
+const { Article } = require('../models')
 
+/**
+ * 创建只做生成文章ID功能
+ */
 exports.create = async (ctx) => {
   try {
-    const call = await Content.create({})
+    const call = await Article.create({})
     ctx.pipeDone(call)
   } catch (e) {
     ctx.pipeFail(e)
   }
 }
 
+/**
+ *  更新文章
+ */
 exports.update = async (ctx) => {
   ctx.checkBody({
     title: {
@@ -37,6 +43,21 @@ exports.update = async (ctx) => {
         errorMessage: 'tags 内需为 string'
       },
     },
+    content: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'content 不能为空',
+      },
+      isString: { errorMessage: 'content 需为 String' },
+    },
+    authorName: {
+      optional: true,
+      isString: { errorMessage: 'authorName 需为 String' },
+    },
+    author: {
+      optional: true,
+      isMongoId: { errIorMessage: 'author 需为 mongoId' },
+    },
     isTop: {
       optional: true,
       isBoolean: { errorMessage: 'isTop 需为 Boolean' }
@@ -52,16 +73,9 @@ exports.update = async (ctx) => {
     status: {
       optional: true,
       isIn: {
-        options: [[0, 1, 2]],
-        errorMessage: 'type 必须为 0/1/2',
+        options: [[0, 1, 2, 9]],
+        errorMessage: 'status 必须为 0/1/2/9',
       },
-    },
-    content: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'content 不能为空',
-      },
-      isJson: { errorMessage: 'content  需为 Json' },
     },
   })
 
@@ -71,20 +85,23 @@ exports.update = async (ctx) => {
         options: [true],
         errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' },
+      isShortid: { errorMessage: '_id  需为 shortid' },
     },
   })
 
   try {
     const { _id, ...input } = await ctx.pipeInput()
 
-    await Content.update({ _id }, input)
+    await Article.update({ _id }, { ...input, updateDate: Date.now() })
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
   }
 }
 
+/**
+ * 查询单个文章
+ */
 exports.one = async (ctx) => {
   ctx.checkParams({
     _id: {
@@ -92,14 +109,14 @@ exports.one = async (ctx) => {
         options: [true],
         errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' },
+      isShortid: { errorMessage: '_id  需为 shortid' },
     },
   })
 
   try {
     const { _id } = await ctx.pipeInput()
 
-    const call = await Content.findById(_id)
+    const call = await Article.findById(_id)
       .select({})
       .lean()
     call ? ctx.pipeDone(call) : ctx.pipeFail('查询失败', 'BN99')
@@ -108,6 +125,9 @@ exports.one = async (ctx) => {
   }
 }
 
+/**
+ * 查询文章列表
+ */
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
@@ -120,13 +140,32 @@ exports.list = async (ctx) => {
       optional: true,
       isMongoId: { errIorMessage: 'category 需为 mongoId' },
     },
-    page: {
+    authorName: {
       optional: true,
-      isNumber: { errorMessage: 'page  需为 Number' },
+      isString: { errorMessage: 'authorName 需为 String' },
     },
-    pageSize: {
+    author: {
       optional: true,
-      isNumber: { errorMessage: 'pageSize  需为 Number' },
+      isMongoId: { errIorMessage: 'author 需为 mongoId' },
+    },
+    isTop: {
+      optional: true,
+      isBoolean: { errorMessage: 'isTop 需为 Boolean' }
+    },
+    original: {
+      optional: true,
+      isBoolean: { errorMessage: 'original 需为 Boolean' }
+    },
+    from: {
+      optional: true,
+      isString: { errorMessage: 'cover 需为 String' },
+    },
+    status: {
+      optional: true,
+      isIn: {
+        options: [[0, 1, 2, 9]],
+        errorMessage: 'status 必须为 0/1/2/9',
+      },
     },
   })
 
@@ -139,8 +178,8 @@ exports.list = async (ctx) => {
 
     if (query.title) query.title = new RegExp(query.title, 'i')
 
-    const total = await Content.count(query)
-    const list = await Content.find(query)
+    const total = await Article.count(query)
+    const list = await Article.find(query)
       .sort('-create.date')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
@@ -154,6 +193,9 @@ exports.list = async (ctx) => {
   }
 }
 
+/**
+ * 删除文章
+ */
 exports.delete = async (ctx) => {
   ctx.checkParams({
     _id: {
@@ -161,14 +203,14 @@ exports.delete = async (ctx) => {
         options: [true],
         errorMessage: '_id 不能为空',
       },
-      isMongoId: { errorMessage: '_id  需为 mongoId' },
+      isShortid: { errorMessage: '_id  需为 shortid' },
     },
   })
 
   try {
     const { _id } = await ctx.pipeInput()
 
-    await Content.remove({ _id })
+    await Article.remove({ _id })
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)
@@ -190,8 +232,8 @@ exports.multi = async (ctx) => {
     multi: {
       optional: true,
       inArray: {
-        options: ['isMongoId'],
-        errorMessage: 'multi 内需为 mongoId',
+        options: ['isShortid'],
+        errorMessage: 'multi 内需为 shortid',
       },
     },
   })
@@ -199,7 +241,23 @@ exports.multi = async (ctx) => {
   try {
     const { multi, type } = await ctx.pipeInput()
     if (type === 'remove') {
-      await Content._remove(multi)
+      // 只物理删除回收站 => status === 9
+      let toTrash = [], toRemove = []
+      const call = await Article.find({ _id: { $in: multi } })
+      if (Array.isArray(call)) {
+        call.forEach(item => {
+          item.status === 9 ? toRemove.push(item._id) : toTrash.push(item._id)
+        })
+      }
+
+      if (toTrash.length) {
+        await Article.update({ _id: { $in: toTrash } }, { status: 9 })
+      }
+
+      if (toRemove.length) {
+        await Article.remove({ _id: { $in: toRemove } })
+      }
+      
       ctx.pipeDone()
     } else {
       ctx.pipeFail(`暂无${type}操作`, 'BN99')

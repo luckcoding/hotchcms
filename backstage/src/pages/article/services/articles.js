@@ -1,11 +1,11 @@
 import { request, config } from 'utils'
 
 const { api } = config
-const { content } = api
+const { article } = api
 
 export function query (params) {
   return request({
-    url: content.replace('/:_id', ''),
+    url: article.replace('/:_id', ''),
     method: 'get',
     data: params,
   })
@@ -13,7 +13,7 @@ export function query (params) {
 
 export function multi (params) {
   return request({
-    url: content.replace('/:_id', '/multi'),
+    url: article.replace('/:_id', '/multi'),
     method: 'post',
     data: params,
   })

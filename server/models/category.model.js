@@ -24,7 +24,7 @@ const CategorySchema = new mongoose.Schema({
   },
 
   // 是否在导航中显示
-  state: { type: Boolean, default: true },
+  state: { type: Boolean, default: false },
 
   // 排序
   sort: { type: Number, default: 0, unique: true },

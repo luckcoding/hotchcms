@@ -3,22 +3,22 @@ import modelExtend from 'dva-model-extend'
 import pathToRegexp from 'path-to-regexp'
 import { routerRedux } from 'dva/router'
 import { model } from 'utils/model'
-import { query, update } from '../../services/content'
+import { query, update } from '../../services/article'
 import * as categorysService from '../../../category/services/categorys'
 
 export default modelExtend(model, {
 
-  namespace: 'contentDetail',
+  namespace: 'articleDetail',
 
   state: {
-    content: {},
+    article: {},
     tree: [],
   },
 
   subscriptions: {
     setup ({ dispatch, history }) {
       history.listen((location) => {
-        const match = pathToRegexp('/content/:_id').exec(location.pathname)
+        const match = pathToRegexp('/article/:_id').exec(location.pathname)
         if (match) {
           dispatch({ type: 'queryCategory', payload: location.query })
           dispatch({ type: 'query', payload: { _id: match[1] } })
@@ -35,7 +35,7 @@ export default modelExtend(model, {
         yield put({
           type: 'updateState',
           payload: {
-            content: result,
+            article: result,
           },
         })
       } else {
@@ -68,7 +68,7 @@ export default modelExtend(model, {
           type: 'updateState',
           payload: {
             tree: [],
-            content: {},
+            article: {},
           },
         })
         yield put(routerRedux.goBack())

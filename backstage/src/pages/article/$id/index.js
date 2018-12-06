@@ -43,8 +43,8 @@ class Edit extends React.Component {
   }
 
   static getDerivedStateFromProps (nextProps) {
-    if (!isEmpty(nextProps.content)) {
-      const { tags } = nextProps.content
+    if (!isEmpty(nextProps.article)) {
+      const { tags } = nextProps.article
       return {
         tags,
       }
@@ -91,7 +91,7 @@ class Edit extends React.Component {
         getFieldDecorator,
         validateFieldsAndScroll,
       },
-      content = {},
+      article = {},
       tree = [],
       dispatch,
     } = this.props
@@ -102,9 +102,9 @@ class Edit extends React.Component {
       validateFieldsAndScroll((errors, values) => {
         if (status && errors) return null
         dispatch({
-          type: 'contentDetail/update',
+          type: 'articleDetail/update',
           payload: {
-            _id: content._id,
+            _id: article._id,
             ...values,
             status,
             tags,
@@ -127,12 +127,12 @@ class Edit extends React.Component {
       <Form layout="horizontal">
         <FormItem label="文章标题" hasFeedback {...formItemLayout}>
           {getFieldDecorator('title', {
-            initialValue: content.title,
+            initialValue: article.title,
           })(<Input />)}
         </FormItem>
         <FormItem label="类别" hasFeedback {...formItemLayout}>
           {getFieldDecorator('category', {
-            initialValue: content.category,
+            initialValue: article.category,
           })(
             <TreeSelect
               allowClear
@@ -168,27 +168,28 @@ class Edit extends React.Component {
           {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
         </FormItem>
         <FormItem label="概述" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('subtitle', {
-            initialValue: content.subtitle,
+          {getFieldDecorator('subTitle', {
+            initialValue: article.subTitle,
           })(<TextArea autosize={textAreaSize} />)}
         </FormItem>
         <FormItem label="是否原创" {...formItemLayout}>
           {getFieldDecorator('original', {
             valuePropName: 'checked',
-            initialValue: content.original,
+            initialValue: article.original,
           })(<Switch />)}
         </FormItem>
         <FormItem label="是否置顶" {...formItemLayout}>
           {getFieldDecorator('isTop', {
             valuePropName: 'checked',
-            initialValue: content.isTop,
+            initialValue: article.isTop,
           })(<Switch />)}
         </FormItem>
         <Card title="文章内容">
           <Editor
             ref={instance => this.editorInstance = instance}
             contentFormat="html"
-            initialContent={content.content}
+            initialContent={article.content}
+            contentId={article._id}
           />
         </Card>
         <ButtonGroup size="large" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
@@ -203,11 +204,11 @@ class Edit extends React.Component {
 Edit.propTypes = {
   form: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-  content: PropTypes.object,
+  article: PropTypes.object,
   tree: PropTypes.array,
 }
 
-export default connect(({ contentDetail }) => ({
-  content: contentDetail.content,
-  tree: contentDetail.tree,
+export default connect(({ articleDetail }) => ({
+  article: articleDetail.article,
+  tree: articleDetail.tree,
 }))(Form.create()(Edit))

@@ -10,11 +10,11 @@ const List = ({ ...tableProps }) => {
       dataIndex: 'cover',
       className: styles.image,
       width: 64,
-      render: text => <img alt="Feture" width={26} src={text} />,
+      render: text => text && <img alt="Feture" width={26} src={text} />,
     }, {
       title: '标题',
       dataIndex: 'title',
-      render: (text, record) => <Link to={`content/${record._id}`}>{text}</Link>,
+      render: (text, record) => <Link to={`article/${record._id}`}>{text || record._id}</Link>,
     }, {
       title: '作者',
       dataIndex: 'author',
@@ -35,7 +35,10 @@ const List = ({ ...tableProps }) => {
       dataIndex: 'viewNum',
     }, {
       title: '创建日期',
-      dataIndex: 'date',
+      dataIndex: 'createDate',
+    }, {
+      title: '最后更新日期',
+      dataIndex: 'updateDate',
     },
   ]
 
