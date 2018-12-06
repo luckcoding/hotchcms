@@ -13,6 +13,8 @@ const MediaSchema = new mongoose.Schema({
 
   size: { type: Number, required: true }, // 媒体大小
 
+  type: { type: String, enum: ['image', 'zip'], required: true }, // 类型
+
   quotes: mongoose.Schema.Types.ObjectId, // 来源归属
 }, {
   collection: 'media',

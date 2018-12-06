@@ -88,7 +88,7 @@ const Menus = ({
   let currentMenu
   let defaultSelectedKeys
   for (let item of menu) {
-    if (item.route && pathToRegexp(item.route).exec(location.pathname)) {
+    if (item.route && pathToRegexp(item.route.split('?')[0]).exec(location.pathname)) {
       if (!navOpenKeys.length && item.mpid && !openKeysFlag) changeOpenKeys([String(item.mpid)])
       currentMenu = item
       break

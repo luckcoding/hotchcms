@@ -89,6 +89,10 @@ module.exports = {
     '/media': {
       post: '*media.create#【文件】上传',
       get: '*media.list#【文件】列表',
+
+      '/multi': {
+        post: '*media.multi#【文件】多项操作',
+      }
     },
 
 

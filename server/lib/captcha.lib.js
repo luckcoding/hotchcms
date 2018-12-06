@@ -64,11 +64,6 @@ module.exports = function () {
   ctx.closePath()
   ctx.stroke()
 
-  // return {
-  //   code: '1234',
-  //   dataURL: '1234',
-  // }
-
   return {
     code: vcode.toLowerCase(),
     dataURL: canvas.toDataURL(),

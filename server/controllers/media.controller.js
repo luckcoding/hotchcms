@@ -4,6 +4,9 @@ const {
   Media,
 } = require('../models')
 
+/**
+ * 上传文件
+ */
 exports.create = async (ctx) => {
   ctx.checkHeaders({
     'content-type': {
@@ -26,13 +29,6 @@ exports.create = async (ctx) => {
         errorMessage: 'media-type 必须为 image/zip',
       },
     },
-    'media-middle': {
-      optional: true,
-      matches: {
-        options: [/(rename)/i],
-        errorMessage: 'media-type 必须为 rename',
-      },
-    },
   })
 
   try {
@@ -52,10 +48,20 @@ exports.create = async (ctx) => {
       if (!_.includes(fileJson.type, mediaType)) throw Error(`存在非${mediaType}的资源`)
       return media.parse(fileJson)
     })
-    const info = await Promise.all(asyncInfo)
 
-    // 保持文件
-    const asyncUpload = info.map(item => media.upload(item))
+    // 解析后的数据
+    let info = await Promise.all(asyncInfo)
+
+    // 保存任务对象
+    let asyncUpload = []
+
+    info = info.map(item => {
+      // 添加任务
+      asyncUpload.push(media.upload(item))
+
+      return {...item, type: mediaType}
+    })
+
     await Promise.all(asyncUpload)
 
     // 数据库存储
@@ -67,17 +73,19 @@ exports.create = async (ctx) => {
   }
 }
 
+/**
+ * 文件列表
+ */
 exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
-    name: {
+    type: {
       optional: true,
-      isString: { errorMessage: 'name  需为 String' },
-    },
-    suffix: {
-      optional: true,
-      isString: { errorMessage: 'suffix  需为 String' },
+      isIn: {
+        options: [['image', 'zip']],
+        errorMessage: 'type 必须为 image/zip',
+      },
     },
   })
   try {
@@ -91,10 +99,49 @@ exports.list = async (ctx) => {
       .sort('-date')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select('path md5 date size quotes')
+      .select()
       .lean()
 
     ctx.pipeDone({ list, total, pageSize, page })
+  } catch (e) {
+    ctx.pipeFail(e)
+  }
+}
+
+
+/**
+ * 多选操作
+ */
+exports.multi = async (ctx) => {
+  ctx.checkBody({
+    type: {
+      notEmpty: {
+        options: [true],
+        errorMessage: 'type 不能为空',
+      },
+      isIn: {
+        options: [['remove', 'add', 'update']],
+        errorMessage: 'type 必须为 remove/add/update',
+      },
+    },
+    multi: {
+      optional: true,
+      inArray: {
+        options: ['isMongoId'],
+        errorMessage: 'multi 内需为 mongoId',
+      },
+    },
+  })
+
+  try {
+    const { multi, type } = await ctx.pipeInput()
+
+    if (type === 'remove') {
+      await Media.remove({ _id: { $in: multi } })
+      ctx.pipeDone()
+    } else {
+      ctx.pipeFail(`暂无${type}操作`, 'BN99')
+    }
   } catch (e) {
     ctx.pipeFail(e)
   }

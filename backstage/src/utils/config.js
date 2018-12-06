@@ -31,6 +31,6 @@ export default {
     category: `${API_URL}/category/:_id`, // 分类
     article: `${API_URL}/article/:_id`, // 内容
     authority: `${API_URL}/authority`, // 权限
-    media: `${API_URL}/media`, // 多媒体
+    media: `${API_URL}/media/:_id`, // 多媒体
   },
 }

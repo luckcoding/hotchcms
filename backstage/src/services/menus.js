@@ -71,6 +71,14 @@ export function query () {
           name: '文章编辑',
           route: '/article/:id',
         },
+        {
+          id: '36',
+          bpid: '3',
+          mpid: '3',
+          name: '资源',
+          icon: 'cloud',
+          route: '/media',
+        },
       ],
     })
   })
