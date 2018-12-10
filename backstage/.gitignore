@@ -1,7 +1,10 @@
+coverage
 dist
 node_modules
-yarn.lock
 npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
 
 # ide
 .idea
@@ -15,5 +18,6 @@ npm-debug.log
 .umi
 .umi-production
 
-dump.rdb
-.DS_Store
+# jslingui
+src/locales/_build
+src/locales/**/*.js

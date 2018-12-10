@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal, TreeSelect, Switch, InputNumber, Tag, Tooltip, Button } from 'antd'
+import { Form, Input, InputNumber, Radio, Modal, Cascader } from 'antd'
+import { Trans, withI18n } from '@lingui/react'
+import city from 'utils/city'
 
 const FormItem = Form.Item
-const TextArea = Input.TextArea
-const TreeNode = TreeSelect.TreeNode
 
 const formItemLayout = {
   labelCol: {
@@ -14,185 +14,123 @@ const formItemLayout = {
     span: 14,
   },
 }
+@withI18n()
+@Form.create()
+class UserModal extends PureComponent {
+  handleOk = () => {
+    const { item = {}, onOk, form } = this.props
+    const { validateFields, getFieldsValue } = form
 
-class modal extends React.Component {
-
-  constructor (props) {
-    super(props)
-    this.state = {
-      tags: props.item.keywords || [],
-      inputVisible: false,
-      inputValue: '',
-      uid: props.item.uid,
-    }
-  }
-
-  onChange = (uid) => {
-    this.setState({ uid })
-  }
-
-  handleClose = (removedTag) => {
-    const tags = this.state.tags.filter(tag => tag !== removedTag)
-    this.setState({ tags })
-  }
-
-  showInput = () => {
-    this.setState({ inputVisible: true }, () => this.input.focus())
-  }
-
-  handleInputChange = (e) => {
-    this.setState({ inputValue: e.target.value })
-  }
-
-  handleInputConfirm = () => {
-    const state = this.state
-    const inputValue = state.inputValue
-    let tags = state.tags
-    if (inputValue && tags.indexOf(inputValue) === -1) {
-      tags = [...tags, inputValue]
-    }
-
-    this.setState({
-      tags,
-      inputVisible: false,
-      inputValue: '',
-    })
-  }
-
-  saveInputRef = (input) => {
-    this.input = input
-  }
-
-  render () {
-    const {
-      modalType,
-      item = {},
-      onOk,
-      form: {
-        getFieldDecorator,
-        validateFields,
-        getFieldsValue,
-      },
-      ...modalProps
-    } = this.props
-
-    const { tags, inputVisible, inputValue } = this.state
-
-    const handleOk = () => {
-      validateFields((errors) => {
-        if (errors) {
-          return
-        }
-        const data = {
-          ...getFieldsValue(),
-          keywords: tags,
-        }
-        onOk(data)
-      })
-    }
-
-    const modalOpts = {
-      ...modalProps,
-      onOk: handleOk,
-    }
-
-    const loop = data => data.map((i) => {
-      const title = <span style={{ textDecoration: !i.state && 'line-through' }}>{i.name}</span>
-      const disabled = i._id === item._id
-      if (i.children) {
-        return (
-          <TreeNode key={i._id} title={title} disabled={disabled} value={i._id}>
-            {loop(i.children)}
-          </TreeNode>
-        )
+    validateFields(errors => {
+      if (errors) {
+        return
       }
-      return <TreeNode key={i._id} title={title} disabled={disabled} value={i._id} />
+      const data = {
+        ...getFieldsValue(),
+        key: item.key,
+      }
+      data.address = data.address.join(' ')
+      onOk(data)
     })
+  }
+
+  render() {
+    const { item = {}, onOk, form, i18n, ...modalProps } = this.props
+    const { getFieldDecorator } = form
 
     return (
-      <Modal {...modalOpts}>
+      <Modal {...modalProps} onOk={this.handleOk}>
         <Form layout="horizontal">
-          {/*<FormItem label="所属" hasFeedback {...formItemLayout}>
-            <TreeSelect
-              value={this.state.uid}
-              allowClear
-              treeDefaultExpandAll
-              placeholder="不选代表顶级分类"
-              onChange={this.onChange}
-            >
-              {loop(tree)}
-            </TreeSelect>
-          </FormItem>*/}
-          <FormItem label="名称" hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Name`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
               rules: [
                 {
-                  required: modalType !== 'update',
+                  required: true,
                 },
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label="别名" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('path', {
-              initialValue: item.path,
+          <FormItem label={i18n.t`NickName`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('nickName', {
+              initialValue: item.nickName,
               rules: [
                 {
-                  required: modalType !== 'update',
+                  required: true,
                 },
               ],
             })(<Input />)}
           </FormItem>
-          {/*<FormItem label="是否首页" {...formItemLayout}>
-            {getFieldDecorator('isHome', {
-              valuePropName: 'checked',
-              initialValue: item.isHome,
-            })(<Switch />)}
-          </FormItem>*/}
-          <FormItem label="导航显示" {...formItemLayout}>
-            {getFieldDecorator('state', {
-              valuePropName: 'checked',
-              initialValue: item.state,
-            })(<Switch />)}
-          </FormItem>
-          <FormItem label="排序" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('sort', {
-              initialValue: item.sort,
+          <FormItem label={i18n.t`Gender`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('isMale', {
+              initialValue: item.isMale,
               rules: [
                 {
-                  required: modalType !== 'update',
+                  required: true,
+                  type: 'boolean',
                 },
               ],
-            })(<InputNumber min={1} max={100} />)}
+            })(
+              <Radio.Group>
+                <Radio value>
+                  <Trans>Male</Trans>
+                </Radio>
+                <Radio value={false}>
+                  <Trans>Female</Trans>
+                </Radio>
+              </Radio.Group>
+            )}
           </FormItem>
-          <FormItem label="关键词" hasFeedback {...formItemLayout}>
-            {tags.map((tag) => {
-              const isLongTag = tag.length > 20
-              const tagElem = (
-                <Tag key={tag} closable afterClose={() => this.handleClose(tag)}>
-                  {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-                </Tag>
-              )
-              return isLongTag ? <Tooltip title={tag}>{tagElem}</Tooltip> : tagElem
-            })}
-            {inputVisible && (
-              <Input
-                ref={this.saveInputRef}
-                type="text"
-                size="small"
-                style={{ width: 78 }}
-                value={inputValue}
-                onChange={this.handleInputChange}
-                onBlur={this.handleInputConfirm}
-                onPressEnter={this.handleInputConfirm}
+          <FormItem label={i18n.t`Age`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('age', {
+              initialValue: item.age,
+              rules: [
+                {
+                  required: true,
+                  type: 'number',
+                },
+              ],
+            })(<InputNumber min={18} max={100} />)}
+          </FormItem>
+          <FormItem label={i18n.t`Phone`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('phone', {
+              initialValue: item.phone,
+              rules: [
+                {
+                  required: true,
+                  pattern: /^1[34578]\d{9}$/,
+                  message: i18n.t`The input is not valid phone!`,
+                },
+              ],
+            })(<Input />)}
+          </FormItem>
+          <FormItem label={i18n.t`Email`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('email', {
+              initialValue: item.email,
+              rules: [
+                {
+                  required: true,
+                  pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
+                  message: i18n.t`The input is not valid E-mail!`,
+                },
+              ],
+            })(<Input />)}
+          </FormItem>
+          <FormItem label={i18n.t`Address`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('address', {
+              initialValue: item.address && item.address.split(' '),
+              rules: [
+                {
+                  required: true,
+                },
+              ],
+            })(
+              <Cascader
+                style={{ width: '100%' }}
+                options={city}
+                placeholder={i18n.t`Pick an address`}
               />
             )}
-            {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
-          </FormItem>
-          <FormItem label="描述" hasFeedback {...formItemLayout}>
-            {getFieldDecorator('description', {
-              initialValue: item.description,
-            })(<TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
           </FormItem>
         </Form>
       </Modal>
@@ -200,12 +138,10 @@ class modal extends React.Component {
   }
 }
 
-modal.propTypes = {
-  modalType: PropTypes.string,
-  form: PropTypes.object.isRequired,
+UserModal.propTypes = {
   type: PropTypes.string,
   item: PropTypes.object,
   onOk: PropTypes.func,
 }
 
-export default Form.create()(modal)
+export default UserModal

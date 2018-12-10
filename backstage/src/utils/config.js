@@ -1,36 +1,64 @@
-import md5 from 'blueimp-md5'
-
 const BASE_URL = 'http://localhost:3030'
 const API_URL = `${BASE_URL}/api`
 
-export default {
-  name: 'Hotchcms',
-  prefix: 'hotchcms',
-  secret: 'hotchcms',
-  footerText: 'Hotchcms',
-  openPages: ['/login', '/install'],
-  get inAuth () {
+module.exports = {
+  siteName: 'Hotchcms',
+  copyright: 'Hotchcms © 2018 luckcoding@gmail.com',
+  logoPath: '/logo.svg',
+  apiPrefix: API_URL,
+  fixedHeader: true, // sticky primary layout header
+  secret: 'hotchcms', // api password secret
+  prefix: 'hotchcms', // storage key
+
+  get inAuth() {
     return `${this.prefix}InAuth`
   },
-  get jwt () {
+  get jwt() {
     return `${this.prefix}JWT`
   },
-  getImgUrl (path) {
+
+  // full img path
+  getImgUrl(path) {
     return `${BASE_URL}/upload/${path}`
   },
-  encrypted (pass) {
-    return md5(pass + this.secret)
+
+  get mediaApiUrl() {
+    return `${this.apiPrefix}/media`
   },
-  api: {
-    signIn: `${API_URL}/admin-account/sign-in`, // 登录
-    signOut: `${API_URL}/admin-account/sign-out`, // 注册
-    captcha: `${API_URL}/common/captcha`, // 验证码
-    current: `${API_URL}/admin-account`, // 获取当前用户
-    adminUser: `${API_URL}/admin-user/:_id`, // 管理员
-    adminGroup: `${API_URL}/admin-group/:_id`, // 管理组
-    category: `${API_URL}/category/:_id`, // 分类
-    article: `${API_URL}/article/:_id`, // 内容
-    authority: `${API_URL}/authority`, // 权限
-    media: `${API_URL}/media/:_id`, // 多媒体
+
+  constant: {
+    CANCEL_REQUEST_MESSAGE: 'cancle request',
+    ROLE_TYPE: {
+      ADMIN: 'admin',
+      DEFAULT: 'admin',
+      DEVELOPER: 'developer',
+    },
+  },
+
+  /* Layout configuration, specify which layout to use for route. */
+  layouts: [
+    {
+      name: 'primary',
+      include: [/.*/],
+      exlude: [/(\/(en|zh))*\/login/],
+    },
+  ],
+
+  /* I18n configuration, `languages` and `defaultLanguage` are required currently. */
+  i18n: {
+    /* Countrys flags: https://www.flaticon.com/packs/countrys-flags */
+    languages: [
+      {
+        key: 'en',
+        title: 'English',
+        flag: '/america.svg',
+      },
+      {
+        key: 'zh',
+        title: '中文',
+        flag: '/china.svg',
+      },
+    ],
+    defaultLanguage: 'en',
   },
 }

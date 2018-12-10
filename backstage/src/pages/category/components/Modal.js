@@ -1,10 +1,20 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, Modal, TreeSelect, Switch, InputNumber, Tag, Tooltip, Button } from 'antd'
+import {
+  Form,
+  Input,
+  Modal,
+  Switch,
+  InputNumber,
+  Tag,
+  Tooltip,
+  Button,
+} from 'antd'
+import { withI18n } from '@lingui/react'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
-const TreeNode = TreeSelect.TreeNode
+// const TreeNode = TreeSelect.TreeNode
 
 const formItemLayout = {
   labelCol: {
@@ -14,10 +24,10 @@ const formItemLayout = {
     span: 14,
   },
 }
-
-class modal extends React.Component {
-
-  constructor (props) {
+@withI18n()
+@Form.create()
+class UserModal extends PureComponent {
+  constructor(props) {
     super(props)
     this.state = {
       tags: props.item.keywords || [],
@@ -27,11 +37,11 @@ class modal extends React.Component {
     }
   }
 
-  onChange = (uid) => {
+  onChange = uid => {
     this.setState({ uid })
   }
 
-  handleClose = (removedTag) => {
+  handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag)
     this.setState({ tags })
   }
@@ -40,7 +50,7 @@ class modal extends React.Component {
     this.setState({ inputVisible: true }, () => this.input.focus())
   }
 
-  handleInputChange = (e) => {
+  handleInputChange = e => {
     this.setState({ inputValue: e.target.value })
   }
 
@@ -59,58 +69,47 @@ class modal extends React.Component {
     })
   }
 
-  saveInputRef = (input) => {
+  saveInputRef = input => {
     this.input = input
   }
 
-  render () {
-    const {
-      modalType,
-      item = {},
-      onOk,
-      form: {
-        getFieldDecorator,
-        validateFields,
-        getFieldsValue,
-      },
-      ...modalProps
-    } = this.props
+  handleOk = () => {
+    const { onOk, form } = this.props
+    const { validateFields, getFieldsValue } = form
+
+    validateFields(errors => {
+      if (errors) {
+        return
+      }
+      const data = {
+        ...getFieldsValue(),
+        keywords: this.state.tags,
+      }
+      onOk(data)
+    })
+  }
+
+  render() {
+    const { item = {}, onOk, form, i18n, modalType, ...modalProps } = this.props
+    const { getFieldDecorator } = form
 
     const { tags, inputVisible, inputValue } = this.state
 
-    const handleOk = () => {
-      validateFields((errors) => {
-        if (errors) {
-          return
-        }
-        const data = {
-          ...getFieldsValue(),
-          keywords: tags,
-        }
-        onOk(data)
-      })
-    }
-
-    const modalOpts = {
-      ...modalProps,
-      onOk: handleOk,
-    }
-
-    const loop = data => data.map((i) => {
-      const title = <span style={{ textDecoration: !i.state && 'line-through' }}>{i.name}</span>
-      const disabled = i._id === item._id
-      if (i.children) {
-        return (
-          <TreeNode key={i._id} title={title} disabled={disabled} value={i._id}>
-            {loop(i.children)}
-          </TreeNode>
-        )
-      }
-      return <TreeNode key={i._id} title={title} disabled={disabled} value={i._id} />
-    })
+    // const loop = (data) => data.map((i) => {
+    //   const title = <span style={{ textDecoration: !i.state && 'line-through' }}>{i.name}</span>
+    //   const disabled = i._id === item._id
+    //   if (i.children) {
+    //     return (
+    //       <TreeNode key={i._id} title={title} disabled={disabled} value={i._id}>
+    //         {loop(i.children)}
+    //       </TreeNode>
+    //     )
+    //   }
+    //   return <TreeNode key={i._id} title={title} disabled={disabled} value={i._id} />
+    // })
 
     return (
-      <Modal {...modalOpts}>
+      <Modal {...modalProps} onOk={this.handleOk}>
         <Form layout="horizontal">
           {/*<FormItem label="所属" hasFeedback {...formItemLayout}>
             <TreeSelect
@@ -123,7 +122,7 @@ class modal extends React.Component {
               {loop(tree)}
             </TreeSelect>
           </FormItem>*/}
-          <FormItem label="名称" hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`名称`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
               rules: [
@@ -133,7 +132,7 @@ class modal extends React.Component {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label="别名" hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`别名`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('path', {
               initialValue: item.path,
               rules: [
@@ -149,13 +148,13 @@ class modal extends React.Component {
               initialValue: item.isHome,
             })(<Switch />)}
           </FormItem>*/}
-          <FormItem label="导航显示" {...formItemLayout}>
+          <FormItem label={i18n.t`是否显示`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('state', {
               valuePropName: 'checked',
               initialValue: item.state,
             })(<Switch />)}
           </FormItem>
-          <FormItem label="排序" hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`排序`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('sort', {
               initialValue: item.sort,
               rules: [
@@ -165,15 +164,23 @@ class modal extends React.Component {
               ],
             })(<InputNumber min={1} max={100} />)}
           </FormItem>
-          <FormItem label="关键词" hasFeedback {...formItemLayout}>
-            {tags.map((tag) => {
+          <FormItem label={i18n.t`关键词`} hasFeedback {...formItemLayout}>
+            {tags.map(tag => {
               const isLongTag = tag.length > 20
               const tagElem = (
-                <Tag key={tag} closable afterClose={() => this.handleClose(tag)}>
+                <Tag
+                  key={tag}
+                  closable
+                  afterClose={() => this.handleClose(tag)}
+                >
                   {isLongTag ? `${tag.slice(0, 20)}...` : tag}
                 </Tag>
               )
-              return isLongTag ? <Tooltip title={tag}>{tagElem}</Tooltip> : tagElem
+              return isLongTag ? (
+                <Tooltip title={tag}>{tagElem}</Tooltip>
+              ) : (
+                tagElem
+              )
             })}
             {inputVisible && (
               <Input
@@ -187,9 +194,13 @@ class modal extends React.Component {
                 onPressEnter={this.handleInputConfirm}
               />
             )}
-            {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
+            {!inputVisible && (
+              <Button size="small" type="dashed" onClick={this.showInput}>
+                +
+              </Button>
+            )}
           </FormItem>
-          <FormItem label="描述" hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`描述`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('description', {
               initialValue: item.description,
             })(<TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
@@ -200,12 +211,11 @@ class modal extends React.Component {
   }
 }
 
-modal.propTypes = {
-  modalType: PropTypes.string,
-  form: PropTypes.object.isRequired,
+UserModal.propTypes = {
   type: PropTypes.string,
   item: PropTypes.object,
   onOk: PropTypes.func,
+  modalType: PropTypes.string.isRequired,
 }
 
-export default Form.create()(modal)
+export default UserModal

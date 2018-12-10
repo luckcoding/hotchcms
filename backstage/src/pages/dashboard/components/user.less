@@ -1,4 +1,4 @@
-@import "~themes/vars";
+@import '~themes/vars';
 
 .user {
   .header {
@@ -7,8 +7,6 @@
     text-align: center;
     color: #fff;
     height: 200px;
-    background-image: ~ "url(./user-background.png)";
-    background-repeat: no-repeat;
     background-size: cover;
     align-items: center;
 
@@ -18,7 +16,8 @@
 
     &::after {
       content: '';
-      background: @purple;
+      background-image: url('./user-background.png');
+      background-size: cover;
       position: absolute;
       width: 100%;
       height: 200px;
@@ -28,17 +27,9 @@
       z-index: 1;
     }
 
-    .avatar {
-      width: 64px;
-      height: 64px;
-      background-position: center;
-      background-size: cover;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
     .name {
       font-size: 16px;
+      margin-top: 8px;
     }
   }
 
@@ -55,7 +46,7 @@
       position: relative;
       padding: 30px 0;
 
-      &+.item {
+      & + .item {
         &::before {
           content: '';
           display: block;

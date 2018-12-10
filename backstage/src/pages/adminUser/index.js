@@ -1,83 +1,95 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { routerRedux } from 'dva/router'
+import { router } from 'utils'
 import { connect } from 'dva'
+import { withI18n } from '@lingui/react'
 import { Page } from 'components'
-import queryString from 'query-string'
+import { stringify } from 'qs'
 import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
 
-const AdminUser = ({
-  location, dispatch, adminUser, loading,
-}) => {
-  const { query, pathname } = location
-  const {
-    list, pagination, currentItem, groupList, modalVisible, modalType,
-  } = adminUser
+@withI18n()
+@connect(({ adminUser, loading }) => ({ adminUser, loading }))
+class AdminUser extends PureComponent {
+  render() {
+    const { location, dispatch, adminUser, loading, i18n } = this.props
+    const { query, pathname } = location
+    const {
+      list,
+      pagination,
+      currentItem,
+      modalVisible,
+      modalType,
+      allAdminGroupList,
+    } = adminUser
 
-  const handleRefresh = (newQuery) => {
-    dispatch(routerRedux.push({
-      pathname,
-      search: queryString.stringify({
-        ...query,
-        ...newQuery,
-      }),
-    }))
-  }
-
-  const modalProps = {
-    modalType,
-    item: modalType === 'create' ? {} : currentItem,
-    groupList,
-    visible: modalVisible,
-    maskClosable: false,
-    confirmLoading: loading.effects[`adminUser/${modalType}`],
-    title: `${modalType === 'create' ? ' 创建' : '更新'}`,
-    wrapClassName: 'vertical-center-modal',
-    onOk (data) {
-      dispatch({
-        type: `adminUser/${modalType}`,
-        payload: data,
+    const handleRefresh = newQuery => {
+      router.push({
+        pathname,
+        search: stringify(
+          {
+            ...query,
+            ...newQuery,
+          },
+          { arrayFormat: 'repeat' }
+        ),
       })
-        .then(() => {
+    }
+
+    const modalProps = {
+      item: modalType === 'create' ? {} : currentItem,
+      modalType,
+      allAdminGroupList,
+      visible: modalVisible,
+      maskClosable: false,
+      confirmLoading: loading.effects[`adminUser/${modalType}`],
+      title: `${
+        modalType === 'create' ? i18n.t`Create User` : i18n.t`Update User`
+      }`,
+      wrapClassName: 'vertical-center-modal',
+      onOk(data) {
+        dispatch({
+          type: `adminUser/${modalType}`,
+          payload: data,
+        }).then(() => {
           handleRefresh()
         })
-    },
-    onCancel () {
-      dispatch({
-        type: 'adminUser/hideModal',
-      })
-    },
-  }
+      },
+      onCancel() {
+        dispatch({
+          type: 'adminUser/hideModal',
+        })
+      },
+    }
 
-  const listProps = {
-    dataSource: list,
-    loading: loading.effects['adminUser/query'],
-    pagination,
-    location,
-    onChange (page) {
-      handleRefresh({
-        page: page.current,
-        pageSize: page.pageSize,
-      })
-    },
-    onDeleteItem (id) {
-      dispatch({
-        type: 'adminUser/delete',
-        payload: id,
-      })
-        .then(() => {
+    const listProps = {
+      dataSource: list,
+      loading: loading.effects['adminUser/query'],
+      pagination,
+      onChange(page) {
+        handleRefresh({
+          page: page.current,
+          pageSize: page.pageSize,
+        })
+      },
+      onDeleteItem(_id) {
+        dispatch({
+          type: 'adminUser/delete',
+          payload: _id,
+        }).then(() => {
           handleRefresh({
-            page: (list.length === 1 && pagination.current > 1) ? pagination.current - 1 : pagination.current,
+            page:
+              list.length === 1 && pagination.current > 1
+                ? pagination.current - 1
+                : pagination.current,
           })
         })
-    },
-    onEditItem (item) {
-      dispatch({
-        type: 'adminUser/queryGroup',
-      })
-        .then(() => {
+      },
+      onEditItem(item) {
+        dispatch({
+          type: 'adminUser/queryAllAdminGroupList',
+        }).then(() => {
           dispatch({
             type: 'adminUser/showModal',
             payload: {
@@ -86,24 +98,23 @@ const AdminUser = ({
             },
           })
         })
-    },
-  }
+      },
+    }
 
-  const filterProps = {
-    filter: {
-      ...query,
-    },
-    onFilterChange (value) {
-      handleRefresh({
-        ...value,
-        page: 1,
-      })
-    },
-    onAdd () {
-      dispatch({
-        type: 'adminUser/queryGroup',
-      })
-        .then(() => {
+    const filterProps = {
+      filter: {
+        ...query,
+      },
+      onFilterChange(value) {
+        handleRefresh({
+          ...value,
+          page: 1,
+        })
+      },
+      onAdd() {
+        dispatch({
+          type: 'adminUser/queryAllAdminGroupList',
+        }).then(() => {
           dispatch({
             type: 'adminUser/showModal',
             payload: {
@@ -111,16 +122,17 @@ const AdminUser = ({
             },
           })
         })
-    },
-  }
+      },
+    }
 
-  return (
-    <Page inner>
-      <Filter {...filterProps} />
-      <List {...listProps} />
-      {modalVisible && <Modal {...modalProps} />}
-    </Page>
-  )
+    return (
+      <Page inner>
+        <Filter {...filterProps} />
+        <List {...listProps} />
+        {modalVisible && <Modal {...modalProps} />}
+      </Page>
+    )
+  }
 }
 
 AdminUser.propTypes = {
@@ -130,4 +142,4 @@ AdminUser.propTypes = {
   loading: PropTypes.object,
 }
 
-export default connect(({ adminUser, loading }) => ({ adminUser, loading }))(AdminUser)
+export default AdminUser

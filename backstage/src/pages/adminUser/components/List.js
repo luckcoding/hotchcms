@@ -1,92 +1,105 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Modal } from 'antd'
-import classnames from 'classnames'
+import { Table, Modal, Avatar } from 'antd'
 import { DropOption } from 'components'
-import { Link } from 'react-router-dom'
-import { config } from 'utils'
+import { Trans, withI18n } from '@lingui/react'
+import config from 'config'
 import styles from './List.less'
 
 const { getImgUrl } = config
 const { confirm } = Modal
 
-const List = ({
-  onDeleteItem, onEditItem, location, ...tableProps
-}) => {
+@withI18n()
+class List extends PureComponent {
+  handleMenuClick = (record, e) => {
+    const { onDeleteItem, onEditItem, i18n } = this.props
 
-  const handleMenuClick = (record, e) => {
     if (e.key === '1') {
       onEditItem(record)
     } else if (e.key === '2') {
       confirm({
-        title: '你确定删除这条记录吗?',
-        onOk () {
+        title: i18n.t`Are you sure delete this record?`,
+        onOk() {
           onDeleteItem(record._id)
         },
       })
     }
   }
 
-  const columns = [
-    {
-      title: '头像',
-      dataIndex: 'avatar',
-      key: 'avatar',
-      width: 64,
-      className: styles.avatar,
-      render: text => text && <img alt="avatar" width={24} src={getImgUrl(text)} />,
-    }, {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
-      render: (text, record) => <Link to={`adminUser/${record._id}`}>{text}</Link>,
-    }, {
-      title: '昵称',
-      dataIndex: 'nickname',
-      key: 'nickname',
-    }, {
-      title: '管理组',
-      dataIndex: 'group',
-      key: 'group',
-      render: text => <span>{text && text.name}</span>,
-    }, {
-      title: '创建时间',
-      dataIndex: 'createDate',
-      key: 'createDate',
-    }, {
-      title: '手机号',
-      dataIndex: 'mobile',
-      key: 'mobile',
-    }, {
-      title: '操作',
-      key: 'operation',
-      width: 100,
-      render: (text, record) => (
-        <DropOption
-          onMenuClick={e => handleMenuClick(record, e)}
-          menuOptions={[{ key: '1', name: '更新' }, { key: '2', name: '删除' }]}
-        />
-      ),
-    },
-  ]
+  render() {
+    const { onDeleteItem, onEditItem, i18n, ...tableProps } = this.props
 
-  const CommonBody = (props) => {
-    return <tbody {...props} />
+    const columns = [
+      {
+        title: <Trans>Avatar</Trans>,
+        dataIndex: 'avatar',
+        key: 'avatar',
+        width: 72,
+        fixed: 'left',
+        render: text => (
+          <Avatar style={{ marginLeft: 8 }} src={getImgUrl(text)} />
+        ),
+      },
+      {
+        title: <Trans>Nickname</Trans>,
+        dataIndex: 'nickname',
+        key: 'nickname',
+      },
+      {
+        title: <Trans>邮箱</Trans>,
+        dataIndex: 'email',
+        key: 'email',
+      },
+      {
+        title: <Trans>手机号</Trans>,
+        dataIndex: 'mobile',
+        key: 'mobile',
+      },
+      {
+        title: <Trans>管理组</Trans>,
+        dataIndex: 'group',
+        key: 'group',
+        render: text => <span>{text && text.name}</span>,
+      },
+      {
+        title: <Trans>创建时间</Trans>,
+        dataIndex: 'createDate',
+        key: 'createDate',
+      },
+      {
+        title: <Trans>Operation</Trans>,
+        key: 'operation',
+        fixed: 'right',
+        render: (text, record) => {
+          return (
+            <DropOption
+              onMenuClick={e => this.handleMenuClick(record, e)}
+              menuOptions={[
+                { key: '1', name: i18n.t`Update` },
+                { key: '2', name: i18n.t`Delete` },
+              ]}
+            />
+          )
+        },
+      },
+    ]
+
+    return (
+      <Table
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+          showTotal: total => i18n.t`Total ${total} Items`,
+        }}
+        className={styles.table}
+        bordered
+        scroll={{ x: 1200 }}
+        columns={columns}
+        simple
+        rowKey={record => record._id}
+      />
+    )
   }
-
-  return (
-    <Table
-      {...tableProps}
-      className={classnames(styles.table)}
-      bordered
-      columns={columns}
-      simple
-      rowKey={record => record._id}
-      components={{
-        body: { wrapper: CommonBody },
-      }}
-    />
-  )
 }
 
 List.propTypes = {

@@ -1,26 +1,30 @@
 /* global window */
 import modelExtend from 'dva-model-extend'
-import { create, remove, update } from './services/adminGroup'
-import * as adminGroupsService from './services/adminGroups'
-import * as authorityService from './services/authority'
+import { pathMatchRegexp } from 'utils'
+import {
+  queryAdminGroupList,
+  createAdminGroup,
+  removeAdminGroup,
+  updateAdminGroup,
+  queryAuthoritiesOwned,
+} from 'api'
 import { pageModel } from 'utils/model'
-
-const { query } = adminGroupsService
 
 export default modelExtend(pageModel, {
   namespace: 'adminGroup',
 
   state: {
     currentItem: {},
-    authority: [],
+    authoritiesOwned: [],
     modalVisible: false,
     modalType: 'create',
+    selectedRowKeys: [],
   },
 
   subscriptions: {
-    setup ({ dispatch, history }) {
-      history.listen((location) => {
-        if (location.pathname === '/adminGroup') {
+    setup({ dispatch, history }) {
+      history.listen(location => {
+        if (pathMatchRegexp('/adminGroup', location.pathname)) {
           const payload = location.query || { page: 1, pageSize: 10 }
           dispatch({
             type: 'query',
@@ -32,9 +36,8 @@ export default modelExtend(pageModel, {
   },
 
   effects: {
-
-    * query ({ payload = {} }, { call, put }) {
-      const data = yield call(query, payload)
+    *query({ payload = {} }, { call, put }) {
+      const data = yield call(queryAdminGroupList, payload)
       if (data.code === '0000') {
         yield put({
           type: 'querySuccess',
@@ -52,13 +55,13 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * queryAuthority ({ payload = {} }, { call, put }) {
-      const data = yield call(authorityService.query, payload)
+    *queryAuthoritiesOwned({ payload = {} }, { call, put }) {
+      const data = yield call(queryAuthoritiesOwned, payload)
       if (data.code === '0000') {
         yield put({
           type: 'updateState',
           payload: {
-            authority: data.result,
+            authoritiesOwned: data.result,
           },
         })
       } else {
@@ -66,15 +69,23 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * delete ({ payload }, { call }) {
-      const data = yield call(remove, { _id: payload })
-      if (data.code !== '0000') {
+    *delete({ payload }, { call, put, select }) {
+      const data = yield call(removeAdminGroup, { _id: payload })
+      const { selectedRowKeys } = yield select(_ => _.adminGroup)
+      if (data.code === '0000') {
+        yield put({
+          type: 'updateState',
+          payload: {
+            selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload),
+          },
+        })
+      } else {
         throw data
       }
     },
 
-    * create ({ payload }, { call, put }) {
-      const data = yield call(create, payload)
+    *create({ payload }, { call, put }) {
+      const data = yield call(createAdminGroup, payload)
       if (data.code === '0000') {
         yield put({ type: 'hideModal' })
       } else {
@@ -82,28 +93,25 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * update ({ payload }, { select, call, put }) {
+    *update({ payload }, { select, call, put }) {
       const _id = yield select(({ adminGroup }) => adminGroup.currentItem._id)
       const newAdminGroup = { ...payload, _id }
-      const data = yield call(update, newAdminGroup)
+      const data = yield call(updateAdminGroup, newAdminGroup)
       if (data.code === '0000') {
         yield put({ type: 'hideModal' })
       } else {
         throw data
       }
     },
-
   },
 
   reducers: {
-
-    showModal (state, { payload }) {
+    showModal(state, { payload }) {
       return { ...state, ...payload, modalVisible: true }
     },
 
-    hideModal (state) {
+    hideModal(state) {
       return { ...state, modalVisible: false }
     },
-
   },
 })

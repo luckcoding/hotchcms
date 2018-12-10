@@ -1,46 +1,48 @@
 /* global window */
-/* global document */
-/* global location */
-/* eslint no-restricted-globals: ["error", "event"] */
 
-import { routerRedux } from 'dva/router'
-import { parse } from 'qs'
+import { router } from 'utils'
+import { stringify } from 'qs'
+import store from 'store'
+import { queryLayout, pathMatchRegexp } from 'utils'
+import { queryRouteList, logoutUser, queryUserInfo } from 'api'
 import config from 'config'
-import { query, logout } from 'services/app'
-import * as menusService from 'services/menus'
-import queryString from 'query-string'
-// import map from 'lodash/map'
-// import keyBy from 'lodash/keyBy'
 
-const { prefix } = config
+const { constant, layouts } = config
 
 export default {
   namespace: 'app',
   state: {
     user: {},
-    // permissions: {
-    //   visit: [],
-    // },
-    menu: [
+    permissions: {
+      visit: [],
+    },
+    routeList: [
       {
-        id: 1,
+        id: '1',
         icon: 'laptop',
         name: 'Dashboard',
+        zhName: '仪表盘',
         router: '/dashboard',
       },
     ],
-    menuPopoverVisible: false,
-    siderFold: window.localStorage.getItem(`${prefix}siderFold`) === 'true',
-    darkTheme: window.localStorage.getItem(`${prefix}darkTheme`) === 'true',
-    isNavbar: document.body.clientWidth < 769,
-    navOpenKeys: JSON.parse(window.localStorage.getItem(`${prefix}navOpenKeys`)) || [],
     locationPathname: '',
     locationQuery: {},
+    theme: store.get('theme') || 'light',
+    collapsed: store.get('collapsed') || false,
+    notifications: [
+      {
+        title: 'New User is registered.',
+        date: new Date(Date.now() - 10000000),
+      },
+      {
+        title: 'Application has been approved.',
+        date: new Date(Date.now() - 50000000),
+      },
+    ],
   },
   subscriptions: {
-
-    setupHistory ({ dispatch, history }) {
-      history.listen((location) => {
+    setupHistory({ dispatch, history }) {
+      history.listen(location => {
         dispatch({
           type: 'updateState',
           payload: {
@@ -51,142 +53,120 @@ export default {
       })
     },
 
-    setup ({ dispatch, history }) {
-      if (history.location.pathname !== '/install') {
-        dispatch({ type: 'query' })
-      }
-      let tid
-      window.onresize = () => {
-        clearTimeout(tid)
-        tid = setTimeout(() => {
-          dispatch({ type: 'changeNavbar' })
-        }, 300)
-      }
+    setupRequestCancel({ history }) {
+      history.listen(() => {
+        const { cancelRequest = new Map() } = window
+
+        cancelRequest.forEach((value, key) => {
+          if (value.pathname !== window.location.pathname) {
+            value.cancel(constant.CANCEL_REQUEST_MESSAGE)
+            cancelRequest.delete(key)
+          }
+        })
+      })
     },
 
+    setup({ dispatch }) {
+      dispatch({ type: 'query' })
+    },
   },
   effects: {
-
-    * query ({
-      payload,
-    }, { call, put, select }) {
-      const { code, result: user } = yield call(query, payload)
+    *query({ payload }, { call, put, select }) {
+      const { code, result: user } = yield call(queryUserInfo, payload)
       const { locationPathname } = yield select(_ => _.app)
+
       if (code === '0000') {
-        const { list } = yield call(menusService.query)
-        // let permissions = map(user.menuList, _ => String(_.menuCode))
-        // let menuListMap = keyBy(user.menuList, 'menuCode')
-
-        // let menu = list.map(item => ({ ...menuListMap[item.id], ...item }))
-
-        // if (user.userName === 'admin') {
-        //   permissions = list.map(item => item.id)
+        // const { list } = yield call(queryRouteList)
+        // const { permissions } = user
+        // let routeList = list
+        // if (
+        //   permissions.role === ROLE_TYPE.ADMIN ||
+        //   permissions.role === ROLE_TYPE.DEVELOPER
+        // ) {
+        //   permissions.visit = list.map(item => item.id)
         // } else {
-        //   menu = list.filter((item) => {
+        //   routeList = list.filter(item => {
         //     const cases = [
-        //       permissions.includes(item.id),
-        //       item.mpid ? permissions.includes(item.mpid) || item.mpid === '-1' : true,
-        //       item.bpid ? permissions.includes(item.bpid) : true,
+        //       permissions.visit.includes(item.id),
+        //       item.mpid
+        //         ? permissions.visit.includes(item.mpid) || item.mpid === '-1'
+        //         : true,
+        //       item.bpid ? permissions.visit.includes(item.bpid) : true,
         //     ]
         //     return cases.every(_ => _)
         //   })
         // }
+
+        const routeList = yield call(queryRouteList)
+
         yield put({
           type: 'updateState',
           payload: {
             user,
             // permissions,
-            menu: list,
+            routeList,
           },
         })
-        if (location.pathname === '/login') {
-          yield put(routerRedux.push({
+        if (pathMatchRegexp('/login', window.location.pathname)) {
+          router.push({
             pathname: '/dashboard',
-          }))
+          })
         }
-      } else if (config.openPages && config.openPages.indexOf(locationPathname) < 0) {
-        yield put(routerRedux.push({
+      } else if (queryLayout(layouts, locationPathname) !== 'public') {
+        router.push({
           pathname: '/login',
-          search: queryString.stringify({
+          search: stringify({
             from: locationPathname,
           }),
-        }))
+        })
       }
     },
 
-    * logout ({
-      payload,
-    }, { call, put }) {
-      const data = yield call(logout, parse(payload))
-      if (data.code === '0000') {
-        yield put({ type: 'updateState', payload: {
-          user: {},
-          permissions: { visit: [] },
-          menu: [{
-              id: 1,
-              icon: 'laptop',
-              name: 'Dashboard',
-              router: '/dashboard',
-            }],
-        }})
+    *signOut({ payload }, { call, put }) {
+      const data = yield call(logoutUser)
+      if (data.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            user: {},
+            permissions: { visit: [] },
+            menu: [
+              {
+                id: '1',
+                icon: 'laptop',
+                name: 'Dashboard',
+                zhName: '仪表盘',
+                router: '/dashboard',
+              },
+            ],
+          },
+        })
         yield put({ type: 'query' })
       } else {
-        throw (data)
+        throw data
       }
     },
-
-    * changeNavbar (action, { put, select }) {
-      const { app } = yield (select(_ => _))
-      const isNavbar = document.body.clientWidth < 769
-      if (isNavbar !== app.isNavbar) {
-        yield put({ type: 'handleNavbar', payload: isNavbar })
-      }
-    },
-
   },
   reducers: {
-    updateState (state, { payload }) {
+    updateState(state, { payload }) {
       return {
         ...state,
         ...payload,
       }
     },
 
-    switchSider (state) {
-      window.localStorage.setItem(`${prefix}siderFold`, !state.siderFold)
-      return {
-        ...state,
-        siderFold: !state.siderFold,
-      }
+    handleThemeChange(state, { payload }) {
+      store.set('theme', payload)
+      state.theme = payload
     },
 
-    switchTheme (state) {
-      window.localStorage.setItem(`${prefix}darkTheme`, !state.darkTheme)
-      return {
-        ...state,
-        darkTheme: !state.darkTheme,
-      }
+    handleCollapseChange(state, { payload }) {
+      store.set('collapsed', payload)
+      state.collapsed = payload
     },
 
-    switchMenuPopver (state) {
-      return {
-        ...state,
-        menuPopoverVisible: !state.menuPopoverVisible,
-      }
-    },
-
-    handleNavbar (state, { payload }) {
-      return {
-        ...state,
-        isNavbar: payload,
-      }
-    },
-
-    handleNavOpenKeys (state, { payload: navOpenKeys }) {
-      return {
-        ...state,
-        ...navOpenKeys,
-      }
+    allNotificationsRead(state) {
+      state.notifications = []
     },
   },
 }

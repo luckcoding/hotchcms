@@ -2,7 +2,7 @@ import modelExtend from 'dva-model-extend'
 
 export const model = {
   reducers: {
-    updateState (state, { payload }) {
+    updateState(state, { payload }) {
       return {
         ...state,
         ...payload,
@@ -12,13 +12,11 @@ export const model = {
 }
 
 export const pageModel = modelExtend(model, {
-
   state: {
     list: [],
     pagination: {
       showSizeChanger: true,
       showQuickJumper: true,
-      showTotal: total => `Total ${total} Items`,
       current: 1,
       total: 0,
       pageSize: 10,
@@ -26,7 +24,7 @@ export const pageModel = modelExtend(model, {
   },
 
   reducers: {
-    querySuccess (state, { payload }) {
+    querySuccess(state, { payload }) {
       const { list, pagination } = payload
       return {
         ...state,
@@ -38,5 +36,20 @@ export const pageModel = modelExtend(model, {
       }
     },
   },
+})
 
+export const listModel = modelExtend(model, {
+  state: {
+    list: [],
+  },
+
+  reducers: {
+    querySuccess(state, { payload }) {
+      const { list } = payload
+      return {
+        ...state,
+        list,
+      }
+    },
+  },
 })

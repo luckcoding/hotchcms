@@ -161,12 +161,28 @@ exports.list = async (ctx) => {
 }
 
 /**
- * 查询所有
+ * 查询可操作
+ */
+exports.operated = async (ctx) => {
+  try {
+    const { group } = ctx.state.user
+    const list = await AdminGroup.find({ gradation: { $lt: group.gradation } })
+      .sort('-gradation')
+      .select('name')
+      .lean()
+    ctx.pipeDone(list)
+  } catch (e) {
+    ctx.pipeFail(e)
+  }
+}
+
+/**
+ * 所有
  */
 exports.all = async (ctx) => {
   try {
     const { group } = ctx.state.user
-    const list = await AdminGroup.find() // AdminGroup.find({ gradation: { $lt: group.gradation } })
+    const list = await AdminGroup.find({})
       .sort('-gradation')
       .select('name')
       .lean()

@@ -1,93 +1,174 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { routerRedux } from 'dva/router'
+import { router } from 'utils'
 import { connect } from 'dva'
 import { Row, Col, Button, Popconfirm } from 'antd'
+import { withI18n } from '@lingui/react'
 import { Page } from 'components'
-import queryString from 'query-string'
+import { stringify } from 'qs'
 import List from './components/List'
 import Filter from './components/Filter'
+import Modal from './components/Modal'
 
-const Media = ({
-  location, dispatch, media, loading,
-}) => {
-  const { query, pathname } = location
-  const {
-    list, pagination, selectedRowKeys,
-  } = media
-
-  const handleRefresh = (newQuery) => {
-    dispatch(routerRedux.push({
-      pathname,
-      search: queryString.stringify({
-        ...query,
-        ...newQuery,
-      }),
-    }))
-  }
-
-  const listProps = {
-    dataSource: list,
-    loading: loading.effects['media/query'],
-    pagination,
-    location,
-    onChange (page) {
-      handleRefresh({
-        page: page.current,
-        pageSize: page.pageSize,
-      })
-    },
-    rowSelection: {
+@withI18n()
+@connect(({ media, loading }) => ({ media, loading }))
+class Media extends PureComponent {
+  render() {
+    const { location, dispatch, media, loading, i18n } = this.props
+    const { query, pathname } = location
+    const {
+      list,
+      pagination,
+      currentItem,
+      modalVisible,
+      modalType,
       selectedRowKeys,
-      onChange: (keys) => {
+    } = media
+
+    const handleRefresh = newQuery => {
+      router.push({
+        pathname,
+        search: stringify(
+          {
+            ...query,
+            ...newQuery,
+          },
+          { arrayFormat: 'repeat' }
+        ),
+      })
+    }
+
+    const modalProps = {
+      item: modalType === 'create' ? {} : currentItem,
+      modalType,
+      visible: modalVisible,
+      maskClosable: false,
+      confirmLoading: loading.effects[`media/${modalType}`],
+      title: `${
+        modalType === 'create' ? i18n.t`Create media` : i18n.t`Update media`
+      }`,
+      wrapClassName: 'vertical-center-modal',
+      onOk(data) {
         dispatch({
-          type: 'media/updateState',
+          type: `media/${modalType}`,
+          payload: data,
+        }).then(() => {
+          handleRefresh()
+        })
+      },
+      onCancel() {
+        dispatch({
+          type: 'media/hideModal',
+        })
+      },
+    }
+
+    const listProps = {
+      dataSource: list,
+      loading: loading.effects['media/query'],
+      pagination,
+      onChange(page) {
+        handleRefresh({
+          page: page.current,
+          pageSize: page.pageSize,
+        })
+      },
+      onDeleteItem(_id) {
+        dispatch({
+          type: 'media/delete',
+          payload: _id,
+        }).then(() => {
+          handleRefresh({
+            page:
+              list.length === 1 && pagination.current > 1
+                ? pagination.current - 1
+                : pagination.current,
+          })
+        })
+      },
+      onEditItem(item) {
+        dispatch({
+          type: 'media/showModal',
           payload: {
-            selectedRowKeys: keys,
+            modalType: 'update',
+            currentItem: item,
           },
         })
       },
-    },
-  }
-
-  const filterProps = {
-    filter: {
-      ...query,
-    },
-    onFilterChange (value) {
-      handleRefresh({
-        ...value,
-        page: 1,
-      })
-    },
-  }
-
-  const handleDeleteItems = () => {
-    dispatch({
-      type: 'media/multiDelete',
-      payload: {
-        multi: selectedRowKeys,
+      rowSelection: {
+        selectedRowKeys,
+        onChange: keys => {
+          dispatch({
+            type: 'media/updateState',
+            payload: {
+              selectedRowKeys: keys,
+            },
+          })
+        },
       },
-    })
-  }
+    }
 
-  return (
-    <Page inner>
-      <Filter {...filterProps} />
-      {
-        selectedRowKeys.length > 0 &&
-        <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
-          <Col>
-            {`选中 ${selectedRowKeys.length} 目标 `}
-            <Popconfirm title={'确定删除这些目标?'} placement="left" onConfirm={handleDeleteItems}>
-               <Button type="danger" size="large" style={{ marginLeft: 8 }}>删除</Button>
-             </Popconfirm>
-          </Col>
-        </Row>
-      }
-      <List {...listProps} />
-    </Page>
-  )
+    const filterProps = {
+      filter: {
+        ...query,
+      },
+      onFilterChange(value) {
+        handleRefresh({
+          ...value,
+          page: 1,
+        })
+      },
+      onAdd() {
+        dispatch({
+          type: 'media/showModal',
+          payload: {
+            modalType: 'create',
+          },
+        })
+      },
+    }
+
+    const handleDeleteItems = () => {
+      dispatch({
+        type: 'media/multiDelete',
+        payload: {
+          multi: selectedRowKeys,
+          type: 'remove',
+        },
+      }).then(() => {
+        handleRefresh({
+          page:
+            list.length === selectedRowKeys.length && pagination.current > 1
+              ? pagination.current - 1
+              : pagination.current,
+        })
+      })
+    }
+
+    return (
+      <Page inner>
+        <Filter {...filterProps} />
+        {selectedRowKeys.length > 0 && (
+          <Row style={{ marginBottom: 24, textAlign: 'right', fontSize: 13 }}>
+            <Col>
+              {`Selected ${selectedRowKeys.length} items `}
+              <Popconfirm
+                title="Are you sure delete these items?"
+                placement="left"
+                onConfirm={handleDeleteItems}
+              >
+                <Button type="primary" style={{ marginLeft: 8 }}>
+                  Remove
+                </Button>
+              </Popconfirm>
+            </Col>
+          </Row>
+        )}
+        <List {...listProps} />
+        {modalVisible && <Modal {...modalProps} />}
+      </Page>
+    )
+  }
 }
 
 Media.propTypes = {
@@ -97,4 +178,4 @@ Media.propTypes = {
   loading: PropTypes.object,
 }
 
-export default connect(({ media, loading }) => ({ media, loading }))(Media)
+export default Media

@@ -30,8 +30,12 @@ module.exports = {
       post: '*admin-group.create#【管理组】新增',
       get: '*admin-group.list#【管理组】查询',
 
+      '/operated': {
+        get: '*admin-group.operated#【管理组】可操作列表',
+      },
+
       '/all': {
-        get: '*admin-group.all#【管理组】查询所有',
+        get: '*admin-group.all#【管理组】所有列表',
       },
 
       '/:_id': {

@@ -1,6 +1,7 @@
 /* global document */
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import { Trans, withI18n } from '@lingui/react'
 import { Form, Button, Row, Col, Input } from 'antd'
 
 const { Search } = Input
@@ -18,27 +19,21 @@ const TwoColProps = {
   xl: 96,
 }
 
-const Filter = ({
-  onAdd,
-  onFilterChange,
-  filter,
-  form: {
-    getFieldDecorator,
-    getFieldsValue,
-    setFieldsValue,
-  },
-}) => {
-  const handleFields = (fields) => {
-    return fields
-  }
+@withI18n()
+@Form.create()
+class Filter extends PureComponent {
+  handleSubmit = () => {
+    const { onFilterChange, form } = this.props
+    const { getFieldsValue } = form
 
-  const handleSubmit = () => {
     let fields = getFieldsValue()
-    fields = handleFields(fields)
     onFilterChange(fields)
   }
 
-  const handleReset = () => {
+  handleReset = () => {
+    const { form } = this.props
+    const { getFieldsValue, setFieldsValue } = form
+
     const fields = getFieldsValue()
     for (let item in fields) {
       if ({}.hasOwnProperty.call(fields, item)) {
@@ -50,29 +45,60 @@ const Filter = ({
       }
     }
     setFieldsValue(fields)
-    handleSubmit()
+    this.handleSubmit()
+  }
+  handleChange = (key, values) => {
+    const { form, onFilterChange } = this.props
+    const { getFieldsValue } = form
+
+    let fields = getFieldsValue()
+    fields[key] = values
+    fields = this.handleFields(fields)
+    onFilterChange(fields)
   }
 
-  const { name } = filter
+  render() {
+    const { onAdd, filter, form, i18n } = this.props
+    const { getFieldDecorator } = form
+    const { name } = filter
 
-  return (
-    <Row gutter={24}>
-      <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-        {getFieldDecorator('name', { initialValue: name })(<Search placeholder="Search Name" onSearch={handleSubmit} />)}
-      </Col>
-      <Col {...TwoColProps} xl={{ span: 10 }} md={{ span: 24 }} sm={{ span: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <div>
-            <Button type="primary" className="margin-right" onClick={handleSubmit}>搜索</Button>
-            <Button onClick={handleReset}>清空</Button>
-          </div>
-          <div className="flex-vertical-center">
-            <Button type="ghost" onClick={onAdd}>创建</Button>
-          </div>
-        </div>
-      </Col>
-    </Row>
-  )
+    return (
+      <Row gutter={24}>
+        <Col {...ColProps} xl={{ span: 6 }} md={{ span: 10 }}>
+          {getFieldDecorator('name', { initialValue: name })(
+            <Search
+              placeholder={i18n.t`Search Name`}
+              onSearch={this.handleSubmit}
+            />
+          )}
+        </Col>
+        <Col
+          {...TwoColProps}
+          xl={{ span: 18 }}
+          md={{ span: 14 }}
+          sm={{ span: 24 }}
+        >
+          <Row type="flex" align="middle" justify="space-between">
+            <div>
+              <Button
+                type="primary"
+                className="margin-right"
+                onClick={this.handleSubmit}
+              >
+                <Trans>Search</Trans>
+              </Button>
+              <Button onClick={this.handleReset}>
+                <Trans>Reset</Trans>
+              </Button>
+            </div>
+            <Button type="ghost" onClick={onAdd}>
+              <Trans>Create</Trans>
+            </Button>
+          </Row>
+        </Col>
+      </Row>
+    )
+  }
 }
 
 Filter.propTypes = {
@@ -82,4 +108,4 @@ Filter.propTypes = {
   onFilterChange: PropTypes.func,
 }
 
-export default Form.create()(Filter)
+export default Filter

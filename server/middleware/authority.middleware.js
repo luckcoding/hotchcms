@@ -17,7 +17,7 @@ module.exports = authRoutes => koaAuthority({
   routes: authRoutes,
   // useKoaRouter: true,
   middleware: async (ctx, { routes }) => {
-    let decoded, user, group, authorities = []
+    let decoded = {}, user = {}, group = {}, authorities = []
 
     const { authorization } = ctx.header
     if (authorization) {
@@ -29,7 +29,7 @@ module.exports = authRoutes => koaAuthority({
         if (decoded.hasOwnProperty('data')) {
           // query user
           const call = await AdminUser.findById(decoded.data).populate('group').lean()
-
+          
           // set user
           user = call || {}
 

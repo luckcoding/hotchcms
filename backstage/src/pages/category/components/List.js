@@ -1,77 +1,82 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Table, Modal } from 'antd'
-import classnames from 'classnames'
 import { DropOption } from 'components'
+import { Trans, withI18n } from '@lingui/react'
 import styles from './List.less'
 
 const { confirm } = Modal
 
-const List = ({
-  onDeleteItem, onEditItem, location, ...tableProps
-}) => {
+@withI18n()
+class List extends PureComponent {
+  handleMenuClick = (record, e) => {
+    const { onDeleteItem, onEditItem, i18n } = this.props
 
-  const handleMenuClick = (record, e) => {
     if (e.key === '1') {
       onEditItem(record)
     } else if (e.key === '2') {
       confirm({
-        title: '你确定删除这条记录吗?',
-        onOk () {
+        title: i18n.t`Are you sure delete this record?`,
+        onOk() {
           onDeleteItem(record._id)
         },
       })
     }
   }
 
-  const columns = [
-    {
-      title: '排序',
-      dataIndex: 'sort',
-      key: 'sort',
-    }, {
-      title: '名称',
-      dataIndex: 'name',
-      key: 'name',
-    }, {
-      title: '目录',
-      dataIndex: 'path',
-      key: 'path',
-    }, {
-      title: '是否显示',
-      dataIndex: 'state',
-      key: 'state',
-      render: text => text ? '是' : '否',
-    }, {
-      title: '操作',
-      key: 'operation',
-      width: 100,
-      render: (text, record) => (
-        <DropOption
-          onMenuClick={e => handleMenuClick(record, e)}
-          menuOptions={[{ key: '1', name: '更新' }, { key: '2', name: '删除' }]}
-        />
-      ),
-    },
-  ]
+  render() {
+    const { onDeleteItem, onEditItem, i18n, ...tableProps } = this.props
 
-  const CommonBody = (props) => {
-    return <tbody {...props} />
+    const columns = [
+      {
+        title: <Trans>排序</Trans>,
+        dataIndex: 'sort',
+        key: 'sort',
+      },
+      {
+        title: <Trans>名称</Trans>,
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: <Trans>目录</Trans>,
+        dataIndex: 'path',
+        key: 'path',
+      },
+      {
+        title: <Trans>是否显示</Trans>,
+        dataIndex: 'state',
+        key: 'state',
+        render: text => (text ? '是' : '否'),
+      },
+      {
+        title: <Trans>Operation</Trans>,
+        key: 'operation',
+        render: (text, record) => {
+          return (
+            <DropOption
+              onMenuClick={e => this.handleMenuClick(record, e)}
+              menuOptions={[
+                { key: '1', name: i18n.t`Update` },
+                { key: '2', name: i18n.t`Delete` },
+              ]}
+            />
+          )
+        },
+      },
+    ]
+
+    return (
+      <Table
+        {...tableProps}
+        className={styles.table}
+        bordered
+        columns={columns}
+        simple
+        rowKey={record => record._id}
+      />
+    )
   }
-
-  return (
-    <Table
-      {...tableProps}
-      className={classnames(styles.table)}
-      bordered
-      columns={columns}
-      simple
-      rowKey={record => record._id}
-      components={{
-        body: { wrapper: CommonBody },
-      }}
-    />
-  )
 }
 
 List.propTypes = {

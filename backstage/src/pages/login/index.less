@@ -1,14 +1,14 @@
-@import "~themes/vars";
+@import '~themes/vars';
 
 .form {
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   margin: -160px 0 0 -160px;
   width: 320px;
-  height: 320px;
+  height: 350px;
   padding: 36px;
-  box-shadow: 0 0 100px rgba(0,0,0,.08);
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.08);
 
   button {
     width: 100%;
@@ -44,10 +44,17 @@
     display: inline-block;
     font-weight: 700;
     color: @primary-color;
+    .text-gradient();
   }
 }
 
 .ant-spin-container,
 .ant-spin-nested-loading {
   height: 100%;
+}
+
+.footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }

@@ -1,29 +1,31 @@
-/* global window */
 import modelExtend from 'dva-model-extend'
 import { routerRedux } from 'dva/router'
-import * as articlesService from './services/articles'
-import { create } from './services/article'
+import { pathMatchRegexp } from 'utils'
+import {
+  queryArticleList,
+  createArticle,
+  removeArticle,
+  removeArticleList,
+} from 'api'
 import { pageModel } from 'utils/model'
-
-const { query, multi } = articlesService
 
 export default modelExtend(pageModel, {
   namespace: 'article',
 
   state: {
-    currentItem: {},
-    modalVisible: false,
     selectedRowKeys: [],
   },
 
   subscriptions: {
-    setup ({ dispatch, history }) {
-      history.listen((location) => {
-        if (location.pathname === '/article') {
-          const payload = location.query || { page: 1, pageSize: 10 }
+    setup({ dispatch, history }) {
+      history.listen(location => {
+        if (pathMatchRegexp('/article', location.pathname)) {
           dispatch({
             type: 'query',
-            payload,
+            payload: {
+              status: 1,
+              ...location.query,
+            },
           })
         }
       })
@@ -31,9 +33,8 @@ export default modelExtend(pageModel, {
   },
 
   effects: {
-
-    * query ({ payload = {} }, { call, put }) {
-      const data = yield call(query, payload)
+    *query({ payload }, { call, put }) {
+      const data = yield call(queryArticleList, payload)
       if (data.code === '0000') {
         yield put({
           type: 'querySuccess',
@@ -51,19 +52,23 @@ export default modelExtend(pageModel, {
       }
     },
 
-    // * delete ({ payload }, { call, put, select }) {
-    //   const data = yield call(remove, { _id: payload })
-    //   const { selectedRowKeys } = yield select(_ => _.article)
-    //   if (data.code === '0000') {
-    //     yield put({ type: 'updateState', payload: { selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload) } })
-    //     yield put({ type: 'query' })
-    //   } else {
-    //     throw data
-    //   }
-    // },
+    *delete({ payload }, { call, put, select }) {
+      const data = yield call(removeArticle, { _id: payload })
+      const { selectedRowKeys } = yield select(_ => _.article)
+      if (data.code === '0000') {
+        yield put({
+          type: 'updateState',
+          payload: {
+            selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload),
+          },
+        })
+      } else {
+        throw data
+      }
+    },
 
-    * multiDelete ({ payload }, { call, put }) {
-      const data = yield call(multi, { type: 'remove', ...payload })
+    *multiDelete({ payload }, { call, put }) {
+      const data = yield call(removeArticleList, payload)
       if (data.code === '0000') {
         yield put({ type: 'updateState', payload: { selectedRowKeys: [] } })
       } else {
@@ -71,40 +76,17 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * create ({ payload }, { call, put }) {
-      const data = yield call(create, payload)
+    *create({ payload }, { call, put }) {
+      const data = yield call(createArticle, payload)
       if (data.code === '0000') {
-        yield put(routerRedux.push({
-          pathname: `/article/${data.result._id}`,
-        }))
+        yield put(
+          routerRedux.push({
+            pathname: `/article/${data.result._id}`,
+          })
+        )
       } else {
         throw data
       }
     },
-
-    // * update ({ payload }, { select, call, put }) {
-    //   const _id = yield select(({ article }) => article.currentItem._id)
-    //   const newArticle = { ...payload, _id }
-    //   const data = yield call(update, newArticle)
-    //   if (data.code === '0000') {
-    //     yield put({ type: 'hideModal' })
-    //     yield put({ type: 'query' })
-    //   } else {
-    //     throw data
-    //   }
-    // },
-
-  },
-
-  reducers: {
-
-    showModal (state, { payload }) {
-      return { ...state, ...payload, modalVisible: true }
-    },
-
-    hideModal (state) {
-      return { ...state, modalVisible: false }
-    },
-
   },
 })
