@@ -65,13 +65,13 @@ export default modelExtend(model, {
         message.success('编辑完成')
         yield call(delay, 1000)
         yield put(routerRedux.goBack())
-        yield put({
-          type: 'updateState',
-          payload: {
-            detail: {},
-            categoryList: [],
-          },
-        })
+        // yield put({
+        //   type: 'updateState',
+        //   payload: {
+        //     detail: {},
+        //     categoryList: [],
+        //   },
+        // })
       } else {
         throw data
       }

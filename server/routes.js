@@ -98,14 +98,19 @@ module.exports = {
         post: '*media.multi#【文件】多项操作',
       }
     },
+
+    '/dashboard': {
+      get: 'dashboard#【统计】dashboard',
+    }
   },
+
   '/api': {
     '/article': {
-      get: 'front-v1.articleList',
+      get: 'article.articleList',
 
       '/:_id': {
-        get: 'front-v1.articleItem',
+        get: 'article.articleItem',
       }
-    }
+    },
   }
 }

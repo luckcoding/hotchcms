@@ -39,7 +39,7 @@ const Nav = styled.nav`
 function Header() {
   return (
     <Wrapper>
-      <Logo src={LogoPNG} />
+      <Link href="/"><a><Logo src={LogoPNG} /></a></Link>
       <Nav>
         <Link activeClassName='active' href='/'>
           <a>Home</a>

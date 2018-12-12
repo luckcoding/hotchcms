@@ -42,7 +42,6 @@ class ArticleDetail extends PureComponent {
       tags: [],
       inputVisible: false,
       inputValue: '',
-      editorState: BraftEditor.createEditorState(null),
     }
   }
 
@@ -191,7 +190,7 @@ class ArticleDetail extends PureComponent {
         <Card title="文章内容">
           <BraftEditor
             ref={instance => this.editorInstance = instance}
-            defaultValue={BraftEditor.createEditorState(detail.content)}
+            value={BraftEditor.createEditorState(detail.content)}
             contentId={detail._id}
           />
         </Card>

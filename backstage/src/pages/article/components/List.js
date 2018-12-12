@@ -32,6 +32,9 @@ class List extends PureComponent {
       {
         title: '标签',
         dataIndex: 'tags',
+        render: text => (
+          <span>{Array.isArray(text) ? text.join('/') : ''}</span>
+        ),
       },
       {
         title: '评论数',

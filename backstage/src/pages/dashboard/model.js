@@ -45,10 +45,14 @@ export default modelExtend(model, {
   effects: {
     *query({ payload }, { call, put }) {
       const data = yield call(queryDashboard, parse(payload))
-      yield put({
-        type: 'updateState',
-        payload: data,
-      })
+      if (data.code === '0000') {
+        yield put({
+          type: 'updateState',
+          payload: data.result,
+        })
+      } else {
+        throw data
+      }
     },
     *queryWeather({ payload = {} }, { call, put }) {
       payload.location = 'shenzhen'
