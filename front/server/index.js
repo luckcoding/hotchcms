@@ -50,9 +50,7 @@ app.prepare()
     ]})
 
     match({ server, app, routes: [
-      '/about',
-      '/categories',
-      '/category/:_id',
+      '/p/:_id',
     ]})
 
     server.get('*', (req, res) => {

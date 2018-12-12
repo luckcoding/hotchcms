@@ -34,10 +34,6 @@ class List extends PureComponent {
         dataIndex: 'tags',
       },
       {
-        title: 'Visibility',
-        dataIndex: 'visibility',
-      },
-      {
         title: '评论数',
         dataIndex: 'comments',
       },
@@ -63,7 +59,7 @@ class List extends PureComponent {
           showTotal: total => i18n.t`Total ${total} Items`,
         }}
         bordered
-        scroll={{ x: 1200 }}
+        scroll={{ x: 1400 }}
         className={styles.table}
         columns={columns}
         simple

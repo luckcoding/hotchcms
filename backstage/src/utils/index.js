@@ -254,3 +254,14 @@ export function setLocale(language) {
     })
   }
 }
+
+/**
+ * delay fn
+ * @param  {Number} timeout delay time
+ * @return {Promise}
+ */
+export function delay(timeout) {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout)
+  })
+}

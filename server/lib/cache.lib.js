@@ -1,8 +1,5 @@
+const lodash = require('lodash')
 const redis = require('./redis.lib')
-
-function isJson (input) {
-  return Object.prototype.toString.call(input).toLowerCase() === '[object object]'
-}
 
 exports.get = key => new Promise(async (resolve, reject) => {
   const client = await redis.connect()
@@ -17,7 +14,7 @@ exports.get = key => new Promise(async (resolve, reject) => {
 })
 
 exports.set = (key, value, maxAge) => new Promise(async (resolve, reject) => {
-  if (isJson(value) || Array.isArray(value)) {
+  if (lodash.isObject(value) || Array.isArray(value)) {
     value = JSON.stringify(value)
   }
   try {

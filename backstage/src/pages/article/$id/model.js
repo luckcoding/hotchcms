@@ -1,7 +1,9 @@
 import { message } from 'antd'
 import modelExtend from 'dva-model-extend'
+import { routerRedux } from 'dva/router'
 import { pathMatchRegexp } from 'utils'
 import { model } from 'utils/model'
+import { delay } from 'utils'
 import {
   queryArticle,
   updateArticle,
@@ -61,6 +63,15 @@ export default modelExtend(model, {
       const data = yield call(updateArticle, payload)
       if (data.code === '0000') {
         message.success('编辑完成')
+        yield call(delay, 1000)
+        yield put(routerRedux.goBack())
+        yield put({
+          type: 'updateState',
+          payload: {
+            detail: {},
+            categoryList: [],
+          },
+        })
       } else {
         throw data
       }

@@ -1,5 +1,5 @@
 const BASE_URL = 'http://localhost:3030'
-const API_URL = `${BASE_URL}/api`
+const API_URL = `${BASE_URL}/backstage-api`
 
 module.exports = {
   siteName: 'Hotchcms',

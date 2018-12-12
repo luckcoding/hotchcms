@@ -14,14 +14,11 @@ Router.events.on('routeChangeError', () => NProgress.done())
 
 class MyApp extends App {
   static async getInitialProps ({ Component, ctx, router }) {
-    // get site info
-    const siteInfo = await onlyResult('site-info')
-
-    // search params
-    let search = qs.parse(ctx.asPath.split('?')[1] || '')
-    
-    let pageInitialProps = {}
     try {
+      // search params
+      let search = qs.parse(ctx.asPath.split('?')[1] || '')
+      
+      let pageInitialProps = {}
 
       if (Component.getInitialProps) {
         pageInitialProps = await Component.getInitialProps({ ...ctx, search })
@@ -31,12 +28,11 @@ class MyApp extends App {
         pageProps: {
           ...pageInitialProps,
           search,
-          siteInfo,
         }
       }
+    
     } catch (e) {
       console.error(e.message)
-      return {pageProps}
     }
   }
 

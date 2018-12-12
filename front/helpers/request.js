@@ -1,45 +1,68 @@
 import 'isomorphic-unfetch'
 import qs from 'qs'
+import { cloneDeep, isEmpty } from 'lodash'
+import pathToRegexp from 'path-to-regexp'
 import { isJson } from './valaditor'
 
-const API_V1 = 'http://localhost:3030/api/v1/'
+const API_V1 = 'http://localhost:3030/api/'
 
 /**
  * request('user')
  * 
  * request('user', {name: 'zhangsan'})
  * 
- * request({
- *   url: 'user',
- *   options: {
- *     method: 'post',
- *     body: {
- *       password: '123'
- *     }
- *   }
- * })
+ * request('post user', {name: 'zhangsan'})
+ *
+ * request('put user/:_id', {_id: '1234'})
+ * 
  */
 
-export default async function request(params, payload) {
-  let url
-  , options = {
-    method: 'GET'
-  }
-
-  if (typeof params === 'string') {
-    url = params
-  } else if (isJson(params)) {
-    url = params.url
-    options = params.options
-  } else {
+export default async function request(params, data) {
+  if (typeof params !== 'string') {
     throw TypeError('Request params is error !')
   }
 
-  if (isJson(payload) && ['get', 'head'].includes(options.method.toLowerCase())) {
-    url = url + '?' + qs.stringify(payload)
+  let url, method = 'GET'
+
+  const paramsArray = params.split(' ')
+
+  if (paramsArray.length === 2) {
+    method = paramsArray[0]
+    url = API_V1 + paramsArray[1]
+  } else {
+    url = API_V1 + params
   }
 
-  const res = await fetch(`${API_V1}${url}`, options)
+  const cloneData = cloneDeep(data)
+
+  try {
+    let domain = ''
+    const urlMatch = url.match(/[a-zA-z]+:\/\/[^/]*/)
+    if (urlMatch) {
+      ;[domain] = urlMatch
+      url = url.slice(domain.length)
+    }
+
+    const match = pathToRegexp.parse(url)
+    url = pathToRegexp.compile(url)(data)
+
+    for (const item of match) {
+      if (item instanceof Object && item.name in cloneData) {
+        delete cloneData[item.name]
+      }
+    }
+    url = domain + url
+  } catch (e) {
+    console.error(e.message)
+  }
+
+  if (['get', 'head'].includes(method.toLocaleLowerCase())) {
+    url = `${url}${isEmpty(cloneData) ? '' : '?'}${qs.stringify(cloneData)}`
+  }
+
+  const res = await fetch(url, {
+    method,
+  })
 
   if (res.status !== 200) {
     throw Error('Network is error !')
@@ -50,14 +73,5 @@ export default async function request(params, payload) {
     return json.result
   } else {
     throw Error(json.message || 'Services unknow error !')
-  }
-}
-
-export async function onlyResult(params) {
-  try {
-    const result = await request(params)
-    return result
-  } catch (e) {
-    return {}
   }
 }

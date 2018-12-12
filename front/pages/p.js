@@ -8,16 +8,17 @@ import request from 'helpers/request'
 import { get } from 'lodash'
 
 class Index extends React.Component {
-  static async getInitialProps () {
-    const result = await request('article')
+  static async getInitialProps ({ query }) {
+    const result = await request('article/:_id', query)
+
     return {
-      list: result.list || []
+      content: result || {}
     }
   }
 
-  static async getHeadSetting (pageProps) {
+  static async getHeadSetting ({ content }) {
     return {
-      title: '首页',
+      title: content.title,
     }
   }
 
@@ -26,16 +27,7 @@ class Index extends React.Component {
     return (
       <div>
         <Header />
-        <ListTitle>最新文章</ListTitle>
-        {list.map((item, key) => (
-          <ListItem
-            url={`/p/${item._id}`}
-            key={key}
-            title={item.title}
-            description={item.subTitle}
-            tag={get(item.category, 'name')}
-          />
-        ))}
+        
       </div>
     )
   }

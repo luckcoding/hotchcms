@@ -44,16 +44,17 @@ const controllers = requireAll({
         // 是否需要验权限
         inAuthed = value.indexOf('*') !== -1
 
-        // 备注
-        description = value.split('#')[1] || ''
+        // 抽离 => controller.action # 备注
+        const parts = value.replace(/(\*|\@)/g, '').split('#')
 
-        // 解析 => controller.action
-        value = value.replace(/^\*/g, '')
-        value = value.split('#')[0]
+        // 备注
+        description = parts[1] || ''
+
+        const combParts = parts[0].split('.')
 
         // 提取 controller / action
-        controller = value.split('.')[0]
-        action = value.split('.')[1]
+        controller = combParts[0]
+        action = combParts[1]
 
         // 路由描述
         notes[`${route}[${key.toUpperCase()}]`] = description
@@ -68,6 +69,7 @@ const controllers = requireAll({
           // auth[key](route, fn)
           authRoutes.push({ path: route, methods: [key] })
         }
+
         router[key](route, fn)
       }
     }

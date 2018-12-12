@@ -24,9 +24,9 @@ exports.update = async (ctx) => {
       },
       isString: { errorMessage: 'title 需为 String' },
     },
-    subtitle: {
+    subTitle: {
       optional: true,
-      isString: { errorMessage: 'subtitle 需为 String' },
+      isString: { errorMessage: 'subTitle 需为 String' },
     },
     category: {
       optional: true,

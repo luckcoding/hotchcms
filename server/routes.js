@@ -1,5 +1,5 @@
 module.exports = {
-  '/api': {
+  '/backstage-api': {
     '/install': {
       get: 'install.status', // 安装状态
       post: 'install.install', // 安装
@@ -98,15 +98,14 @@ module.exports = {
         post: '*media.multi#【文件】多项操作',
       }
     },
+  },
+  '/api': {
+    '/article': {
+      get: 'front-v1.articleList',
 
-
-    '/v1': {
-      '/categories': {
-        get: 'v1.getCategories#【网站】获取分类',
-      },
-      '/articles': {
-        get: 'v1.getArticles#【网站】获取文章列表'
+      '/:_id': {
+        get: 'front-v1.articleItem',
       }
     }
-  },
+  }
 }
