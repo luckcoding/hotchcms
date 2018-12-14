@@ -1,10 +1,4 @@
 export default {
-  // queryRouteList: '/routes',
-
-  // queryUserInfo: '/user',
-  // logoutUser: '/user/logout',
-  // loginUser: 'POST /user/login',
-
   queryUserInfo: '/admin-account',
   logoutUser: 'PUT /admin-account/sign-out',
   loginUser: 'PUT /admin-account/sign-in',

@@ -20,7 +20,7 @@ export default {
   loggedIn() {
     return !!localStorage.getItem(INAUTH_NAME)
   },
-  jump() {
+  logoutJump() {
     let from = window.location.pathname
     window.location = `${window.location.origin}/login?from=${from}`
   },

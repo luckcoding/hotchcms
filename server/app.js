@@ -6,6 +6,7 @@ const koaStatic = require('koa-static')
 const cors = require('kcors')
 // const views = require('koa-views')
 
+const stateMiddle = require('./middleware/state.middleware')
 const validation = require('./middleware/validation.middleware')
 const pipe = require('./middleware/pipe.middleware')
 const authority = require('./middleware/authority.middleware')
@@ -38,6 +39,7 @@ app.use(convert(koaBody({
 
 // middleware
 app.use(convert.compose(
+  stateMiddle(),
   authority(route.authRoutes), // 权限验证
   validation(), // 验证参数
   pipe() // 通讯

@@ -17,36 +17,31 @@ module.exports = authRoutes => koaAuthority({
   routes: authRoutes,
   // useKoaRouter: true,
   middleware: async (ctx, { routes }) => {
-    let decoded = {}, user = {}, group = {}, authorities = []
 
-    const { authorization } = ctx.header
-    if (authorization) {
-      const parts = authorization.split(' ')
-      if (parts.length === 2 && /^Bearer$/i.test(parts[0])) {
+    let user = {}, group = {}, authorities = []
 
-        decoded = await verify(parts[1], settings.system.secret)
-        if (decoded.hasOwnProperty('data')) {
-          // query user
-          const call = await AdminUser.findById(decoded.data).populate('group').lean()
-          
-          // set user
-          user = call || {}
+    const { _id } = ctx.state.user
 
-          if (user.hasOwnProperty('group')) {
-            // set group
-            group = isJson(user.group) ? user.group : {}
+    if (_id) {
+      // query user
+      const call = await AdminUser.findById(_id).populate('group').lean()
 
-            // set authorities
-            authorities = user.group.gradation === 100
-              ? routes
-              : user.group.authorities
-          }
-        }
+      // set user
+      user = call || {}
+
+      if (user.hasOwnProperty('group')) {
+        // set group
+        group = isJson(user.group) ? user.group : {}
+
+        // set authorities
+        authorities = user.group.gradation === 100
+          ? routes
+          : user.group.authorities
       }
     }
 
     // bind in the ctx
-    ctx.state.user = Object.assign(decoded, user, { group }, { authorities })
+    ctx.state.user = Object.assign({}, ctx.state.user, user, { group }, { authorities })
 
     /**
      * bind check auth levl fn

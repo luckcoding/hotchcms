@@ -14,15 +14,15 @@ module.exports = {
     },
 
     '/admin-account': {
-      get: '*admin-account.current#【当前账号】查询',
-      put: '*admin-account.update#【当前账号】更新',
+      get: '@admin-account.current#【当前账号】查询',
+      put: '@admin-account.update#【当前账号】更新',
 
       '/sign-in': {
         put: 'admin-account.signIn', // 登录
       },
 
       '/sign-out': {
-        put: '*admin-account.signOut#退出',
+        put: '@admin-account.signOut#退出',
       },
     },
 

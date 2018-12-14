@@ -44,6 +44,9 @@ const controllers = requireAll({
         // 是否需要验权限
         inAuthed = value.indexOf('*') !== -1
 
+        // 需要验证登录状态
+        inChecked = (value.indexOf('*') !== -1) || (value.indexOf('@') !== -1)
+
         // 抽离 => controller.action # 备注
         const parts = value.replace(/(\*|\@)/g, '').split('#')
 
@@ -64,10 +67,12 @@ const controllers = requireAll({
 
         // 路由绑定函数
         if (inAuthed) {
-          router[key](route, controllers.check()) // 验证状态
-
           // auth[key](route, fn)
           authRoutes.push({ path: route, methods: [key] })
+        }
+
+        if (inChecked) {
+          router[key](route, controllers.check()) // 验证状态
         }
 
         router[key](route, fn)
