@@ -258,7 +258,7 @@ export function setLocale(language) {
 /**
  * delay fn
  * @param  {Number} timeout delay time
- * @return {Promise}
+ * @return {Promise} async
  */
 export function delay(timeout) {
   return new Promise(resolve => {

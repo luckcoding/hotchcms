@@ -1,6 +1,5 @@
 import modelExtend from 'dva-model-extend'
-import { routerRedux } from 'dva/router'
-import { pathMatchRegexp } from 'utils'
+import { router, pathMatchRegexp } from 'utils'
 import {
   queryArticleList,
   createArticle,
@@ -79,11 +78,9 @@ export default modelExtend(pageModel, {
     *create({ payload }, { call, put }) {
       const data = yield call(createArticle, payload)
       if (data.code === '0000') {
-        yield put(
-          routerRedux.push({
-            pathname: `/article/${data.result._id}`,
-          })
-        )
+        router.push({
+          pathname: `/article/${data.result._id}`,
+        })
       } else {
         throw data
       }

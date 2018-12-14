@@ -1,0 +1,6 @@
+{
+  "name": "MediaLink",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./MediaLink.js"
+}

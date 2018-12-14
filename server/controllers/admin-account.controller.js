@@ -63,6 +63,7 @@ exports.signOut = async (ctx) => {
     const expires = exp * 1000 - Date.now()
 
     const auth = ctx.request.headers.authorization.split(' ')[1]
+
     // await cache.del(auth)
     await cache.set(auth, _id, expires)
     ctx.pipeDone()

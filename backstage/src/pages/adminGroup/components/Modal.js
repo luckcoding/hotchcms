@@ -63,7 +63,7 @@ class UserModal extends PureComponent {
     return (
       <Modal {...modalProps} onOk={this.handleOk}>
         <Form layout="horizontal">
-          <FormItem label={i18n.t`名称`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Name`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
               rules: [
@@ -73,7 +73,7 @@ class UserModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`描述`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Description`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('description', {
               initialValue: item.description,
               rules: [
@@ -83,7 +83,7 @@ class UserModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`级别`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Gradation`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('gradation', {
               initialValue: item.gradation,
               rules: [
@@ -93,7 +93,7 @@ class UserModal extends PureComponent {
               ],
             })(<InputNumber min={0} max={100} />)}
           </FormItem>
-          <FormItem label={i18n.t`权限`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Authority`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('authorities', {
               initialValue: Array.isArray(item.authority)
                 ? item.authority.map(_ => _.prefix)

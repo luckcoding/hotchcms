@@ -1,10 +1,14 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { isEmpty } from 'lodash'
+import { isEqual } from 'lodash'
 import { connect } from 'dva'
-import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect, Switch } from 'antd'
+import { Form, Input, Tag, Tooltip, Button, Card, TreeSelect, Upload, Icon, Modal, message } from 'antd'
 import { BraftEditor } from 'components'
-import { withI18n } from '@lingui/react'
+import { withI18n, Trans } from '@lingui/react'
+import { auth, config } from 'utils'
+import { getMediaUrl, handleFileListUrl } from 'utils/helpers'
+
+const { mediaApiUrl } = config
 
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
@@ -12,9 +16,10 @@ const { TreeNode } = TreeSelect
 const { TextArea } = Input
 
 const EnumPostStatus = {
-  UNPUBLISH: 0,
-  PUBLISHED: 1,
-  DELETED: 2,
+  PUBLISHED: 1, // 已发布
+  UNPUBLISH: 2, // 已下线
+  DRAFT: 0, // 草稿
+  TRASH: 9, // 回收站
 }
 
 const formItemLayout = {
@@ -42,18 +47,41 @@ class ArticleDetail extends PureComponent {
       tags: [],
       inputVisible: false,
       inputValue: '',
+      previewVisible: false,
+      previewImage: '',
+      fileList: [],
+
+      initial: {},
     }
   }
 
-  static getDerivedStateFromProps (props, state) {
-    const { detail } = props.articleDetail
-    if (!isEmpty(detail) && !isEmpty(detail.tags) && isEmpty(state.tags)) {
-      return {
-        tags: detail.tags,
+  // UNSAFE_componentWillReceiveProps(nextProps) {}
+
+  static getDerivedStateFromProps (nextProps, prevState) {
+
+    const { detail } = nextProps.articleDetail
+
+    let nextExtendsState = null
+
+    if (!isEqual(detail, prevState.initial)) {
+      nextExtendsState = {
+        ...prevState,
+        initial: detail,
+        tags: detail.tags || [],
       }
-    } else {
-      return null
+
+      if (detail.cover) {
+        nextExtendsState.fileList = [
+          {
+            uid: '-1',
+            status: 'done',
+            url: detail.cover,
+          }
+        ]
+      }
     }
+
+    return nextExtendsState
   }
 
   handleClose = (removedTag) => {
@@ -87,35 +115,74 @@ class ArticleDetail extends PureComponent {
     this.input = input
   }
 
+  handleCancel = () => this.setState({ previewVisible: false })
+
+  handlePreview = file => {
+    this.setState({
+      previewImage: getMediaUrl(file.url) || file.thumbUrl,
+      previewVisible: true,
+    })
+  }
+
+  handleChange = ({ fileList }) => {
+    fileList = fileList.filter(file => {
+      if ((file.status === 'done') && file.response) {
+        const status = file.response.code === '0000'
+        if (!status) {
+          message.error(file.response.message)
+        } else {
+          file.url = file.response.result[0].path
+        }
+        return status
+      }
+      return true
+    })
+
+    this.setState({ fileList })
+  }
+
   handleOk = (status) => {
     const { form, dispatch, articleDetail } = this.props
     const { validateFieldsAndScroll } = form
     const { detail } = articleDetail
-    const { tags } = this.state
+    const { tags, fileList } = this.state
+
+    form.getFieldValue('password')
 
     validateFieldsAndScroll((errors, values) => {
       if (errors) {
         return
       }
+
+      const data = {
+        _id: detail._id,
+        ...values,
+        status,
+        tags,
+        content: this.editorInstance.getValue().toHTML(),
+      }
+
+      if (fileList.length) {
+        data.cover = fileList[0].url
+      } else {
+        data.cover = ''
+      }
+
       dispatch({
         type: 'articleDetail/update',
-        payload: {
-          _id: detail._id,
-          ...values,
-          status,
-          tags,
-          content: this.editorInstance.getValue().toHTML(),
-        },
+        payload: data
       })
     })
   }
 
   render() {
     const { articleDetail, i18n, form } = this.props
-    const { getFieldDecorator } = form
+    const { getFieldDecorator, getFieldValue } = form
     const { detail, categoryList } = articleDetail
 
-    const { tags, inputVisible, inputValue } = this.state
+    const originalAuthor = getFieldValue('originalAuthor')
+
+    const { tags, inputVisible, inputValue, previewVisible, previewImage, fileList } = this.state
 
     const loop = data => data.map((i) => {
       const title = <span style={{ textDecoration: !i.state && 'line-through' }}>{i.name}</span>
@@ -128,12 +195,12 @@ class ArticleDetail extends PureComponent {
 
     return (
       <Form layout="horizontal">
-        <FormItem label={i18n.t`名称`} hasFeedback {...formItemLayout}>
+        <FormItem label={i18n.t`Title`} hasFeedback {...formItemLayout}>
           {getFieldDecorator('title', {
           initialValue: detail.title,
         })(<Input />)}
         </FormItem>
-        <FormItem label={i18n.t`描述`} hasFeedback {...formItemLayout}>
+        <FormItem label={i18n.t`Category`} hasFeedback {...formItemLayout}>
           {getFieldDecorator('category', {
             initialValue: detail.category,
           })(
@@ -146,7 +213,7 @@ class ArticleDetail extends PureComponent {
             </TreeSelect>
           )}
         </FormItem>
-        <FormItem label="标签" hasFeedback {...formItemLayout}>
+        <FormItem label={i18n.t`Tags`} hasFeedback {...formItemLayout}>
           {tags.map((tag) => {
             const isLongTag = tag.length > 20
             const tagElem = (
@@ -170,34 +237,65 @@ class ArticleDetail extends PureComponent {
           )}
           {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+</Button>}
         </FormItem>
-        <FormItem label="概述" hasFeedback {...formItemLayout}>
-          {getFieldDecorator('subTitle', {
-            initialValue: detail.subTitle,
+        <FormItem label={i18n.t`Cover`} hasFeedback {...formItemLayout}>
+          <Upload
+            className="cover"
+            action={mediaApiUrl}
+            headers={{
+              authorization: auth.get(),
+              'media-type': 'image',
+            }}
+            listType="picture-card"
+            fileList={handleFileListUrl(fileList)}
+            onPreview={this.handlePreview}
+            onChange={this.handleChange}
+          >
+            {!fileList.length && (
+              <div>
+                <Icon type="plus" />
+                <div className="ant-upload-text">Upload</div>
+              </div>
+            )}
+          </Upload>
+        </FormItem>
+        <FormItem label={i18n.t`原作者`}  {...formItemLayout}>
+          {getFieldDecorator('originalAuthor', {
+            initialValue: detail.originalAuthor,
+          })(<Input placeholder="填写后，将证明文章来自转载" />)}
+        </FormItem>
+        {originalAuthor && (
+          <FormItem label={i18n.t`原地址`}  {...formItemLayout}>
+            {getFieldDecorator('originalUrl', {
+              initialValue: detail.originalUrl,
+            })(<Input />)}
+          </FormItem>
+        )}
+        <FormItem label={i18n.t`Overview`} hasFeedback {...formItemLayout}>
+          {getFieldDecorator('overview', {
+            initialValue: detail.overview,
           })(<TextArea autosize={textAreaSize} />)}
         </FormItem>
-        <FormItem label="是否原创" {...formItemLayout}>
-          {getFieldDecorator('original', {
-            valuePropName: 'checked',
-            initialValue: detail.original,
-          })(<Switch />)}
-        </FormItem>
-        <FormItem label="是否置顶" {...formItemLayout}>
-          {getFieldDecorator('isTop', {
-            valuePropName: 'checked',
-            initialValue: detail.isTop,
-          })(<Switch />)}
-        </FormItem>
-        <Card title="文章内容">
+        <Card label={i18n.t`Content`}>
           <BraftEditor
             ref={instance => this.editorInstance = instance}
             value={BraftEditor.createEditorState(detail.content)}
             contentId={detail._id}
+            language={i18n._language === 'en' ? 'en' : 'zh'}
           />
         </Card>
-        <ButtonGroup size="large" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-          <Button type="primary" icon="upload" onClick={() => this.handleOk(EnumPostStatus.PUBLISHED)}>发布</Button>
-          <Button type="danger" icon="cloud-download-o" onClick={() => this.handleOk(EnumPostStatus.UNPUBLISH)}>草稿</Button>
+        <ButtonGroup style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', position: 'sticky', bottom: '20px', zIndex: '2' }}>
+          <Button type="primary" icon="upload" onClick={() => this.handleOk(EnumPostStatus.PUBLISHED)}><Trans>Publish</Trans></Button>
+          <Button icon="lock" onClick={() => this.handleOk(EnumPostStatus.UNPUBLISH)}><Trans>UnPublish</Trans></Button>
+          <Button type="danger" icon="cloud-download-o" onClick={() => this.handleOk(EnumPostStatus.DRAFT)}><Trans>Draft</Trans></Button>
         </ButtonGroup>
+
+        <Modal
+          visible={previewVisible}
+          footer={null}
+          onCancel={this.handleCancel}
+        >
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
       </Form>
     )
   }

@@ -46,7 +46,7 @@ class Index extends React.Component {
     }
   }
 
-  static async getHeadSetting ({ content }) {
+  static async getSettings ({ content }) {
     return {
       title: content.title,
     }

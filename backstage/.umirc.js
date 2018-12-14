@@ -23,14 +23,6 @@ export default {
             /models\//,
             /components\//,
             /services\//,
-            /chart\/Container\.js$/,
-            /chart\/ECharts\/.+Component\.js$/,
-            /chart\/ECharts\/.+ComPonent\.js$/,
-            /chart\/ECharts\/theme\/.+\.js$/,
-            /chart\/highCharts\/.+Component\.js$/,
-            /chart\/highCharts\/mapdata\/.+\.js$/,
-            /chart\/Recharts\/.+Component\.js$/,
-            /chart\/Recharts\/Container\.js$/,
           ],
           update: routes => {
             if (!i18n) return routes

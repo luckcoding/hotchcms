@@ -74,7 +74,6 @@ export default {
     *query({ payload }, { call, put, select }) {
       const { code, result: user } = yield call(queryUserInfo, payload)
       const { locationPathname } = yield select(_ => _.app)
-
       if (code === '0000') {
         // const { list } = yield call(queryRouteList)
         // const { permissions } = user
@@ -124,7 +123,7 @@ export default {
 
     *signOut({ payload }, { call, put }) {
       const data = yield call(logoutUser)
-      if (data.success) {
+      if (data.code === '0000') {
         yield put({
           type: 'updateState',
           payload: {

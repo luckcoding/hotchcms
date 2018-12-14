@@ -45,7 +45,9 @@ class AdminUser extends PureComponent {
       maskClosable: false,
       confirmLoading: loading.effects[`adminUser/${modalType}`],
       title: `${
-        modalType === 'create' ? i18n.t`Create User` : i18n.t`Update User`
+        modalType === 'create'
+          ? i18n.t`Create Admin User`
+          : i18n.t`Update Admin User`
       }`,
       wrapClassName: 'vertical-center-modal',
       onOk(data) {

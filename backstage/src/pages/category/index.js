@@ -43,11 +43,7 @@ class Category extends PureComponent {
       visible: modalVisible,
       maskClosable: false,
       confirmLoading: loading.effects[`category/${modalType}`],
-      title: `${
-        modalType === 'create'
-          ? i18n.t`Create category`
-          : i18n.t`Update category`
-      }`,
+      title: `${modalType === 'create' ? i18n.t`Create` : i18n.t`Update`}`,
       wrapClassName: 'vertical-center-modal',
       onOk(data) {
         dispatch({

@@ -11,31 +11,29 @@ export default (Page) => {
 
     static async getInitialProps (ctx) {
 
-      let pageProps, headSetting
-
+      let pageProps, settings
 
       if (Page.getInitialProps) {
         pageProps = await Page.getInitialProps(ctx)
       }
 
-      if (Page.getHeadSetting) {
-        headSetting = await Page.getHeadSetting(pageProps)
+      if (Page.getSettings) {
+        settings = await Page.getSettings(pageProps)
       }
 
-      return {
-        ...pageProps,
-        headSetting: { ...headSetting },
-      }
+      return Object.assign({}, pageProps, { settings })
     }
 
     render () {
-      const { headSetting: setting, ...pageProps } = this.props
+      const { settings, ...pageProps } = this.props
+      const { title, keywords, description, append } = settings
+
       return [
         <Head key="head">
-          <title>{setting.title} - {seo.title}</title>
-          <meta name="keywords" content={setting.keywords || seo.keywords} />
-          <meta name="description" content={setting.description || seo.description} />
-          {typeof setting.append ==='function' ? setting.append() : null}
+          <title>{title} - {seo.title}</title>
+          <meta name="keywords" content={keywords || seo.keywords} />
+          <meta name="description" content={description || seo.description} />
+          {typeof append ==='function' ? append() : null}
         </Head>,
         <Page key="page" {...pageProps} />
       ]

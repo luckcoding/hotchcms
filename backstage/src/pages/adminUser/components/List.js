@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import { Table, Modal, Avatar } from 'antd'
 import { DropOption } from 'components'
 import { Trans, withI18n } from '@lingui/react'
-import config from 'config'
+import { getMediaUrl } from 'utils/helpers'
 import styles from './List.less'
 
-const { getImgUrl } = config
 const { confirm } = Modal
 
 @withI18n()
@@ -37,32 +36,32 @@ class List extends PureComponent {
         width: 72,
         fixed: 'left',
         render: text => (
-          <Avatar style={{ marginLeft: 8 }} src={getImgUrl(text)} />
+          <Avatar style={{ marginLeft: 8 }} src={getMediaUrl(text)} />
         ),
       },
       {
-        title: <Trans>Nickname</Trans>,
+        title: <Trans>NickName</Trans>,
         dataIndex: 'nickname',
         key: 'nickname',
       },
       {
-        title: <Trans>邮箱</Trans>,
+        title: <Trans>Email</Trans>,
         dataIndex: 'email',
         key: 'email',
       },
       {
-        title: <Trans>手机号</Trans>,
+        title: <Trans>Phone</Trans>,
         dataIndex: 'mobile',
         key: 'mobile',
       },
       {
-        title: <Trans>管理组</Trans>,
+        title: <Trans>Admin Group</Trans>,
         dataIndex: 'group',
         key: 'group',
         render: text => <span>{text && text.name}</span>,
       },
       {
-        title: <Trans>创建时间</Trans>,
+        title: <Trans>CreateTime</Trans>,
         dataIndex: 'createDate',
         key: 'createDate',
       },

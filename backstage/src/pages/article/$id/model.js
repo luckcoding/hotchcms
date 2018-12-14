@@ -25,6 +25,9 @@ export default modelExtend(model, {
         if (match) {
           dispatch({ type: 'queryCategoryList' })
           dispatch({ type: 'query', payload: { _id: match[1] } })
+        } else {
+          // clear state cache
+          dispatch({ type: 'updateState', payload: { detail: {}, categoryList: [] } })
         }
       })
     },
@@ -65,13 +68,6 @@ export default modelExtend(model, {
         message.success('编辑完成')
         yield call(delay, 1000)
         yield put(routerRedux.goBack())
-        // yield put({
-        //   type: 'updateState',
-        //   payload: {
-        //     detail: {},
-        //     categoryList: [],
-        //   },
-        // })
       } else {
         throw data
       }

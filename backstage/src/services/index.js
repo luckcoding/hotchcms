@@ -1,7 +1,7 @@
 import { has, set, isNull, isObject } from 'lodash'
 import md5 from 'md5'
 import request from 'utils/request'
-import { apiPrefix, secret } from 'utils/config'
+import { API_URL, secret } from 'utils/config'
 import auth from 'utils/auth'
 
 import routes from './routes'
@@ -29,13 +29,13 @@ const filterNull = data => {
 }
 
 const gen = params => {
-  let url = apiPrefix + params
+  let url = API_URL + params
   let method = 'GET'
 
   const paramsArray = params.split(' ')
   if (paramsArray.length === 2) {
     method = paramsArray[0]
-    url = apiPrefix + paramsArray[1]
+    url = API_URL + paramsArray[1]
   }
 
   return function(data) {
@@ -58,7 +58,7 @@ for (const key in api) {
 APIFunction.queryWeather = params => {
   params.key = 'i7sau1babuzwhycn'
   return request({
-    url: `${apiPrefix}/weather/now.json`,
+    url: `${API_URL}/weather/now.json`,
     data: params,
   })
 }

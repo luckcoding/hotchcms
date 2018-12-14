@@ -1,12 +1,10 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Table, Modal } from 'antd'
-import { DropOption } from 'components'
+import { DropOption, MediaLink } from 'components'
 import { Trans, withI18n } from '@lingui/react'
-import config from 'config'
 import styles from './List.less'
 
-const { getImgUrl } = config
 const { confirm } = Modal
 
 @withI18n()
@@ -31,18 +29,22 @@ class List extends PureComponent {
 
     const columns = [
       {
-        title: <Trans>路径</Trans>,
+        title: <Trans>Path</Trans>,
         dataIndex: 'path',
         key: 'path',
-        render: text => <a href={getImgUrl(text)}>{text}</a>,
+        render: text => (
+          <MediaLink>
+            <a href={text}>{text}</a>
+          </MediaLink>
+        ),
       },
       {
-        title: <Trans>大小</Trans>,
+        title: <Trans>Size</Trans>,
         dataIndex: 'size',
         key: 'size',
       },
       {
-        title: <Trans>类型</Trans>,
+        title: <Trans>Type</Trans>,
         dataIndex: 'type',
         key: 'type',
       },

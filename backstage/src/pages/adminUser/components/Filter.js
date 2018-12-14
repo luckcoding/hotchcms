@@ -67,7 +67,7 @@ class Filter extends PureComponent {
         <Col {...ColProps} xl={{ span: 6 }} md={{ span: 10 }}>
           {getFieldDecorator('nickname', { initialValue: nickname })(
             <Search
-              placeholder={i18n.t`Search Name`}
+              placeholder={i18n.t`Search NickName`}
               onSearch={this.handleSubmit}
             />
           )}

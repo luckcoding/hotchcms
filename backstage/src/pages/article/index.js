@@ -5,7 +5,7 @@ import { Tabs, Button, Row, Col, Popconfirm } from 'antd'
 import { router } from 'utils'
 import { forEach } from 'lodash'
 import { stringify } from 'qs'
-import { withI18n } from '@lingui/react'
+import { withI18n, Trans } from '@lingui/react'
 import { Page } from 'components'
 import List from './components/List'
 
@@ -54,20 +54,34 @@ class Article extends PureComponent {
       dataSource: list,
       loading: loading.effects['article/query'],
       onChange(page) {
+        handleRefresh({
+          page: page.current,
+          pageSize: page.pageSize,
+        })
+      },
+      onDeleteItem(_id) {
+        dispatch({
+          type: 'article/delete',
+          payload: _id,
+        }).then(() => {
+          handleRefresh({
+            page:
+              list.length === 1 && pagination.current > 1
+                ? pagination.current - 1
+                : pagination.current,
+          })
+        })
+      },
+      onEditItem(item) {
         router.push({
-          pathname,
-          search: stringify({
-            ...query,
-            page: page.current,
-            pageSize: page.pageSize,
-          }),
+          pathname: `/article/${item._id}`,
         })
       },
       rowSelection: {
         selectedRowKeys,
         onChange: keys => {
           dispatch({
-            type: 'media/updateState',
+            type: 'article/updateState',
             payload: {
               selectedRowKeys: keys,
             },
@@ -92,7 +106,15 @@ class Article extends PureComponent {
     }
 
     const handleDeleteItems = () => {
-      handleRefresh()
+      dispatch({
+        type: 'article/multiDelete',
+        payload: {
+          multi: selectedRowKeys,
+          type: 'remove',
+        },
+      }).then(() => {
+        handleRefresh()
+      })
     }
 
     return (
@@ -107,7 +129,7 @@ class Article extends PureComponent {
                 onConfirm={handleDeleteItems}
               >
                 <Button type="primary" style={{ marginLeft: 8 }}>
-                  Remove
+                  <Trans>Remove</Trans>
                 </Button>
               </Popconfirm>
             </Col>
@@ -118,20 +140,23 @@ class Article extends PureComponent {
           onTabClick={handleTabClick}
           tabBarExtraContent={
             <Button type="primary" onClick={onCreate}>
-              新建
+              <Trans>Create</Trans>
             </Button>
           }
         >
-          <TabPane tab={i18n.t`已发布`} key={String(EnumPostStatus.PUBLISHED)}>
+          <TabPane
+            tab={i18n.t`Published`}
+            key={String(EnumPostStatus.PUBLISHED)}
+          >
             <List {...listProps} />
           </TabPane>
-          <TabPane tab={i18n.t`已下线`} key={String(EnumPostStatus.UNPUBLISH)}>
+          <TabPane tab={i18n.t`Offline`} key={String(EnumPostStatus.UNPUBLISH)}>
             <List {...listProps} />
           </TabPane>
-          <TabPane tab={i18n.t`草稿`} key={String(EnumPostStatus.DRAFT)}>
+          <TabPane tab={i18n.t`Draft`} key={String(EnumPostStatus.DRAFT)}>
             <List {...listProps} />
           </TabPane>
-          <TabPane tab={i18n.t`回收站`} key={String(EnumPostStatus.TRASH)}>
+          <TabPane tab={i18n.t`Trash`} key={String(EnumPostStatus.TRASH)}>
             <List {...listProps} />
           </TabPane>
         </Tabs>

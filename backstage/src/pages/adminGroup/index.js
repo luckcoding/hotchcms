@@ -45,7 +45,9 @@ class AdminGroup extends PureComponent {
       maskClosable: false,
       confirmLoading: loading.effects[`adminGroup/${modalType}`],
       title: `${
-        modalType === 'create' ? i18n.t`Create User` : i18n.t`Update User`
+        modalType === 'create'
+          ? i18n.t`Create Admin Group`
+          : i18n.t`Update Admin Group`
       }`,
       wrapClassName: 'vertical-center-modal',
       onOk(data) {

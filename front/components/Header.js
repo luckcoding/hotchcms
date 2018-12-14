@@ -44,9 +44,6 @@ function Header() {
         <Link activeClassName='active' href='/'>
           <a>Home</a>
         </Link>
-        <Link activeClassName='active' href='/categories'>
-          <a>Categories</a>
-        </Link>
         <Link activeClassName='active' href='/about'>
           <a>About</a>
         </Link>

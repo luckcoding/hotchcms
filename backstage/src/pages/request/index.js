@@ -1,6 +1,6 @@
 import React from 'react'
 import { request } from 'utils'
-import { apiPrefix } from 'utils/config'
+import { API_URL } from 'utils/config'
 import {
   Row,
   Col,
@@ -32,12 +32,12 @@ const methodTagColor = {
 }
 
 const requests = Object.values(api).map(item => {
-  let url = apiPrefix + item
+  let url = API_URL + item
   let method = 'GET'
   const paramsArray = item.split(' ')
   if (paramsArray.length === 2) {
     method = paramsArray[0]
-    url = apiPrefix + paramsArray[1]
+    url = API_URL + paramsArray[1]
   }
   return {
     method,

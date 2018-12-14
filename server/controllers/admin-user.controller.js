@@ -7,10 +7,7 @@ const { AdminGroup, AdminUser } = require('../models')
 exports.create = async (ctx) => {
   ctx.checkBody({
     email: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'email 不能为空'
-      },
+      optional: true,
       isEmail: { errorMessage: 'email 格式不正确' }
     },
     password: {
@@ -42,12 +39,14 @@ exports.create = async (ctx) => {
   })
 
   try {
-    const input = await ctx.pipeInput()
+    const { email, mobile, ...input } = await ctx.pipeInput()
+
+    if (!email && !mobile) return ctx.pipeFail('缺少账户信息', 'BN99')
 
     // 判断数据的操作权限
     await ctx.checkGradation(input.group)
 
-    await AdminUser.create(input)
+    await AdminUser.create({ ...input, email, mobile })
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)

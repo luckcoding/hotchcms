@@ -3,7 +3,8 @@ import App, {Container} from 'next/app'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import { onlyResult } from 'helpers/request'
-import qs from 'qs';
+import defaultPage from 'hocs/defaultPage'
+import qs from 'qs'
 
 Router.events.on('routeChangeStart', (url) => {
   console.log(`Loading: ${url}`)

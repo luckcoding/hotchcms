@@ -18,15 +18,12 @@ exports.create = async (ctx) => {
 exports.update = async (ctx) => {
   ctx.checkBody({
     title: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'title 不能为空'
-      },
+      optional: true,
       isString: { errorMessage: 'title 需为 String' },
     },
-    subTitle: {
+    overview: {
       optional: true,
-      isString: { errorMessage: 'subTitle 需为 String' },
+      isString: { errorMessage: 'overview 需为 String' },
     },
     category: {
       optional: true,
@@ -44,31 +41,16 @@ exports.update = async (ctx) => {
       },
     },
     content: {
-      notEmpty: {
-        options: [true],
-        errorMessage: 'content 不能为空',
-      },
+      optional: true,
       isString: { errorMessage: 'content 需为 String' },
     },
-    authorName: {
+    originalAuthor: {
       optional: true,
-      isString: { errorMessage: 'authorName 需为 String' },
+      isString: { errorMessage: 'originalAuthor 需为 String' },
     },
-    author: {
+    originalUrl: {
       optional: true,
-      isMongoId: { errIorMessage: 'author 需为 mongoId' },
-    },
-    isTop: {
-      optional: true,
-      isBoolean: { errorMessage: 'isTop 需为 Boolean' }
-    },
-    original: {
-      optional: true,
-      isBoolean: { errorMessage: 'original 需为 Boolean' }
-    },
-    from: {
-      optional: true,
-      isString: { errorMessage: 'cover 需为 String' },
+      isString: { errorMessage: 'originalUrl 需为 String' }
     },
     status: {
       optional: true,
@@ -90,9 +72,21 @@ exports.update = async (ctx) => {
   })
 
   try {
-    const { _id, ...input } = await ctx.pipeInput()
+    const { _id, originalAuthor, ...input } = await ctx.pipeInput()
 
-    await Article.update({ _id }, { ...input, updateDate: Date.now() })
+    let extendsData = {
+      updateDate: Date.now(),
+    }
+
+    if (originalAuthor) {
+      extendsData['originalAuthor'] = originalAuthor
+      extendsData['$unset'] = { author: true }
+    } else {
+      extendsData['author'] = ctx.state.user._id
+      extendsData['$unset'] = { originalAuthor: true }
+    }
+
+    await Article.update({ _id }, { ...input, ...extendsData })
     ctx.pipeDone()
   } catch (e) {
     ctx.pipeFail(e)

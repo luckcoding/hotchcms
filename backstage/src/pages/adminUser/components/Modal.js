@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import { Form, Input, Modal, Select, Upload, Icon, message } from 'antd'
 import { withI18n } from '@lingui/react'
 import { auth, config } from 'utils'
+import { getMediaUrl } from 'utils/helpers'
 
-const { getImgUrl, mediaApiUrl } = config
+const { mediaApiUrl } = config
 
 const FormItem = Form.Item
 const Option = Select.Option
@@ -29,7 +30,7 @@ class UserModal extends PureComponent {
       fileList.push({
         uid: '-1',
         status: 'done',
-        url: getImgUrl(props.item.avatar),
+        url: getMediaUrl(props.item.avatar),
       })
     }
 
@@ -51,7 +52,7 @@ class UserModal extends PureComponent {
 
   handleChange = ({ fileList }) => {
     fileList = fileList.filter(file => {
-      if (file.response) {
+      if (file.status === 'done' && file.response) {
         const status = file.response.code === '0000'
         if (!status) {
           message.error(file.response.message)
@@ -82,6 +83,8 @@ class UserModal extends PureComponent {
       }
       if (fileList.length) {
         data.avatar = fileList[0].url
+      } else {
+        data.avatar = ''
       }
       onOk(data)
     })
@@ -104,7 +107,7 @@ class UserModal extends PureComponent {
     return (
       <Modal {...modalProps} onOk={this.handleOk}>
         <Form layout="horizontal">
-          <FormItem label={i18n.t`头像`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Avatar`} hasFeedback {...formItemLayout}>
             <Upload
               action={mediaApiUrl}
               headers={{
@@ -130,12 +133,12 @@ class UserModal extends PureComponent {
               rules: [
                 {
                   pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
-                  message: '请输入正确的邮箱地址!',
+                  message: i18n.t`Pls input the right Email`,
                 },
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`昵称`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`NickName`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('nickname', {
               initialValue: item.nickname,
               rules: [
@@ -145,18 +148,18 @@ class UserModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`手机号`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Phone`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('mobile', {
               initialValue: item.mobile,
               rules: [
                 {
                   pattern: /^1[3|4|5|7|8]\d{9}$/,
-                  message: '请输入正确的手机号!',
+                  message: 'Pls input the right Phone',
                 },
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`用户组`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Admin Group`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('group', {
               initialValue: item.group ? item.group._id : null,
             })(
@@ -170,7 +173,9 @@ class UserModal extends PureComponent {
             )}
           </FormItem>
           <FormItem
-            label={modalType === 'update' ? i18n.t`新密码` : i18n.t`密码`}
+            label={
+              modalType === 'update' ? i18n.t`New Password` : i18n.t`Password`
+            }
             hasFeedback
             {...formItemLayout}
           >

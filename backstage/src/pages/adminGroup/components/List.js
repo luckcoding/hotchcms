@@ -29,22 +29,22 @@ class List extends PureComponent {
 
     const columns = [
       {
-        title: <Trans>名称</Trans>,
+        title: <Trans>Name</Trans>,
         dataIndex: 'name',
         key: 'name',
       },
       {
-        title: <Trans>描述</Trans>,
+        title: <Trans>Description</Trans>,
         dataIndex: 'description',
         key: 'description',
       },
       {
-        title: <Trans>级别</Trans>,
+        title: <Trans>Gradation</Trans>,
         dataIndex: 'gradation',
         key: 'gradation',
       },
       {
-        title: <Trans>权限</Trans>,
+        title: <Trans>Authority</Trans>,
         dataIndex: 'authority',
         key: 'authority',
         render: (text = []) => {

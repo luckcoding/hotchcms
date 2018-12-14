@@ -29,25 +29,25 @@ class List extends PureComponent {
 
     const columns = [
       {
-        title: <Trans>排序</Trans>,
+        title: <Trans>Sort</Trans>,
         dataIndex: 'sort',
         key: 'sort',
       },
       {
-        title: <Trans>名称</Trans>,
+        title: <Trans>Name</Trans>,
         dataIndex: 'name',
         key: 'name',
       },
       {
-        title: <Trans>目录</Trans>,
+        title: <Trans>Dir</Trans>,
         dataIndex: 'path',
         key: 'path',
       },
       {
-        title: <Trans>是否显示</Trans>,
+        title: <Trans>Is Show</Trans>,
         dataIndex: 'state',
         key: 'state',
-        render: text => (text ? '是' : '否'),
+        render: text => (text ? <Trans>Yes</Trans> : <Trans>No</Trans>),
       },
       {
         title: <Trans>Operation</Trans>,

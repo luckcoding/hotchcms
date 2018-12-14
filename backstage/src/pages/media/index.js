@@ -44,9 +44,7 @@ class Media extends PureComponent {
       visible: modalVisible,
       maskClosable: false,
       confirmLoading: loading.effects[`media/${modalType}`],
-      title: `${
-        modalType === 'create' ? i18n.t`Create media` : i18n.t`Update media`
-      }`,
+      title: `${modalType === 'create' ? i18n.t`Create` : i18n.t`Update`}`,
       wrapClassName: 'vertical-center-modal',
       onOk(data) {
         dispatch({

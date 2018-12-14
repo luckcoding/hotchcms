@@ -122,7 +122,7 @@ class UserModal extends PureComponent {
               {loop(tree)}
             </TreeSelect>
           </FormItem>*/}
-          <FormItem label={i18n.t`名称`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Name`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
               rules: [
@@ -132,7 +132,7 @@ class UserModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`别名`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Dir`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('path', {
               initialValue: item.path,
               rules: [
@@ -148,13 +148,13 @@ class UserModal extends PureComponent {
               initialValue: item.isHome,
             })(<Switch />)}
           </FormItem>*/}
-          <FormItem label={i18n.t`是否显示`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Is Show`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('state', {
               valuePropName: 'checked',
               initialValue: item.state,
             })(<Switch />)}
           </FormItem>
-          <FormItem label={i18n.t`排序`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Sort`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('sort', {
               initialValue: item.sort,
               rules: [
@@ -164,7 +164,7 @@ class UserModal extends PureComponent {
               ],
             })(<InputNumber min={1} max={100} />)}
           </FormItem>
-          <FormItem label={i18n.t`关键词`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Keywords`} hasFeedback {...formItemLayout}>
             {tags.map(tag => {
               const isLongTag = tag.length > 20
               const tagElem = (
@@ -200,7 +200,7 @@ class UserModal extends PureComponent {
               </Button>
             )}
           </FormItem>
-          <FormItem label={i18n.t`描述`} hasFeedback {...formItemLayout}>
+          <FormItem label={i18n.t`Description`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('description', {
               initialValue: item.description,
             })(<TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}

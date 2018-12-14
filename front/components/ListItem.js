@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
+import { getMediaUrl } from 'helpers'
 
 const Wrapper = styled.div`
   display: flex;
@@ -98,12 +99,12 @@ const Bar = styled.div`
   }
 `
 
-function ArticleListItem({ url, title, description, tag }) {
+function ArticleListItem({ url, cover, title, description, tag, category, date, author }) {
   return (
     <Wrapper>
       <Link href="/categories" passHref>
         <Cover>
-          <img src="https://pic.36krcnd.com/201812/11031202/tr7ax6cqvzezr35v!heading" />
+          <img src={getMediaUrl(cover)} />
         </Cover>
       </Link>
       <Main>
@@ -112,8 +113,8 @@ function ArticleListItem({ url, title, description, tag }) {
         <Description>{description}</Description>
 
         <Bar>
-          <span>来自主题<a>创投新闻</a></span>|<span><a>作者张三</a></span>
-          <span style={{float: 'right'}}>9分钟前</span>
+          <span>来自主题<a>{category}</a></span>|<span><a>{author}</a></span>
+          <span style={{float: 'right'}}>{date}</span>
         </Bar>
       </Main>
     </Wrapper>

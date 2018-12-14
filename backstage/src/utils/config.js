@@ -5,25 +5,14 @@ module.exports = {
   siteName: 'Hotchcms',
   copyright: 'Hotchcms © 2018 luckcoding@gmail.com',
   logoPath: '/logo.svg',
-  apiPrefix: API_URL,
+  BASE_URL,
+  API_URL,
   fixedHeader: true, // sticky primary layout header
   secret: 'hotchcms', // api password secret
   prefix: 'hotchcms', // storage key
 
-  get inAuth() {
-    return `${this.prefix}InAuth`
-  },
-  get jwt() {
-    return `${this.prefix}JWT`
-  },
-
-  // full img path
-  getImgUrl(path) {
-    return `${BASE_URL}/upload/${path}`
-  },
-
   get mediaApiUrl() {
-    return `${this.apiPrefix}/media`
+    return `${API_URL}/media`
   },
 
   constant: {

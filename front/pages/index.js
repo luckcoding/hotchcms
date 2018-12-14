@@ -15,7 +15,7 @@ class Index extends React.Component {
     }
   }
 
-  static async getHeadSetting (pageProps) {
+  static async getSettings (pageProps) {
     return {
       title: '首页',
     }
@@ -27,13 +27,17 @@ class Index extends React.Component {
       <div>
         <Header />
         <ListTitle>最新文章</ListTitle>
-        {list.map((item, key) => (
+        {list.map((_, key) => (
           <ListItem
-            url={`/p/${item._id}`}
+            url={`/p/${_._id}`}
             key={key}
-            title={item.title}
-            description={item.subTitle}
-            tag={get(item.category, 'name')}
+            title={_.title}
+            description={_.subTitle}
+            date={_.createDate}
+            tag={get(_.category, 'name')}
+            category={get(_.category, 'name')}
+            cover={_.cover}
+            author={_.originalAuthor || get(_.author, 'nickname')}
           />
         ))}
       </div>

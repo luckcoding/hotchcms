@@ -25,7 +25,6 @@ module.exports = authRoutes => koaAuthority({
       if (parts.length === 2 && /^Bearer$/i.test(parts[0])) {
 
         decoded = await verify(parts[1], settings.system.secret)
-
         if (decoded.hasOwnProperty('data')) {
           // query user
           const call = await AdminUser.findById(decoded.data).populate('group').lean()
