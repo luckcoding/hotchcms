@@ -12,6 +12,7 @@
         "alias": {
           "helpers": "./helpers",
           "components": "./components",
+          "containers": "./containers",
           "hocs": "./hocs",
           "pages": "./pages",
           "static": "./static"

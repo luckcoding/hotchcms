@@ -49,9 +49,17 @@ app.prepare()
       '/robots.txt'
     ]})
 
-    match({ server, app, routes: [
-      '/p/:_id',
-    ]})
+    match({
+      app,
+      server,
+      languages: ['en', 'zh'],
+      defaultLanguage: 'zh',
+      routes: [
+        '/',
+        '/about',
+        '/p/:_id',
+      ],
+    })
 
     server.get('*', (req, res) => {
       return handle(req, res)

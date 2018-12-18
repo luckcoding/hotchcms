@@ -49,15 +49,18 @@ class List extends PureComponent {
         key: 'authority',
         render: (text = []) => {
           return (
-            <span
+            <div
               style={{
                 fontSize: '12px',
                 display: 'inline-block',
                 maxWidth: '300px',
+                whiteSpace: 'normal',
+                wordWrap: 'break-word',
+                wordBreak: 'break-all',
               }}
             >
               {text.map(_ => _.name).join(',')}
-            </span>
+            </div>
           )
         },
       },
@@ -88,7 +91,7 @@ class List extends PureComponent {
         }}
         className={styles.table}
         bordered
-        scroll={{ x: 1200 }}
+        scroll={{ x: 800 }}
         columns={columns}
         simple
         rowKey={record => record._id}

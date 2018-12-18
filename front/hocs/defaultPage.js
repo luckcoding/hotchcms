@@ -2,6 +2,9 @@ import React from 'react'
 import Head from 'next/head'
 import { getComponentDisplayName } from 'helpers'
 import config from 'helpers/config'
+import {connect} from 'react-redux'
+
+import {loadData, startClock, tickClock} from '../store/actions'
 
 const { seo } = config
 
@@ -10,7 +13,6 @@ export default (Page) => {
     static displayName = `Connect(${getComponentDisplayName})`
 
     static async getInitialProps (ctx) {
-
       let pageProps, settings
 
       if (Page.getInitialProps) {
@@ -21,7 +23,18 @@ export default (Page) => {
         settings = await Page.getSettings(pageProps)
       }
 
-      return Object.assign({}, pageProps, { settings })
+      /**
+       * redux startup
+       */
+      const { store, isServer } = ctx
+
+      store.dispatch(tickClock(isServer))
+
+      if (!store.getState().placeholderData) {
+        store.dispatch(loadData())
+      }
+
+      return { ...pageProps, settings: { ...settings } }
     }
 
     render () {

@@ -3,8 +3,9 @@ import qs from 'qs'
 import { cloneDeep, isEmpty } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
 import { isJson } from './valaditor'
+import config from './config'
 
-const API_V1 = 'http://localhost:3030/api/'
+const { getApiUrl } = config
 
 /**
  * request('user')
@@ -22,15 +23,15 @@ export default async function request(params, data) {
     throw TypeError('Request params is error !')
   }
 
-  let url, method = 'GET'
+  let url, method = 'get'
 
   const paramsArray = params.split(' ')
 
   if (paramsArray.length === 2) {
     method = paramsArray[0]
-    url = API_V1 + paramsArray[1]
+    url = getApiUrl(paramsArray[1])
   } else {
-    url = API_V1 + params
+    url = getApiUrl(params)
   }
 
   const cloneData = cloneDeep(data)
