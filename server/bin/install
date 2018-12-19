@@ -22,7 +22,7 @@ function result(res) {
  */
 function statusTest(cb) {
   request
-    .get('/api/install')
+    .get('/backstage-api/install')
     .expect(200)
     .end(function(err, res) {
       const { code, message } = result(res);
@@ -40,7 +40,7 @@ function statusTest(cb) {
  */
 function mongodbTest(cb) {
   request
-    .put('/api/install/test-database')
+    .put('/backstage-api/install/test-database')
     .send(settings.mongodb)
     .expect(200)
     .end(function(err, res) {
@@ -59,7 +59,7 @@ function mongodbTest(cb) {
  */
 function redisTest(cb) {
   request
-    .put('/api/install/test-redis')
+    .put('/backstage-api/install/test-redis')
     .send(settings.redis)
     .expect(200)
     .end(function(err, res) {
@@ -78,7 +78,7 @@ function redisTest(cb) {
  */
 function install(cb) {
   request
-    .post('/api/install')
+    .post('/backstage-api/install')
     .send({
       dbHost: settings.mongodb.host,
       dbPort: settings.mongodb.port,

@@ -1,0 +1,82 @@
+# Node, Mongo, Redis, Nginx
+# Minh Chu <luckcoding@gmail.com>
+
+version: "3.3"
+services:
+  node:
+    # image: node:10.14.2
+    depends_on:
+      - mongodb
+      - redis
+    build:
+      context: ./docker/node
+      args:
+        - NODE_VERSION=latest
+        - PROJECT_PATH=/opt/app/
+        - NODE_ENV=production
+        - YARN=false
+    volumes:
+      - ./:/opt/app/
+    working_dir: /opt/app
+    entrypoint: run-nodock "npm start"
+    tty: true
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100MB"
+        max-file: "3"
+
+  mongodb:
+    # image: mongo:4.1.6-xenial
+    build: ./docker/mongo
+    expose:
+      - "27017"
+    volumes:
+      - ./data/mongo/:/var/lib/mongodb
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100MB"
+        max-file: "3"
+
+  redis:
+    # image: redis:latest
+    build: ./docker/redis
+    networks:
+      - backend
+    expose:
+      - "6379"
+    # volumes:
+    #   - ./data/redis:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100MB"
+        max-file: "3"
+
+  nginx:
+    # image: nginx:latest
+    depends_on:
+      - api
+    networks:
+      - backend
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100MB"
+        max-file: "3"
+
+networks:
+  backend:
+
+volumes:
+  mongodb:

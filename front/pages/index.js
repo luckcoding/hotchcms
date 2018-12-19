@@ -35,7 +35,7 @@ class Index extends React.Component {
     return (
       <Fragment>
         <Header />
-        <ListTitle><I18n id="latest articles" />111</ListTitle>
+        <ListTitle><I18n id="latest articles" /></ListTitle>
         {list.map((_, key) => (
           <ListItem
             url={`/p/${_._id}`}
