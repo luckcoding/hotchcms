@@ -34,7 +34,6 @@ class MyApp extends App {
       // In the browser, use the same values that the server serialized.
       const { req } = ctx
       const { locale } = req || window.__NEXT_DATA__.props
-      console.log('locale',locale)
       return {
         pageProps: {
           ...pageInitialProps,

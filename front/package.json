@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server/index.js",
-    "build": "next build",
-    "start": "next start"
+    "build": "cross-env API_ENV=production next build",
+    "start": "cross-env NODE_ENV=production node server/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -42,6 +42,7 @@
     "babel-plugin-styled-components": "^1.8.0",
     "babel-plugin-transform-assets": "^1.0.2",
     "babel-plugin-transform-assets-import-to-string": "^1.2.0",
+    "cross-env": "^5.2.0",
     "next-images": "^1.0.1",
     "nodemon": "^1.18.6",
     "redux-devtools-extension": "^2.13.7",

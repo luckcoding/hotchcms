@@ -25,10 +25,6 @@ exports.testDatabase = async (ctx) => {
         options: [true],
         errorMessage: 'host 不能为空',
       },
-      matches: {
-        options: [regx.host],
-        errorMessage: 'host 格式不正确',
-      },
     },
     port: {
       notEmpty: {
@@ -76,10 +72,6 @@ exports.testRedis = async (ctx) => {
       notEmpty: {
         options: [true],
         errorMessage: 'host 不能为空',
-      },
-      matches: {
-        options: [regx.host],
-        errorMessage: 'host 格式不正确',
       },
     },
     port: {
@@ -137,10 +129,6 @@ exports.install = async (ctx) => {
         options: [true],
         errorMessage: 'dbHost 不能为空',
       },
-      matches: {
-        options: [regx.host],
-        errorMessage: 'dbHost 格式不正确',
-      },
     },
     dbPort: {
       notEmpty: {
@@ -171,10 +159,6 @@ exports.install = async (ctx) => {
       notEmpty: {
         options: [true],
         errorMessage: 'rdHost 不能为空',
-      },
-      matches: {
-        options: [regx.host],
-        errorMessage: 'rdHost 格式不正确',
       },
     },
     rdPort: {
