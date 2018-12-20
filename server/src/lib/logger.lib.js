@@ -4,7 +4,7 @@ const tracer = require('tracer')
 
 // 日志
 const dailyfile = tracer.dailyfile({
-  root: path.join(__dirname, '../logs'),
+  root: path.join(__dirname, '../../logs'),
   maxLogFiles: 10,
   // level: 'warn',
   format: '{{timestamp}} {{message}}',

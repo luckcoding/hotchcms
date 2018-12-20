@@ -6,8 +6,6 @@ const crypto = require('crypto')
 const moment = require('moment')
 const { random } = require('./random.lib')
 
-const uploadDir = '../static/upload'
-
 /**
  *  处理文件存储路径
  *  类型-时间
@@ -39,7 +37,7 @@ const parse = input => new Promise((resolve, reject) => {
  * 文件上传
  */
 const upload = schema => new Promise((resolve, reject) => {
-  const filePath = `${uploadDir}/${_.trimStart(schema.path, '/')}`
+  const filePath = `../static/upload/${_.trimStart(schema.path, '/')}`
   const fileDir = filePath.substr(0, filePath.lastIndexOf('/'))
   mkdirp(path.join(__dirname, fileDir), error => {
     if (error) return reject(error)

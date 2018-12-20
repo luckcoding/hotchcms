@@ -6,13 +6,20 @@
     "lib": "lib"
   },
   "scripts": {
-    "dev": "nodemon ./bin/www",
-    "init": "node ./bin/install",
+    "dev": "nodemon ./src/bin/www",
+    "init": "node ./src/bin/install",
     "test": "./node_modules/.bin/mocha --harmony",
-    "start": "cross-env NODE_ENV=production node ./bin/www"
+    "start": "cross-env NODE_ENV=production node ./src/bin/www",
+    "lint": "eslint --ext .js src --color",
+    "lint:watch": "npm run lint -- --watch"
   },
   "author": "luckcoding",
   "license": "ISC",
+  "lint-staged": {
+    "src/**/*.js": [
+      "eslint --ext .js --fix"
+    ]
+  },
   "dependencies": {
     "adm-zip": "^0.4.11",
     "bluebird": "^3.5.1",
@@ -38,8 +45,13 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-watch": "^4.0.2",
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
+    "shelljs": "^0.8.3",
     "supertest": "^3.3.0"
   }
 }

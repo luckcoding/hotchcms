@@ -13,7 +13,7 @@ const {
  */
 exports.status = () => new Promise((resolve, reject) => {
   // 读取锁文件
-  fs.stat(path.join(__dirname, '../install.lock'), (err, stat) => {
+  fs.stat(path.join(__dirname, '../../install.lock'), (err, stat) => {
     if (err && err.code === 'ENOENT') return resolve(false) // 未安装
 
     if (err) return reject(err) // 出错
