@@ -1,4 +1,3 @@
-const fs = require('fs')
 const path = require('path')
 const tracer = require('tracer')
 
@@ -8,11 +7,11 @@ const dailyfile = tracer.dailyfile({
   maxLogFiles: 10,
   // level: 'warn',
   format: '{{timestamp}} {{message}}',
-  dateformat: 'mm-dd HH:MM:ss'
+  dateformat: 'mm-dd HH:MM:ss',
 })
 
 // 打印
-const colorConsole = tracer.colorConsole();
+const colorConsole = tracer.colorConsole()
 
 // 简单绑定功能
 // 可读性👍
@@ -22,13 +21,13 @@ function logger() {
     trace: colorConsole.trace,
     debug: colorConsole.debug,
     info: colorConsole.info,
-    warn () {
-      colorConsole.warn.apply(null, arguments)
-      dailyfile.warn.apply(null, arguments)
+    warn(...args) {
+      colorConsole.warn.apply(null, args)
+      dailyfile.warn.apply(null, args)
     },
-    error () {
-      colorConsole.error.apply(null, arguments)
-      dailyfile.error.apply(null, arguments)
+    error(...args) {
+      colorConsole.error.apply(null, args)
+      dailyfile.error.apply(null, args)
     },
   }
 }

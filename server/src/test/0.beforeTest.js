@@ -1,3 +1,1 @@
-describe('0. env tests', function () {
-  
-})
+describe('0. env tests', () => {})

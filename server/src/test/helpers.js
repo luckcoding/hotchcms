@@ -1,11 +1,11 @@
-var supertest = require('supertest')
-var portLib = require('../lib/port.lib')
-var chai = require('chai')
+const supertest = require('supertest')
+const chai = require('chai')
+const portLib = require('../lib/port.lib')
 
-var expect = chai.expect
-var port = portLib()
+const expect = chai.expect
+const port = portLib()
 
-var request = supertest('http://localhost:' + port)
+const request = supertest(`http://localhost:${port}`)
 
 exports.expect = expect
 module.exports = request

@@ -3,7 +3,7 @@ const { Article } = require('../models')
 /**
  * 创建只做生成文章ID功能
  */
-exports.create = async (ctx) => {
+exports.create = async ctx => {
   try {
     const call = await Article.create({})
     ctx.pipeDone(call)
@@ -15,7 +15,7 @@ exports.create = async (ctx) => {
 /**
  *  更新文章
  */
-exports.update = async (ctx) => {
+exports.update = async ctx => {
   ctx.checkBody({
     title: {
       optional: true,
@@ -37,7 +37,7 @@ exports.update = async (ctx) => {
       optional: true,
       inArray: {
         options: ['isString'],
-        errorMessage: 'tags 内需为 string'
+        errorMessage: 'tags 内需为 string',
       },
     },
     content: {
@@ -50,7 +50,7 @@ exports.update = async (ctx) => {
     },
     originalUrl: {
       optional: true,
-      isString: { errorMessage: 'originalUrl 需为 String' }
+      isString: { errorMessage: 'originalUrl 需为 String' },
     },
     status: {
       optional: true,
@@ -74,16 +74,16 @@ exports.update = async (ctx) => {
   try {
     const { _id, originalAuthor, ...input } = await ctx.pipeInput()
 
-    let extendsData = {
+    const extendsData = {
       updateDate: Date.now(),
     }
 
     if (originalAuthor) {
-      extendsData['originalAuthor'] = originalAuthor
-      extendsData['$unset'] = { author: true }
+      extendsData.originalAuthor = originalAuthor
+      extendsData.$unset = { author: true }
     } else {
-      extendsData['author'] = ctx.state.user._id
-      extendsData['$unset'] = { originalAuthor: true }
+      extendsData.author = ctx.state.user._id
+      extendsData.$unset = { originalAuthor: true }
     }
 
     await Article.update({ _id }, { ...input, ...extendsData })
@@ -96,7 +96,7 @@ exports.update = async (ctx) => {
 /**
  * 查询单个文章
  */
-exports.one = async (ctx) => {
+exports.one = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -122,7 +122,7 @@ exports.one = async (ctx) => {
 /**
  * 查询文章列表
  */
-exports.list = async (ctx) => {
+exports.list = async ctx => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -144,11 +144,11 @@ exports.list = async (ctx) => {
     },
     isTop: {
       optional: true,
-      isBoolean: { errorMessage: 'isTop 需为 Boolean' }
+      isBoolean: { errorMessage: 'isTop 需为 Boolean' },
     },
     original: {
       optional: true,
-      isBoolean: { errorMessage: 'original 需为 Boolean' }
+      isBoolean: { errorMessage: 'original 需为 Boolean' },
     },
     from: {
       optional: true,
@@ -164,11 +164,7 @@ exports.list = async (ctx) => {
   })
 
   try {
-
-    const {
-      page = 1, pageSize = 10,
-      ...query
-    } = await ctx.pipeInput()
+    const { page = 1, pageSize = 10, ...query } = await ctx.pipeInput()
 
     if (query.title) query.title = new RegExp(query.title, 'i')
 
@@ -181,7 +177,12 @@ exports.list = async (ctx) => {
       .populate('category', 'name path')
       .lean()
 
-    ctx.pipeDone({ list, total, pageSize, page })
+    ctx.pipeDone({
+      list,
+      total,
+      pageSize,
+      page,
+    })
   } catch (e) {
     ctx.pipeFail(e)
   }
@@ -190,7 +191,7 @@ exports.list = async (ctx) => {
 /**
  * 删除文章
  */
-exports.delete = async (ctx) => {
+exports.delete = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -211,7 +212,7 @@ exports.delete = async (ctx) => {
   }
 }
 
-exports.multi = async (ctx) => {
+exports.multi = async ctx => {
   ctx.checkBody({
     type: {
       notEmpty: {
@@ -236,7 +237,8 @@ exports.multi = async (ctx) => {
     const { multi, type } = await ctx.pipeInput()
     if (type === 'remove') {
       // 只物理删除回收站 => status === 9
-      let toTrash = [], toRemove = []
+      const toTrash = []
+      const toRemove = []
       const call = await Article.find({ _id: { $in: multi } })
       if (Array.isArray(call)) {
         call.forEach(item => {
@@ -251,7 +253,7 @@ exports.multi = async (ctx) => {
       if (toRemove.length) {
         await Article.remove({ _id: { $in: toRemove } })
       }
-      
+
       ctx.pipeDone()
     } else {
       ctx.pipeFail(`暂无${type}操作`, 'BN99')
@@ -266,11 +268,10 @@ exports.multi = async (ctx) => {
  * front api
  */
 
-
 /**
  * 查询文章列表
  */
-exports.articleList = async (ctx) => {
+exports.articleList = async ctx => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -292,18 +293,15 @@ exports.articleList = async (ctx) => {
     },
     isTop: {
       optional: true,
-      isBoolean: { errorMessage: 'isTop 需为 Boolean' }
+      isBoolean: { errorMessage: 'isTop 需为 Boolean' },
     },
   })
 
   try {
-    const {
-      page = 1, pageSize = 10,
-      ...query
-    } = await ctx.pipeInput()
+    const { page = 1, pageSize = 10, ...query } = await ctx.pipeInput()
 
     if (query.title) query.title = new RegExp(query.title, 'i')
-    if (query.authorName) authorName.title = new RegExp(query.authorName, 'i')
+    if (query.authorName) query.authorName = new RegExp(query.authorName, 'i')
 
     // default query
     query.status = 1
@@ -313,13 +311,19 @@ exports.articleList = async (ctx) => {
       .sort('-create.date')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select('title createDate subTitle category cover tags author authorName viewNum commentNum original')
+      .select(
+        'title createDate subTitle category cover tags author authorName viewNum commentNum original'
+      )
       .populate('category', 'name path')
       .populate('author')
       .lean()
 
-    ctx.pipeDone({ list, total, pageSize, page })
-
+    ctx.pipeDone({
+      list,
+      total,
+      pageSize,
+      page,
+    })
   } catch (e) {
     ctx.pipeFail(e)
   }
@@ -328,7 +332,7 @@ exports.articleList = async (ctx) => {
 /**
  * 查询文章
  */
-exports.articleItem = async (ctx) => {
+exports.articleItem = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {

@@ -96,12 +96,12 @@ module.exports = {
 
       '/multi': {
         post: '*media.multi#【文件】多项操作',
-      }
+      },
     },
 
     '/dashboard': {
       get: 'dashboard#【统计】dashboard',
-    }
+    },
   },
 
   '/api': {
@@ -110,7 +110,7 @@ module.exports = {
 
       '/:_id': {
         get: 'article.articleItem',
-      }
+      },
     },
-  }
+  },
 }

@@ -8,18 +8,22 @@ const config = require('../config')
 module.exports = () => {
   let PORT = false
 
-  const portIndex = _.findIndex(process.argv, (arg) => {
-    return arg === '--port' || arg === '-p'
-  })
+  const portIndex = _.findIndex(
+    process.argv,
+    arg => arg === '--port' || arg === '-p'
+  )
 
-  if (portIndex !== -1 && _.isNumber(parseInt(process.argv[portIndex + 1], 10))) {
+  if (
+    portIndex !== -1 &&
+    _.isNumber(parseInt(process.argv[portIndex + 1], 10))
+  ) {
     PORT = process.argv[portIndex + 1]
   }
 
   const val = PORT || process.env.PORT || config.server_port
   const port = parseInt(val, 10)
 
-  if (isNaN(port)) return val // named pipe
+  if (Number.isNaN(port)) return val // named pipe
 
   if (port >= 0) return port // port number
 

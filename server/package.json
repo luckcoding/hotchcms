@@ -10,14 +10,18 @@
     "init": "node ./src/bin/install",
     "test": "./node_modules/.bin/mocha --harmony",
     "start": "cross-env NODE_ENV=production node ./src/bin/www",
-    "lint": "eslint --ext .js src --color",
-    "lint:watch": "npm run lint -- --watch"
+    "lint": "eslint --ext .js src --fix",
+    "lint:watch": "npm run lint -- --watch",
+    "prettier": "prettier --write 'src/**/*.js'",
+    "precommit": "lint-staged"
   },
   "author": "luckcoding",
   "license": "ISC",
   "lint-staged": {
     "src/**/*.js": [
-      "eslint --ext .js --fix"
+      "eslint --ext .js --fix",
+      "npm run prettier",
+      "git add"
     ]
   },
   "dependencies": {
@@ -41,7 +45,8 @@
     "redis": "^2.8.0",
     "require-all": "^2.2.0",
     "shortid": "^2.2.14",
-    "tracer": "^0.8.15"
+    "tracer": "^0.8.15",
+    "validator": "^10.9.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -51,6 +56,7 @@
     "eslint-watch": "^4.0.2",
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
+    "prettier": "^1.15.3",
     "shelljs": "^0.8.3",
     "supertest": "^3.3.0"
   }

@@ -23,7 +23,7 @@ module.exports = () => async (ctx, next) => {
     /**
      * 返回
      */
-    ctx.pipeDone = (result) => {
+    ctx.pipeDone = result => {
       ctx._pipeDoneData = { code: '0000', result }
     }
     ctx.pipeFail = (input, code = '9999') => {
@@ -41,11 +41,11 @@ module.exports = () => async (ctx, next) => {
       const input = Object.assign({}, validationInput, sanitizerInput)
 
       // filter undefined data
-      for (let key in input) {
-        if (typeof input[key] === 'undefined') {
+      Object.keys(input).forEach(key => {
+        if (input[key] === 'undefined') {
           delete input[key]
         }
-      }
+      })
 
       return input
     }

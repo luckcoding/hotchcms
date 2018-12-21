@@ -1,13 +1,11 @@
 const _ = require('lodash')
 const media = require('../lib/media.lib')
-const {
-  Media,
-} = require('../models')
+const { Media } = require('../models')
 
 /**
  * 上传文件
  */
-exports.create = async (ctx) => {
+exports.create = async ctx => {
   ctx.checkHeaders({
     'content-type': {
       notEmpty: {
@@ -32,7 +30,6 @@ exports.create = async (ctx) => {
   })
 
   try {
-
     const input = await ctx.pipeInput()
 
     let files = ctx.request.files.file
@@ -45,7 +42,8 @@ exports.create = async (ctx) => {
     // 解析
     const asyncInfo = files.map(file => {
       const fileJson = file.toJSON()
-      if (!_.includes(fileJson.type, mediaType)) throw Error(`存在非${mediaType}的资源`)
+      if (!_.includes(fileJson.type, mediaType))
+        throw Error(`存在非${mediaType}的资源`)
       return media.parse(fileJson)
     })
 
@@ -53,13 +51,13 @@ exports.create = async (ctx) => {
     let info = await Promise.all(asyncInfo)
 
     // 保存任务对象
-    let asyncUpload = []
+    const asyncUpload = []
 
     info = info.map(item => {
       // 添加任务
       asyncUpload.push(media.upload(item))
 
-      return {...item, type: mediaType}
+      return { ...item, type: mediaType }
     })
 
     await Promise.all(asyncUpload)
@@ -76,7 +74,7 @@ exports.create = async (ctx) => {
 /**
  * 文件列表
  */
-exports.list = async (ctx) => {
+exports.list = async ctx => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -89,10 +87,7 @@ exports.list = async (ctx) => {
     },
   })
   try {
-    const {
-      page = 1, pageSize = 10,
-      ...query
-    } = await ctx.pipeInput()
+    const { page = 1, pageSize = 10, ...query } = await ctx.pipeInput()
 
     const total = await Media.count(query)
     const list = await Media.find(query)
@@ -102,17 +97,21 @@ exports.list = async (ctx) => {
       .select()
       .lean()
 
-    ctx.pipeDone({ list, total, pageSize, page })
+    ctx.pipeDone({
+      list,
+      total,
+      pageSize,
+      page,
+    })
   } catch (e) {
     ctx.pipeFail(e)
   }
 }
 
-
 /**
  * 多选操作
  */
-exports.multi = async (ctx) => {
+exports.multi = async ctx => {
   ctx.checkBody({
     type: {
       notEmpty: {

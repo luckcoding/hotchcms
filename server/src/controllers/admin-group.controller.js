@@ -1,36 +1,32 @@
-const lodash = require('lodash')
-const {
-  AdminGroup,
-  AdminUser,
-} = require('../models')
+const { AdminGroup, AdminUser } = require('../models')
 
 /**
  * 创建管理组
  */
-exports.create = async (ctx) => {
+exports.create = async ctx => {
   ctx.checkBody({
     name: {
       notEmpty: {
         options: [true],
-        errorMessage: 'name 不能为空'
+        errorMessage: 'name 不能为空',
       },
-      isString: { errorMessage: 'name 需为 String' }
+      isString: { errorMessage: 'name 需为 String' },
     },
     description: {
       notEmpty: {
         options: [true],
-        errorMessage: 'description 不能为空'
+        errorMessage: 'description 不能为空',
       },
-      isString: { errorMessage: 'description 需为 String' }
+      isString: { errorMessage: 'description 需为 String' },
     },
     gradation: {
       optional: true,
-      isNumber: { errorMessage: 'authorities 需为 Number' }
+      isNumber: { errorMessage: 'authorities 需为 Number' },
     },
     authorities: {
       optional: true,
-      isArray: { errorMessage: 'authorities 需为 Array' }
-    }
+      isArray: { errorMessage: 'authorities 需为 Array' },
+    },
   })
 
   try {
@@ -48,24 +44,24 @@ exports.create = async (ctx) => {
 /**
  * 更新管理组
  */
-exports.update = async (ctx) => {
+exports.update = async ctx => {
   ctx.checkBody({
     name: {
       optional: true,
-      isString: { errorMessage: 'name 需为 String' }
+      isString: { errorMessage: 'name 需为 String' },
     },
     description: {
       optional: true,
-      isString: { errorMessage: 'description 需为 String' }
+      isString: { errorMessage: 'description 需为 String' },
     },
     gradation: {
       optional: true,
-      isNumber: { errorMessage: 'authorities 需为 Number' }
+      isNumber: { errorMessage: 'authorities 需为 Number' },
     },
     authorities: {
       optional: true,
-      isArray: { errorMessage: 'authorities 需为 Array' }
-    }
+      isArray: { errorMessage: 'authorities 需为 Array' },
+    },
   })
 
   ctx.checkParams({
@@ -101,7 +97,7 @@ exports.update = async (ctx) => {
 /**
  * 查询单个管理组
  */
-exports.one = async (ctx) => {
+exports.one = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -127,17 +123,17 @@ exports.one = async (ctx) => {
 /**
  * 查询管理组列表
  */
-exports.list = async (ctx) => {
+exports.list = async ctx => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
     name: {
       optional: true,
-      isString: { errorMessage: 'name  需为 String' }
+      isString: { errorMessage: 'name  需为 String' },
     },
     gradation: {
       optional: true,
-      isNumber: { errorMessage: 'authorities 需为 Number' }
+      isNumber: { errorMessage: 'authorities 需为 Number' },
     },
   })
 
@@ -152,9 +148,14 @@ exports.list = async (ctx) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .select()
-      // .lean() // 注释，返回虚拟字段 authority
+    // .lean() // 注释，返回虚拟字段 authority
 
-    ctx.pipeDone({ list, total, pageSize, page })
+    ctx.pipeDone({
+      list,
+      total,
+      pageSize,
+      page,
+    })
   } catch (e) {
     ctx.pipeFail(e)
   }
@@ -163,7 +164,7 @@ exports.list = async (ctx) => {
 /**
  * 查询可操作
  */
-exports.operated = async (ctx) => {
+exports.operated = async ctx => {
   try {
     const { group } = ctx.state.user
     const list = await AdminGroup.find({ gradation: { $lt: group.gradation } })
@@ -179,9 +180,8 @@ exports.operated = async (ctx) => {
 /**
  * 所有
  */
-exports.all = async (ctx) => {
+exports.all = async ctx => {
   try {
-    const { group } = ctx.state.user
     const list = await AdminGroup.find({})
       .sort('-gradation')
       .select('name')
@@ -195,7 +195,7 @@ exports.all = async (ctx) => {
 /**
  * 删除管理组
  */
-exports.delete = async (ctx) => {
+exports.delete = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -207,7 +207,6 @@ exports.delete = async (ctx) => {
   })
 
   try {
-
     const { _id } = await ctx.pipeInput()
 
     const call = await AdminGroup.findById(_id)

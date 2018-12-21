@@ -7,7 +7,7 @@ const models = requireAll({
   filter: /(.+)\.model\.js$/,
 })
 
-let schema = {}
+const schema = {}
 
 forEach(models, (model, key) => {
   schema[upperFirst(camelCase(key))] = model

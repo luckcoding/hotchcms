@@ -5,7 +5,7 @@ const cache = require('../lib/cache.lib')
  */
 module.exports = () => async (ctx, next) => {
   try {
-    let _id = ctx.state.user._id.toString()
+    const _id = ctx.state.user._id.toString()
     const auth = ctx.request.headers.authorization.split(' ')[1]
     const reply = await cache.get(auth)
 

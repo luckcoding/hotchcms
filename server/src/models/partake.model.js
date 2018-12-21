@@ -3,20 +3,21 @@ const mongoose = require('mongoose')
 /**
  * 评论模型
  */
-const partakeSchema = new mongoose.Schema({
+const partakeSchema = new mongoose.Schema(
+  {
+    // 归属
+    belong: { type: mongoose.Schema.Types.ObjectId },
 
-  // 归属
-  belong: { type: mongoose.Schema.Types.ObjectId },
-
-  // 参与者
-  actor: {
-    id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
-    name: { type: String },
+    // 参与者
+    actor: {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
+      name: { type: String },
+    },
   },
-
-}, {
-  collection: 'partake',
-  id: false,
-})
+  {
+    collection: 'partake',
+    id: false,
+  }
+)
 
 module.exports = mongoose.model('Partake', partakeSchema)

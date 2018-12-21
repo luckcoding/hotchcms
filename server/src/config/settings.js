@@ -38,5 +38,5 @@ module.exports = {
    */
   static: {
     SYSTEM_CATEGORIES: 'SYSTEM_CATEGORIES',
-  }
+  },
 }

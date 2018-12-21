@@ -1,32 +1,31 @@
-const regx = require('../lib/regx.lib')
-const { AdminGroup, AdminUser } = require('../models')
+const { AdminUser } = require('../models')
 
 /**
  * 创建管理员
  */
-exports.create = async (ctx) => {
+exports.create = async ctx => {
   ctx.checkBody({
     email: {
       optional: true,
-      isEmail: { errorMessage: 'email 格式不正确' }
+      isEmail: { errorMessage: 'email 格式不正确' },
     },
     password: {
       notEmpty: {
         options: [true],
-        errorMessage: 'password 不能为空'
+        errorMessage: 'password 不能为空',
       },
     },
     mobile: {
       optional: true,
-      isMobile: { errorMessage: 'mobile 格式不正确' }
+      isMobile: { errorMessage: 'mobile 格式不正确' },
     },
     nickname: {
       optional: true,
       isString: { errorMessage: 'nickname 需为字符串' },
       isLength: {
-        options: [2,20],
-        errorMessage: 'nickname 为 2-20 位'
-      }
+        options: [2, 20],
+        errorMessage: 'nickname 为 2-20 位',
+      },
     },
     avatar: {
       optional: true,
@@ -35,7 +34,7 @@ exports.create = async (ctx) => {
     group: {
       optional: true,
       isMongoId: { errIorMessage: 'group 需为 mongoId' },
-    }
+    },
   })
 
   try {
@@ -56,7 +55,7 @@ exports.create = async (ctx) => {
 /**
  * 更新管理员
  */
-exports.update = async (ctx) => {
+exports.update = async ctx => {
   ctx.checkBody({
     nickname: {
       optional: true,
@@ -77,7 +76,7 @@ exports.update = async (ctx) => {
     group: {
       optional: true,
       isMongoId: { errIorMessage: 'role 需为 mongoId' },
-    }
+    },
   })
 
   ctx.checkParams({
@@ -112,7 +111,7 @@ exports.update = async (ctx) => {
 /**
  * 查询单个管理员
  */
-exports.one = async (ctx) => {
+exports.one = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -139,25 +138,25 @@ exports.one = async (ctx) => {
 /**
  * 管理员列表查询
  */
-exports.list = async (ctx) => {
+exports.list = async ctx => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
     email: {
       optional: true,
-      isEmail: { errorMessage: 'email 格式不正确' }
+      isEmail: { errorMessage: 'email 格式不正确' },
     },
     mobile: {
       optional: true,
-      isMobile: { errorMessage: 'mobile 格式不正确' }
+      isMobile: { errorMessage: 'mobile 格式不正确' },
     },
     nickname: {
       optional: true,
-      isString: { errorMessage: 'nickname  需为 String' }
+      isString: { errorMessage: 'nickname  需为 String' },
     },
     group: {
       optional: true,
-      isMongoId: { errorMessage: 'group  需为 mongoId' }
+      isMongoId: { errorMessage: 'group  需为 mongoId' },
     },
     page: {
       optional: true,
@@ -183,7 +182,12 @@ exports.list = async (ctx) => {
       .populate('group', 'name')
       .lean()
 
-    ctx.pipeDone({ list, total, pageSize, page })
+    ctx.pipeDone({
+      list,
+      total,
+      pageSize,
+      page,
+    })
   } catch (e) {
     ctx.pipeFail(e)
   }
@@ -192,7 +196,7 @@ exports.list = async (ctx) => {
 /**
  * 删除管理员
  */
-exports.delete = async (ctx) => {
+exports.delete = async ctx => {
   ctx.checkParams({
     _id: {
       notEmpty: {

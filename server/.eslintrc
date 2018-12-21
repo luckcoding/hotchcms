@@ -1,9 +1,13 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "airbnb-base"
-  ],
+  "extends": "airbnb-base",
+  "env": {
+    "es6": true,
+    "browser": true
+  },
   "rules": {
-    "valid-jsdoc": "warn"
+    "semi": ["warn", "never"],
+    "consistent-return": 0,
+    "no-underscore-dangle": 0,
+    "no-unused-expressions": 0
   }
 }

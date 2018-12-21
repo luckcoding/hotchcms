@@ -5,16 +5,16 @@ const sha1 = require('../lib/sha1.lib')
 const AdminUser = require('../models/admin-user.model')
 const settings = require('../config/settings')
 
-const { secret, expiresIn, expiresInLong, } = settings.system
+const { secret, expiresIn, expiresInLong } = settings.system
 
 /**
  * 登陆
  */
-exports.signIn = async (ctx) => {
+exports.signIn = async ctx => {
   ctx.checkBody({
     email: {
       optional: true,
-      isEmail: { errorMessage: 'email 格式不正确' }
+      isEmail: { errorMessage: 'email 格式不正确' },
     },
     mobile: {
       optional: true,
@@ -23,24 +23,23 @@ exports.signIn = async (ctx) => {
     password: {
       notEmpty: {
         options: [true],
-        errorMessage: 'password 不能为空'
+        errorMessage: 'password 不能为空',
       },
     },
     autoSignIn: {
       optional: true,
-      isBoolean: { errorMessage: 'autoSignIn 需为布尔值' }
-    }
-  });
+      isBoolean: { errorMessage: 'autoSignIn 需为布尔值' },
+    },
+  })
 
   try {
-
     const { password, autoSignIn, ...query } = await ctx.pipeInput()
 
     if (lodash.isEmpty(query)) return ctx.pipeFail('缺少账户信息', 'BN99')
 
     const call = await AdminUser.findOne(query)
     if (call && sha1(password) === call.password) {
-      let expires = autoSignIn ? expiresInLong : expiresIn // token 时间
+      const expires = autoSignIn ? expiresInLong : expiresIn // token 时间
 
       const _id = call._id.toString()
       const token = jwt.sign({ data: _id }, secret, { expiresIn: expires })
@@ -57,7 +56,7 @@ exports.signIn = async (ctx) => {
 /**
  * 注销
  */
-exports.signOut = async (ctx) => {
+exports.signOut = async ctx => {
   try {
     const { _id, exp } = ctx.state.user
     const expires = exp * 1000 - Date.now()
@@ -75,7 +74,7 @@ exports.signOut = async (ctx) => {
 /**
  * 查询当前账号
  */
-exports.current = async (ctx) => {
+exports.current = async ctx => {
   try {
     const { _id } = ctx.state.user
     const user = await AdminUser.findById(_id).populate('group')
@@ -88,11 +87,11 @@ exports.current = async (ctx) => {
 /**
  * 更新当前账号
  */
-exports.update = async (ctx) => {
+exports.update = async ctx => {
   ctx.checkBody({
     email: {
       optional: true,
-      isEmail: { errorMessage: 'email 格式不正确' }
+      isEmail: { errorMessage: 'email 格式不正确' },
     },
     mobile: {
       optional: true,
@@ -100,7 +99,7 @@ exports.update = async (ctx) => {
     },
     nickname: {
       optional: true,
-      isString: { errorMessage: 'nickname 需为字符串' }
+      isString: { errorMessage: 'nickname 需为字符串' },
     },
     password: {
       optional: true,

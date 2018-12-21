@@ -16,6 +16,7 @@ const Throw = require('./lib/error.lib')
 const config = require('./config')
 
 global.Promise = require('bluebird')
+
 global.Throw = Throw
 global.Route = route // 处理lib自执行函数内绑定controller时传值问题
 
@@ -24,26 +25,34 @@ app.jsonSpaces = 0 // 压缩json返回中的空格
 app.keys = ['key']
 
 // 跨域
-app.use(cors({
-  credentials: true,
-}))
+app.use(
+  cors({
+    credentials: true,
+  })
+)
 
 // 请求解析
-app.use(convert(koaBody({
-  multipart: true,
-  formLimit: '5mb',
-  formidable: {
-    uploadDir: path.join(__dirname + '/tmp'),
-  }
-})))
+app.use(
+  convert(
+    koaBody({
+      multipart: true,
+      formLimit: '5mb',
+      formidable: {
+        uploadDir: path.join(`${__dirname}/tmp`),
+      },
+    })
+  )
+)
 
 // middleware
-app.use(convert.compose(
-  stateMiddle(),
-  authority(route.authRoutes), // 权限验证
-  validation(), // 验证参数
-  pipe() // 通讯
-))
+app.use(
+  convert.compose(
+    stateMiddle(),
+    authority(route.authRoutes), // 权限验证
+    validation(), // 验证参数
+    pipe() // 通讯
+  )
+)
 
 // 静态文件
 app.use(convert(koaStatic(path.join(__dirname, '/static'))))
@@ -58,9 +67,11 @@ app.use(logger.httpEffectMiddle(config.http_effect))
 
 // 路由
 app.use(route.routes())
-app.use(route.allowedMethods({
-  throw: true,
-}))
+app.use(
+  route.allowedMethods({
+    throw: true,
+  })
+)
 
 // 监听错误
 app.on('error', (err, ctx) => {

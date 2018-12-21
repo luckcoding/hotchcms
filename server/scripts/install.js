@@ -6,4 +6,4 @@ require('shelljs/global')
 
 // console.log(settings.toString())
 
-sed('-i', 'PROGRAM_VERSION', 'v0.1.3', './config/settings.js');
+sed('-i', 'PROGRAM_VERSION', 'v0.1.3', './config/settings.js')
