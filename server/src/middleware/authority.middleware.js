@@ -45,10 +45,10 @@ module.exports = authRoutes =>
 
       /**
        * bind check auth levl fn
-       * @param  {Number or MongoId} gradation [需要校验的权限等级]
+       * @param  {Number , MongoId} gradation [需要校验的权限等级]
        * @return {Boolean}
        */
-      ctx.checkGradation = async gradation => {
+      ctx.checkGradation = async (gradation = '') => {
         const hasGradation = group.gradation || 0
         let checkedGradation = gradation
 
@@ -59,9 +59,10 @@ module.exports = authRoutes =>
           }
         }
 
-        if (hasGradation > (checkedGradation || 0)) {
+        if (hasGradation > checkedGradation) {
           return true
         }
+
         throw Error('Gradation forbidden')
       }
 

@@ -41,7 +41,7 @@ const parse = input =>
  */
 const upload = schema =>
   new Promise((resolve, reject) => {
-    const filePath = `../static/upload/${_.trimStart(schema.path, '/')}`
+    const filePath = `../../static/upload/${_.trimStart(schema.path, '/')}`
     const fileDir = filePath.substr(0, filePath.lastIndexOf('/'))
     mkdirp(path.join(__dirname, fileDir), error => {
       if (error) return reject(error)

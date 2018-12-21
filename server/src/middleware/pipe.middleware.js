@@ -42,7 +42,7 @@ module.exports = () => async (ctx, next) => {
 
       // filter undefined data
       Object.keys(input).forEach(key => {
-        if (input[key] === 'undefined') {
+        if (typeof input[key] === 'undefined') {
           delete input[key]
         }
       })

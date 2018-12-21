@@ -38,7 +38,7 @@ app.use(
       multipart: true,
       formLimit: '5mb',
       formidable: {
-        uploadDir: path.join(`${__dirname}/tmp`),
+        uploadDir: path.join(__dirname, '../tmp'),
       },
     })
   )
@@ -55,7 +55,7 @@ app.use(
 )
 
 // 静态文件
-app.use(convert(koaStatic(path.join(__dirname, '/static'))))
+app.use(convert(koaStatic(path.join(__dirname, '../static'))))
 
 // 渲染引擎
 // app.use(views(path.join(__dirname, './static/theme/'), {
