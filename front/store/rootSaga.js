@@ -1,38 +1,33 @@
 /* global fetch */
 
-import {delay} from 'redux-saga'
-import {all, call, put, take, takeLatest} from 'redux-saga/effects'
+import { delay } from 'redux-saga'
+import { all, call, take, takeLatest } from 'redux-saga/effects'
 // import es6promise from 'es6-promise'
 import 'isomorphic-unfetch'
 
-import {actionTypes, failure, loadDataSuccess, tickClock} from './actions'
+import { actionTypes } from './actions'
 
 // es6promise.polyfill()
 
-function * runClockSaga () {
-  console.log('11=====>>>>>>>>>>>')
+function* runClockSaga() {
   yield take(actionTypes.START_CLOCK)
-  console.log('=====>>>')
   while (true) {
-    console.log('run')
     yield call(delay, 1000)
   }
 }
 
-function * loadDataSaga () {
-  try {
-    const res = yield fetch('https://jsonplaceholder.typicode.com/users')
-    const data = yield res.json()
-    console.log('Yes')
-  } catch (err) {
-    console.log('err')
-  }
-}
+// function* loadDataSaga() {
+//   try {
+//     const res = yield fetch('https://jsonplaceholder.typicode.com/users')
+//     const data = yield res.json()
+//   } catch (err) {
+//   }
+// }
 
-function * rootSaga () {
+function* rootSaga() {
   yield all([
     call(runClockSaga),
-    takeLatest(actionTypes.LOAD_DATA, loadDataSaga)
+    // takeLatest(actionTypes.LOAD_DATA, loadDataSaga),
   ])
 }
 

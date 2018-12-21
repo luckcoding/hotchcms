@@ -15,6 +15,7 @@ import { t } from './helpers'
  */
 class I18nProvider extends React.Component {
   static instance
+
   static displayName = 'I18nProvider'
 
   state = {
@@ -27,17 +28,18 @@ class I18nProvider extends React.Component {
     translations: PropTypes.object,
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
-    if (!isEqual(nextProps.locale, prevState.locale)
-      || !isEqual(nextProps.translations, prevState.translations)) {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (
+      !isEqual(nextProps.locale, prevState.locale) ||
+      !isEqual(nextProps.translations, prevState.translations)
+    ) {
       return {
         ...prevState,
         locale: nextProps.locale,
         translations: nextProps.translations,
       }
-    } else {
-      return null
     }
+    return null
   }
 
   // static asyncInfo () {
@@ -52,14 +54,14 @@ class I18nProvider extends React.Component {
   //   }
   // }
 
-  getChildContext () {
+  getChildContext() {
     return {
       locale: this.state.locale,
       translations: this.state.translations,
     }
   }
 
-  render () {
+  render() {
     return React.Children.only(this.props.children)
   }
 }
@@ -72,11 +74,11 @@ I18nProvider.defaultProps = {
 I18nProvider.propTypes = {
   locale: PropTypes.string.isRequired,
   translations: PropTypes.object.isRequired,
-};
+}
 
 /**
  * lang =>
- * 
+ *
  * {
  *   "zh": {
  *     "ID": "名字: {name}",
@@ -85,11 +87,11 @@ I18nProvider.propTypes = {
  *     "ID": "name: {name}",
  *   },
  * }
- * 
+ *
  * <I18nNode zh="名字" en="name" />
  * <I18nNode value={name: 'xx'} zh="名字: {name}" en="name: {name}" />
  * <I18nNode id="ID" value={name: 'xx'} />
- * 
+ *
  */
 class I18n extends React.PureComponent {
   constructor(props, context) {
@@ -101,7 +103,7 @@ class I18n extends React.PureComponent {
     translations: PropTypes.object.isRequired,
   }
 
-  render () {
+  render() {
     const { locale, translations } = this.context
 
     return t(this.props, locale, translations)

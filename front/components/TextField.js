@@ -1,9 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-export const Input = styled.input`
-  
-`
+export const Input = styled.input``
 
 export default function TextField({
   input,
@@ -11,7 +9,7 @@ export default function TextField({
   classes,
   ...props
 }) {
-  const inError = !!error && !!touched;
+  const inError = !!error && !!touched
   return (
     <Input
       {...input}
@@ -19,5 +17,5 @@ export default function TextField({
       error={inError}
       helperText={(inError && error) || ' '}
     />
-  );
+  )
 }

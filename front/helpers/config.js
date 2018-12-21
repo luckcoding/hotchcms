@@ -14,5 +14,5 @@ export default {
     title: 'Hotchcms',
     keywords: 'hotchcms,react,next.js',
     description: 'A lightweight cms system .',
-  }
+  },
 }

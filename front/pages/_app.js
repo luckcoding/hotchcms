@@ -1,5 +1,5 @@
 import React from 'react'
-import App, {Container} from 'next/app'
+import App, { Container } from 'next/app'
 import NProgress from 'nprogress'
 import Router from 'next/router'
 import defaultPage from 'hocs/defaultPage'
@@ -11,7 +11,7 @@ import { I18nProvider } from 'helpers/I18n'
 
 import configureStore from '../store/configureStore'
 
-Router.events.on('routeChangeStart', (url) => {
+Router.events.on('routeChangeStart', url => {
   console.log(`Loading: ${url}`)
   NProgress.start()
 })
@@ -19,11 +19,11 @@ Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
 
 class MyApp extends App {
-  static async getInitialProps ({ Component, ctx, router }) {
+  static async getInitialProps({ Component, ctx, router }) {
     try {
       // search params
-      let search = qs.parse(ctx.asPath.split('?')[1] || '')
-      
+      const search = qs.parse(ctx.asPath.split('?')[1] || '')
+
       let pageInitialProps = {}
 
       if (Component.getInitialProps) {
@@ -41,14 +41,13 @@ class MyApp extends App {
         },
         locale,
       }
-    
     } catch (e) {
       console.error(e.message)
     }
   }
 
-  render () {
-    const {Component, pageProps, store, locale} = this.props
+  render() {
+    const { Component, pageProps, store, locale } = this.props
     return (
       <Container>
         <Provider store={store}>

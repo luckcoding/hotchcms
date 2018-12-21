@@ -4,7 +4,7 @@ import LogoPNG from 'static/logo.png'
 import Link from './Link'
 
 const Wrapper = styled.header`
-  background-color: rgba(0, 0, 0, .85);
+  background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: saturate(180%) blur(20px);
 
   position: sticky;
@@ -28,9 +28,10 @@ const Nav = styled.nav`
     padding: 10px 20px;
 
     color: #999;
-    transition: ease-in-out color .15s;
+    transition: ease-in-out color 0.15s;
 
-    &:hover, &.active {
+    &:hover,
+    &.active {
       color: #fff;
     }
   }
@@ -39,12 +40,16 @@ const Nav = styled.nav`
 function Header() {
   return (
     <Wrapper>
-      <Link href="/"><a><Logo src={LogoPNG} /></a></Link>
+      <Link href="/">
+        <a>
+          <Logo src={LogoPNG} />
+        </a>
+      </Link>
       <Nav>
-        <Link activeClassName='active' href='/'>
+        <Link activeClassName="active" href="/">
           <a>Home</a>
         </Link>
-        <Link activeClassName='active' href='/about'>
+        <Link activeClassName="active" href="/about">
           <a>About</a>
         </Link>
       </Nav>

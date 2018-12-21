@@ -1,0 +1,4 @@
+*.svg
+*.ejs
+.DS_Store
+.next

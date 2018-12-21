@@ -29,8 +29,8 @@ const Summary = styled.p`
   line-height: 24px;
 
   &:after {
-    border: .5px solid #e5e5e5;
-    content: "";
+    border: 0.5px solid #e5e5e5;
+    content: '';
     display: block;
     margin: 20px 0;
     width: 58px;
@@ -38,28 +38,31 @@ const Summary = styled.p`
 `
 
 class Index extends React.Component {
-  static async getInitialProps ({ query }) {
+  static async getInitialProps({ query }) {
     const result = await request('article/:_id', query)
 
     return {
-      content: result || {}
+      content: result || {},
     }
   }
 
-  static async getSettings ({ content }) {
+  static async getSettings({ content }) {
     return {
       title: content.title,
     }
   }
 
-  render () {
+  render() {
     const { content: _ } = this.props
     return (
       <div>
         <Header />
         <Wrapper>
           <Title>{_.title}</Title>
-          <div><a>{_.author}</a><span>{_.createDate}</span></div>
+          <div>
+            <a>{_.author}</a>
+            <span>{_.createDate}</span>
+          </div>
           <Summary>{_.subTitle}</Summary>
 
           <div
@@ -67,7 +70,7 @@ class Index extends React.Component {
               __html: _.content,
             }}
           />
-          </Wrapper>
+        </Wrapper>
       </div>
     )
   }

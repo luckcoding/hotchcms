@@ -8,34 +8,36 @@ import request from 'helpers/request'
 import I18n, { Trans } from 'helpers/I18n'
 import { get } from 'lodash'
 
-import {connect} from 'react-redux'
-import {loadData, startClock, tickClock} from '../store/actions'
+import { connect } from 'react-redux'
+import { loadData, startClock, tickClock } from '../store/actions'
 
 class Index extends React.Component {
-  static async getInitialProps () {
+  static async getInitialProps() {
     const result = await request('article')
     return {
-      list: result.list || []
+      list: result.list || [],
     }
   }
 
-  static async getSettings (pageProps) {
+  static async getSettings(pageProps) {
     return {
       title: '首页',
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.props.dispatch(startClock())
   }
 
-  render () {
+  render() {
     const { list } = this.props
 
     return (
       <Fragment>
         <Header />
-        <ListTitle><I18n id="latest articles" /></ListTitle>
+        <ListTitle>
+          <I18n id="latest articles" />
+        </ListTitle>
         {list.map((_, key) => (
           <ListItem
             url={`/p/${_._id}`}

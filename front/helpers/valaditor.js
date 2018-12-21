@@ -1,4 +1,3 @@
-
 export function getType(input) {
   return Object.prototype.toString.call(input).toLowerCase()
 }

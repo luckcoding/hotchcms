@@ -9,13 +9,13 @@ const { getApiUrl } = config
 
 /**
  * request('user')
- * 
+ *
  * request('user', {name: 'zhangsan'})
- * 
+ *
  * request('post user', {name: 'zhangsan'})
  *
  * request('put user/:_id', {_id: '1234'})
- * 
+ *
  */
 
 export default async function request(params, data) {
@@ -23,7 +23,8 @@ export default async function request(params, data) {
     throw TypeError('Request params is error !')
   }
 
-  let url, method = 'get'
+  let url
+  let method = 'get'
 
   const paramsArray = params.split(' ')
 
@@ -72,7 +73,6 @@ export default async function request(params, data) {
   const json = await res.json()
   if (json.code === '0000') {
     return json.result
-  } else {
-    throw Error(json.message || 'Services unknow error !')
   }
+  throw Error(json.message || 'Services unknow error !')
 }

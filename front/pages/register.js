@@ -6,18 +6,17 @@ import TextField from 'components/TextField'
 import request from 'helpers/request'
 
 class Register extends React.Component {
-  static async getSettings () {
+  static async getSettings() {
     return {
       title: '注册',
     }
   }
 
-  render () {
+  render() {
     const { list } = this.props
     return (
       <div>
         <Header />
-        
       </div>
     )
   }

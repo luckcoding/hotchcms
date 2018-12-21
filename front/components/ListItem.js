@@ -8,9 +8,9 @@ const Wrapper = styled.div`
   height: 143px;
   padding: 10px;
   position: relative;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
   &:hover {
-    box-shadow: 0 0 25px 2px rgba(0,0,0,.2);
+    box-shadow: 0 0 25px 2px rgba(0, 0, 0, 0.2);
   }
 `
 
@@ -62,7 +62,7 @@ const Title = styled.a`
     max-height: 48px;
     overflow: hidden;
     text-align: justify;
-    transition: .5s;
+    transition: 0.5s;
     width: 100%;
 
     &:hover {
@@ -99,7 +99,16 @@ const Bar = styled.div`
   }
 `
 
-function ArticleListItem({ url, cover, title, description, tag, category, date, author }) {
+function ArticleListItem({
+  url,
+  cover,
+  title,
+  description,
+  tag,
+  category,
+  date,
+  author,
+}) {
   return (
     <Wrapper>
       <Link href="/categories" passHref>
@@ -108,18 +117,30 @@ function ArticleListItem({ url, cover, title, description, tag, category, date, 
         </Cover>
       </Link>
       <Main>
-        <Link href="/categories" passHref><Tag>{tag}</Tag></Link>
-        <Link href={url} passHref><Title><h3>{title}</h3></Title></Link>
+        <Link href="/categories" passHref>
+          <Tag>{tag}</Tag>
+        </Link>
+        <Link href={url} passHref>
+          <Title>
+            <h3>{title}</h3>
+          </Title>
+        </Link>
         <Description>{description}</Description>
 
         <Bar>
-          <span>来自主题<a>{category}</a></span>|<span><a>{author}</a></span>
-          <span style={{float: 'right'}}>{date}</span>
+          <span>
+            来自主题
+            <a>{category}</a>
+          </span>
+          |
+          <span>
+            <a>{author}</a>
+          </span>
+          <span style={{ float: 'right' }}>{date}</span>
         </Bar>
       </Main>
     </Wrapper>
   )
 }
-
 
 export default ArticleListItem

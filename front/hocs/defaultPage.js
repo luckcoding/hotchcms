@@ -1,19 +1,18 @@
 import React from 'react'
 import Head from 'next/head'
-import { getComponentDisplayName } from 'helpers'
-import config from 'helpers/config'
-import {connect} from 'react-redux'
+import { getComponentDisplayName, config } from '../helpers'
 
-import {loadData, startClock, tickClock} from '../store/actions'
+import { loadData, tickClock } from '../store/actions'
 
 const { seo } = config
 
-export default (Page) => {
+export default Page => {
   class defaultPage extends React.Component {
     static displayName = `Connect(${getComponentDisplayName})`
 
-    static async getInitialProps (ctx) {
-      let pageProps, settings
+    static async getInitialProps(ctx) {
+      let pageProps
+      let settings
 
       if (Page.getInitialProps) {
         pageProps = await Page.getInitialProps(ctx)
@@ -37,18 +36,20 @@ export default (Page) => {
       return { ...pageProps, settings: { ...settings } }
     }
 
-    render () {
+    render() {
       const { settings, ...pageProps } = this.props
       const { title, keywords, description, append } = settings
 
       return [
         <Head key="head">
-          <title>{title} - {seo.title}</title>
+          <title>
+            {title} - {seo.title}
+          </title>
           <meta name="keywords" content={keywords || seo.keywords} />
           <meta name="description" content={description || seo.description} />
-          {typeof append ==='function' ? append() : null}
+          {typeof append === 'function' ? append() : null}
         </Head>,
-        <Page key="page" {...pageProps} />
+        <Page key="page" {...pageProps} />,
       ]
     }
   }

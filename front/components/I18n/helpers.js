@@ -8,25 +8,24 @@ import { get, isObject, isEmpty } from 'lodash'
  * @return {String}              "result"
  */
 function t(params, locale, translations) {
-  if (!isObject(params)
-    || typeof locale !== 'string'
-    || !isObject(translations)) {
+  if (
+    !isObject(params) ||
+    typeof locale !== 'string' ||
+    !isObject(translations)
+  ) {
     throw TypeError('arguments type error')
   }
 
   const { id, value, ...other } = params
 
   // lang text, like: "name is: {name}"
-  let text = (
-    typeof id === 'string'
-      ? translations[locale][id]
-      : other[locale]
-  ) || ''
+  let text =
+    (typeof id === 'string' ? translations[locale][id] : other[locale]) || ''
 
   // bind {value}
   if (isObject(value) && !isEmpty(value)) {
     for (const key in value) {
-      const regx = new RegExp(`{${key}}`, 'g');
+      const regx = new RegExp(`{${key}}`, 'g')
       text = text.replace(regx, value[key])
     }
   }

@@ -3,12 +3,12 @@ import { t } from 'components/I18n/helpers'
 
 export const defaultLocale = {
   locale: '',
-  get value () {
+  get value() {
     return this.locale
   },
-  set value (value) {
+  set value(value) {
     this.locale = value
-  }
+  },
 }
 
 export const defaultTranslations = {
@@ -17,7 +17,7 @@ export const defaultTranslations = {
   },
   en: {
     'latest articles': 'latest articles',
-  }
+  },
 }
 
 export function I18nProvider({ children, ...props }) {
@@ -36,7 +36,11 @@ export function I18nProvider({ children, ...props }) {
  * @param {Object} translations can be null
  */
 export function Trans(params, locale, translations) {
-  return t(params, locale || defaultLocale.value, translations || defaultTranslations)
+  return t(
+    params,
+    locale || defaultLocale.value,
+    translations || defaultTranslations
+  )
 }
 
 export default I18n

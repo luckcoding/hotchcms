@@ -60,6 +60,11 @@
     "umi": "^2.2.8",
     "umi-plugin-react": "^1.2.3"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "src/**/*.js": [
       "eslint --ext .js --fix",
@@ -98,7 +103,6 @@
     "start": "cross-env NODE_ENV=production node server.js",
     "test": "cross-env BABELRC=none umi test",
     "prettier": "prettier --write 'src/**/*.(js|less)'",
-    "precommit": "lint-staged",
     "add-locale": "lingui add-locale",
     "extract": "lingui extract",
     "trans": "lingui extract --clean && node ./scripts/translate.js"

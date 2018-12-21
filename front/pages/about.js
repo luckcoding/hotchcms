@@ -4,7 +4,7 @@ import defaultPage from 'hocs/defaultPage'
 import I18n from 'helpers/I18n'
 
 class About extends Component {
-  render () {
+  render() {
     return (
       <div>
         <Header />
