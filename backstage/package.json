@@ -1,5 +1,5 @@
 {
-  "name": "hotchcms",
+  "name": "hotchcms-backstage",
   "version": "1.0.0",
   "private": true,
   "description": "Base on antd-admin",
@@ -60,11 +60,6 @@
     "umi": "^2.2.8",
     "umi-plugin-react": "^1.2.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "src/**/*.js": [
       "eslint --ext .js --fix",
@@ -105,6 +100,7 @@
     "prettier": "prettier --write 'src/**/*.(js|less)'",
     "add-locale": "lingui add-locale",
     "extract": "lingui extract",
-    "trans": "lingui extract --clean && node ./scripts/translate.js"
+    "trans": "lingui extract --clean && node ./scripts/translate.js",
+    "lint-staged": "lint-staged"
   }
 }

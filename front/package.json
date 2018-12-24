@@ -1,5 +1,5 @@
 {
-  "name": "front",
+  "name": "hotchcms-front",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js . --fix",
     "lint:watch": "npm run lint -- --watch",
     "prettier": "prettier --write '**/*.js'",
-    "precommit": "lint-staged"
+    "lint-staged": "lint-staged"
   },
   "author": "",
   "license": "ISC",

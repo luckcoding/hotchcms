@@ -1,5 +1,5 @@
 {
-  "name": "hotchcms",
+  "name": "hotchcms-server",
   "version": "1.0.0",
   "main": "index.js",
   "directories": {
@@ -13,7 +13,7 @@
     "lint": "eslint --ext .js src --fix",
     "lint:watch": "npm run lint -- --watch",
     "prettier": "prettier --write 'src/**/*.js'",
-    "precommit": "lint-staged"
+    "lint-staged": "lint-staged"
   },
   "author": "luckcoding",
   "license": "ISC",
@@ -54,6 +54,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-watch": "^4.0.2",
+    "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
     "prettier": "^1.15.3",

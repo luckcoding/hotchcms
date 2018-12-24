@@ -26,8 +26,10 @@ exports.status = () =>
 /**
  * 安装
  */
-exports.install = ({ databaseData, redisData, adminUserData }) =>
+exports.install = data =>
   new Promise(async (resolve, reject) => {
+    const { databaseData, redisData, adminUserData } = data
+
     if (!databaseData || !redisData || !adminUserData) {
       return reject(global.Throw('缺少参数'))
     }

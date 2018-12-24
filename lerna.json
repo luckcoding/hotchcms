@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "backstage",
+    "front",
+    "server"
+  ],
+  "version": "0.0.0"
+}
