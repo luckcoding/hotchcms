@@ -9,7 +9,7 @@ import I18n from 'helpers/I18n'
 import { get } from 'lodash'
 
 import { connect } from 'react-redux'
-import { startClock } from '../store/actions'
+import { startClock } from 'store/actions'
 
 class Index extends React.Component {
   static async getInitialProps() {

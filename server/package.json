@@ -11,8 +11,6 @@
     "test": "./node_modules/.bin/mocha --harmony",
     "start": "cross-env NODE_ENV=production node ./src/bin/www",
     "lint": "eslint --ext .js src --fix",
-    "lint:watch": "npm run lint -- --watch",
-    "prettier": "prettier --write 'src/**/*.js'",
     "lint-staged": "lint-staged"
   },
   "author": "luckcoding",
@@ -20,7 +18,7 @@
   "lint-staged": {
     "src/**/*.js": [
       "eslint --ext .js --fix",
-      "npm run prettier",
+      "npm run lint",
       "git add"
     ]
   },
@@ -57,7 +55,6 @@
     "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
-    "prettier": "^1.15.3",
     "shelljs": "^0.8.3",
     "supertest": "^3.3.0"
   }

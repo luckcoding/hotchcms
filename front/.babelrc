@@ -10,11 +10,12 @@
           "./"
         ],
         "alias": {
-          "helpers": "./helpers",
-          "components": "./components",
-          "containers": "./containers",
-          "hocs": "./hocs",
-          "pages": "./pages",
+          "components": "./src/components",
+          "containers": "./src/containers",
+          "helpers": "./src/helpers",
+          "hocs": "./src/hocs",
+          "pages": "./src/pages",
+          "store": "./src/store",
           "static": "./static"
         }
       }

@@ -7,8 +7,7 @@ import { Provider } from 'react-redux'
 import withRedux from 'next-redux-wrapper'
 import withReduxSaga from 'next-redux-saga'
 import { I18nProvider } from 'helpers/I18n'
-
-import configureStore from '../store/configureStore'
+import configureStore from 'store/configureStore'
 
 Router.events.on('routeChangeStart', (url) => {
   console.log(`Loading: ${url}`)
