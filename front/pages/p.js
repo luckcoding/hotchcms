@@ -1,11 +1,8 @@
 import React from 'react'
-import Link from 'next/link'
+import PropTypes from 'prop-types'
 import defaultPage from 'hocs/defaultPage'
 import Header from 'components/Header'
-import ListTitle from 'components/ListTitle'
-import ListItem from 'components/ListItem'
 import request from 'helpers/request'
-import { get } from 'lodash'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -37,7 +34,7 @@ const Summary = styled.p`
   }
 `
 
-class Index extends React.Component {
+class Detail extends React.Component {
   static async getInitialProps({ query }) {
     const result = await request('article/:_id', query)
 
@@ -76,4 +73,8 @@ class Index extends React.Component {
   }
 }
 
-export default defaultPage(Index)
+Detail.propTypes = {
+  content: PropTypes.object.isRequired,
+}
+
+export default defaultPage(Detail)

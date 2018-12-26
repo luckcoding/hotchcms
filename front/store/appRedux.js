@@ -27,8 +27,7 @@ export const initialState = fromJS({
 
 /* ------------- Reducers ------------- */
 
-export const logoutSuccess = state =>
-  state.set('currentUser', {}).set('inLogin', false)
+export const logoutSuccess = state => state.set('currentUser', {}).set('inLogin', false)
 
 /* ------------- Hookup Reducers To Types ------------- */
 

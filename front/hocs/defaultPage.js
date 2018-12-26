@@ -6,7 +6,7 @@ import { loadData, tickClock } from '../store/actions'
 
 const { seo } = config
 
-export default Page => {
+export default (Page) => {
   class defaultPage extends React.Component {
     static displayName = `Connect(${getComponentDisplayName})`
 
@@ -38,12 +38,17 @@ export default Page => {
 
     render() {
       const { settings, ...pageProps } = this.props
-      const { title, keywords, description, append } = settings
+      const {
+        title, keywords, description, append,
+      } = settings
 
       return [
         <Head key="head">
           <title>
-            {title} - {seo.title}
+            {title}
+            {' '}
+-
+            {seo.title}
           </title>
           <meta name="keywords" content={keywords || seo.keywords} />
           <meta name="description" content={description || seo.description} />

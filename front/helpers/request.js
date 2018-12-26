@@ -2,7 +2,6 @@ import 'isomorphic-unfetch'
 import qs from 'qs'
 import { cloneDeep, isEmpty } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
-import { isJson } from './valaditor'
 import config from './config'
 
 const { getApiUrl } = config
@@ -41,7 +40,7 @@ export default async function request(params, data) {
     let domain = ''
     const urlMatch = url.match(/[a-zA-z]+:\/\/[^/]*/)
     if (urlMatch) {
-      ;[domain] = urlMatch
+      [domain] = urlMatch
       url = url.slice(domain.length)
     }
 

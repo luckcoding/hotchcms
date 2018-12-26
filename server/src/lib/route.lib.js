@@ -15,61 +15,63 @@ const notes = {} // 路由描述
 const controllers = requireAll({
   dirname: path.join(__dirname, '../controllers/'),
   filter: /(.+)\.controller\.js$/,
-})(
-  (function loop(map, route = '') {
-    _.forEach(map, (value, key) => {
-      if (_.isObject(value) && !_.isArray(value)) {
-        // { '/path': { ... }}
-        loop(value, route + key)
-      } else if (_.isString(value)) {
-        /**
-         * 'controller.action'
-         * 'controller.action#description'
-         * '*controller.action'
-         * 'controller'
-         */
+})
 
-        // 是否需要验权限
-        const inAuthed = value.indexOf('*') !== -1
+function loop(map, route = '') {
+  _.forEach(map, (value, key) => {
+    if (_.isObject(value) && !_.isArray(value)) {
+      // { '/path': { ... }}
+      loop(value, route + key)
+    } else if (_.isString(value)) {
+      /**
+       * 'controller.action'
+       * 'controller.action#description'
+       * '*controller.action'
+       * 'controller'
+       */
 
-        // 需要验证登录状态
-        const inChecked = value.indexOf('*') !== -1 || value.indexOf('@') !== -1
+      // 是否需要验权限
+      const inAuthed = value.indexOf('*') !== -1
 
-        // 抽离 => controller.action # 备注
-        const parts = value.replace(/(\*|@)/g, '').split('#')
+      // 需要验证登录状态
+      const inChecked = value.indexOf('*') !== -1 || value.indexOf('@') !== -1
 
-        // 备注
-        const description = parts[1] || ''
+      // 抽离 => controller.action # 备注
+      const parts = value.replace(/(\*|@)/g, '').split('#')
 
-        const combParts = parts[0].split('.')
+      // 备注
+      const description = parts[1] || ''
 
-        // 提取controller / action
-        const controller = combParts[0]
-        const action = combParts[1]
+      const combParts = parts[0].split('.')
 
-        // 路由描述
-        notes[`${route}[${key.toUpperCase()}]`] = description
+      // 提取controller / action
+      const controller = combParts[0]
+      const action = combParts[1]
 
-        // 获取控制器函数
-        const fn = action
-          ? controllers[controller][action]
-          : controllers[controller]
+      // 路由描述
+      notes[`${route}[${key.toUpperCase()}]`] = description
 
-        // 路由绑定函数
-        if (inAuthed) {
-          // auth[key](route, fn)
-          authRoutes.push({ path: route, methods: [key] })
-        }
+      // 获取控制器函数
+      const fn = action
+        ? controllers[controller][action]
+        : controllers[controller]
 
-        if (inChecked) {
-          router[key](route, controllers.check()) // 验证状态
-        }
-
-        router[key](route, fn)
+      // 路由绑定函数
+      if (inAuthed) {
+        // auth[key](route, fn)
+        authRoutes.push({ path: route, methods: [key] })
       }
-    })
-  })(routes)
-)
+
+      if (inChecked) {
+        router[key](route, controllers.check()) // 验证状态
+      }
+
+      router[key](route, fn)
+    }
+  })
+}
+
+loop(routes)
 
 module.exports = router
 module.exports.authRoutes = authRoutes

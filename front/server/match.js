@@ -18,21 +18,20 @@ module.exports = ({
 }) => {
   if (
     !(
-      app &&
-      server &&
-      Array.isArray(routes) &&
-      Array.isArray(languages) &&
-      typeof defaultLanguage === 'string'
+      app
+      && server
+      && Array.isArray(routes)
+      && Array.isArray(languages)
+      && typeof defaultLanguage === 'string'
     )
-  )
-    throw TypeError('options Error')
+  ) throw TypeError('options Error')
 
   // all the route will be match
   // like '/' '/p/:id' '/zh' '/zh/p/:id' '/en' '/en/p/:id' ...
   const routesMap = []
 
   routes.forEach(({ route, useCache }) => {
-    ;['', ...languages].forEach(language => {
+    ['', ...languages].forEach((language) => {
       let packed = `/${language}/${route}`
       packed = packed.replace(/\/{2,}/g, '/')
       routesMap.push({
@@ -45,7 +44,9 @@ module.exports = ({
   })
 
   // render with next.js
-  routesMap.map(({ packed, original, language, useCache }) => {
+  routesMap.forEach(({
+    packed, original, language, useCache,
+  }) => {
     const parts = original.split('/:')
     const renderPath = parts[0]
 

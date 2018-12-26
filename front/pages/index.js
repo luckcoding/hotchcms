@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react'
-import Link from 'next/link'
+import PropTypes from 'prop-types'
 import defaultPage from 'hocs/defaultPage'
 import Header from 'components/Header'
 import ListTitle from 'components/ListTitle'
 import ListItem from 'components/ListItem'
 import request from 'helpers/request'
-import I18n, { Trans } from 'helpers/I18n'
+import I18n from 'helpers/I18n'
 import { get } from 'lodash'
 
 import { connect } from 'react-redux'
-import { loadData, startClock, tickClock } from '../store/actions'
+import { startClock } from '../store/actions'
 
 class Index extends React.Component {
   static async getInitialProps() {
@@ -19,7 +19,7 @@ class Index extends React.Component {
     }
   }
 
-  static async getSettings(pageProps) {
+  static async getSettings() {
     return {
       title: '首页',
     }
@@ -54,6 +54,11 @@ class Index extends React.Component {
       </Fragment>
     )
   }
+}
+
+Index.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  list: PropTypes.array.isRequired,
 }
 
 export default connect()(defaultPage(Index))

@@ -6,7 +6,7 @@ import rootSaga from './rootSaga'
 
 const sagaMiddleware = createSagaMiddleware()
 
-const bindMiddleware = middleware => {
+const bindMiddleware = (middleware) => {
   if (process.env.NODE_ENV !== 'production') {
     const { composeWithDevTools } = require('redux-devtools-extension')
     return composeWithDevTools(applyMiddleware(...middleware))

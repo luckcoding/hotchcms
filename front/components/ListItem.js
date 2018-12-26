@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Link from 'next/link'
 import { getMediaUrl } from 'helpers'
@@ -113,7 +114,7 @@ function ArticleListItem({
     <Wrapper>
       <Link href="/categories" passHref>
         <Cover>
-          <img src={getMediaUrl(cover)} />
+          <img src={getMediaUrl(cover)} alt="Hotchcms" />
         </Cover>
       </Link>
       <Main>
@@ -141,6 +142,17 @@ function ArticleListItem({
       </Main>
     </Wrapper>
   )
+}
+
+ArticleListItem.propTypes = {
+  url: PropTypes.string,
+  cover: PropTypes.string,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  tag: PropTypes.string,
+  category: PropTypes.string,
+  date: PropTypes.string,
+  author: PropTypes.string,
 }
 
 export default ArticleListItem

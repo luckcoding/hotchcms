@@ -1,3 +1,4 @@
+import React from 'react'
 import I18n, { I18nProvider as Provider } from 'components/I18n'
 import { t } from 'components/I18n/helpers'
 

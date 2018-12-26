@@ -1,10 +1,10 @@
 /* ------------- Types ------------- */
 
-import Actions, { Types } from './appRedux'
+// import Actions, { Types } from './appRedux'
 
 /**
  * Project start up task
  */
-export function* startup(action) {
-  if (auth.loggedIn()) yield put(Actions.queryUserRequest())
+export function* startup() {
+  // if (auth.loggedIn()) yield put(Actions.queryUserRequest())
 }

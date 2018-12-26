@@ -2,7 +2,6 @@ import React from 'react'
 import App, { Container } from 'next/app'
 import NProgress from 'nprogress'
 import Router from 'next/router'
-import defaultPage from 'hocs/defaultPage'
 import qs from 'qs'
 import { Provider } from 'react-redux'
 import withRedux from 'next-redux-wrapper'
@@ -11,7 +10,7 @@ import { I18nProvider } from 'helpers/I18n'
 
 import configureStore from '../store/configureStore'
 
-Router.events.on('routeChangeStart', url => {
+Router.events.on('routeChangeStart', (url) => {
   console.log(`Loading: ${url}`)
   NProgress.start()
 })
@@ -19,7 +18,7 @@ Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
 
 class MyApp extends App {
-  static async getInitialProps({ Component, ctx, router }) {
+  static async getInitialProps({ Component, ctx }) {
     try {
       // search params
       const search = qs.parse(ctx.asPath.split('?')[1] || '')
@@ -47,7 +46,9 @@ class MyApp extends App {
   }
 
   render() {
-    const { Component, pageProps, store, locale } = this.props
+    const {
+      Component, pageProps, store, locale,
+    } = this.props
     return (
       <Container>
         <Provider store={store}>

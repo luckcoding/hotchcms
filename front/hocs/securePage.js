@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import defaultPage from './defaultPage'
 
-const securePageHoc = Page =>
-  class SecurePage extends React.Component {
+const securePageHoc = Page => class SecurePage extends React.Component {
     static propTypes = {
       inLogin: PropTypes.bool.isRequired,
     }
@@ -16,6 +15,6 @@ const securePageHoc = Page =>
       const { inLogin } = this.props
       return inLogin ? <Page {...this.props} /> : <div>404</div>
     }
-  }
+}
 
 export default Page => defaultPage(securePageHoc(Page))

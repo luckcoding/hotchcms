@@ -4,23 +4,22 @@ import isEqual from 'lodash/isEqual'
 import { t } from './helpers'
 
 /**
- * default:
+ *
  * <I18nProvider local="zh" />
  *   <App />
  * </I18nProvider>
- *
- * if you need local information, need bind instance:
- * <I18nProvider ref={c => I18nProvider.instance = c } >
- * then, you can use `I18nProvider.asyncInfo()` to get some you need
  */
 class I18nProvider extends React.Component {
   static instance
 
   static displayName = 'I18nProvider'
 
-  state = {
-    locale: '',
-    translations: {},
+  constructor(props) {
+    super(props)
+    this.state = {
+      locale: props.locale,
+      translations: props.translations,
+    }
   }
 
   static childContextTypes = {
@@ -29,10 +28,8 @@ class I18nProvider extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (
-      !isEqual(nextProps.locale, prevState.locale) ||
-      !isEqual(nextProps.translations, prevState.translations)
-    ) {
+    if (!isEqual(nextProps.locale, prevState.locale)
+      || !isEqual(nextProps.translations, prevState.translations)) {
       return {
         ...prevState,
         locale: nextProps.locale,
@@ -72,8 +69,9 @@ I18nProvider.defaultProps = {
 }
 
 I18nProvider.propTypes = {
-  locale: PropTypes.string.isRequired,
-  translations: PropTypes.object.isRequired,
+  locale: PropTypes.string,
+  translations: PropTypes.object,
+  children: PropTypes.node,
 }
 
 /**
@@ -91,13 +89,10 @@ I18nProvider.propTypes = {
  * <I18nNode zh="名字" en="name" />
  * <I18nNode value={name: 'xx'} zh="名字: {name}" en="name: {name}" />
  * <I18nNode id="ID" value={name: 'xx'} />
- *
+ * <I18nNode id="ID" format={(text, locale) => 'format'} />
+ * <I18nNode id="ID" wrapper={text => <div>{text}</div>} />
  */
 class I18n extends React.PureComponent {
-  constructor(props, context) {
-    super(props, context)
-  }
-
   static contextTypes = {
     locale: PropTypes.string.isRequired,
     translations: PropTypes.object.isRequired,
@@ -106,8 +101,25 @@ class I18n extends React.PureComponent {
   render() {
     const { locale, translations } = this.context
 
-    return t(this.props, locale, translations)
+    const { wrapper, format } = this.props
+
+    let text = t(this.props, locale, translations)
+
+    if (typeof format === 'function') {
+      text = format(text, locale)
+    } else if (format && typeof format[locale] === 'function') {
+      text = format[locale](text, locale)
+    }
+
+    text = text || ''
+
+    return wrapper ? wrapper(text) : text
   }
+}
+
+I18n.propTypes = {
+  wrapper: PropTypes.func,
+  format: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 }
 
 export { I18nProvider }

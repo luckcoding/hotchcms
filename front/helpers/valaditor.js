@@ -15,7 +15,7 @@ export function isFunction(input) {
 }
 
 export function isNumber(input) {
-  return !isNaN(Number(input))
+  return !Number.isNaN(Number(input))
 }
 
 export function isNull(input) {
