@@ -28,7 +28,7 @@ app.keys = ['key']
 app.use(
   cors({
     credentials: true,
-  })
+  }),
 )
 
 // 请求解析
@@ -40,8 +40,8 @@ app.use(
       formidable: {
         uploadDir: path.join(__dirname, '../tmp'),
       },
-    })
-  )
+    }),
+  ),
 )
 
 // middleware
@@ -50,8 +50,8 @@ app.use(
     stateMiddle(),
     authority(route.authRoutes), // 权限验证
     validation(), // 验证参数
-    pipe() // 通讯
-  )
+    pipe(), // 通讯
+  ),
 )
 
 // 静态文件
@@ -70,7 +70,7 @@ app.use(route.routes())
 app.use(
   route.allowedMethods({
     throw: true,
-  })
+  }),
 )
 
 // 监听错误

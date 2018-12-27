@@ -32,7 +32,7 @@ const commentSchema = new mongoose.Schema(
   {
     collection: 'comment',
     id: false,
-  }
+  },
 )
 
 module.exports = mongoose.model('Comment', commentSchema)

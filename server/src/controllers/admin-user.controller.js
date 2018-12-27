@@ -3,7 +3,7 @@ const { AdminUser } = require('../models')
 /**
  * 创建管理员
  */
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   ctx.checkBody({
     email: {
       optional: true,
@@ -55,7 +55,7 @@ exports.create = async ctx => {
 /**
  * 更新管理员
  */
-exports.update = async ctx => {
+exports.update = async (ctx) => {
   ctx.checkBody({
     nickname: {
       optional: true,
@@ -111,7 +111,7 @@ exports.update = async ctx => {
 /**
  * 查询单个管理员
  */
-exports.one = async ctx => {
+exports.one = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -138,7 +138,7 @@ exports.one = async ctx => {
 /**
  * 管理员列表查询
  */
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -196,7 +196,7 @@ exports.list = async ctx => {
 /**
  * 删除管理员
  */
-exports.delete = async ctx => {
+exports.delete = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {

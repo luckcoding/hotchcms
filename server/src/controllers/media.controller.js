@@ -5,7 +5,7 @@ const { Media } = require('../models')
 /**
  * 上传文件
  */
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   ctx.checkHeaders({
     'content-type': {
       notEmpty: {
@@ -40,10 +40,9 @@ exports.create = async ctx => {
     const mediaType = input['media-type']
 
     // 解析
-    const asyncInfo = files.map(file => {
+    const asyncInfo = files.map((file) => {
       const fileJson = file.toJSON()
-      if (!_.includes(fileJson.type, mediaType))
-        throw Error(`存在非${mediaType}的资源`)
+      if (!_.includes(fileJson.type, mediaType)) throw Error(`存在非${mediaType}的资源`)
       return media.parse(fileJson)
     })
 
@@ -53,7 +52,7 @@ exports.create = async ctx => {
     // 保存任务对象
     const asyncUpload = []
 
-    info = info.map(item => {
+    info = info.map((item) => {
       // 添加任务
       asyncUpload.push(media.upload(item))
 
@@ -74,7 +73,7 @@ exports.create = async ctx => {
 /**
  * 文件列表
  */
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -111,7 +110,7 @@ exports.list = async ctx => {
 /**
  * 多选操作
  */
-exports.multi = async ctx => {
+exports.multi = async (ctx) => {
   ctx.checkBody({
     type: {
       notEmpty: {

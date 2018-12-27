@@ -3,7 +3,7 @@ const { Article } = require('../models')
 /**
  * 创建只做生成文章ID功能
  */
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   try {
     const call = await Article.create({})
     ctx.pipeDone(call)
@@ -15,7 +15,7 @@ exports.create = async ctx => {
 /**
  *  更新文章
  */
-exports.update = async ctx => {
+exports.update = async (ctx) => {
   ctx.checkBody({
     title: {
       optional: true,
@@ -96,7 +96,7 @@ exports.update = async ctx => {
 /**
  * 查询单个文章
  */
-exports.one = async ctx => {
+exports.one = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -122,7 +122,7 @@ exports.one = async ctx => {
 /**
  * 查询文章列表
  */
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -191,7 +191,7 @@ exports.list = async ctx => {
 /**
  * 删除文章
  */
-exports.delete = async ctx => {
+exports.delete = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -212,7 +212,7 @@ exports.delete = async ctx => {
   }
 }
 
-exports.multi = async ctx => {
+exports.multi = async (ctx) => {
   ctx.checkBody({
     type: {
       notEmpty: {
@@ -241,7 +241,7 @@ exports.multi = async ctx => {
       const toRemove = []
       const call = await Article.find({ _id: { $in: multi } })
       if (Array.isArray(call)) {
-        call.forEach(item => {
+        call.forEach((item) => {
           item.status === 9 ? toRemove.push(item._id) : toTrash.push(item._id)
         })
       }
@@ -271,7 +271,7 @@ exports.multi = async ctx => {
 /**
  * 查询文章列表
  */
-exports.articleList = async ctx => {
+exports.articleList = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -312,7 +312,7 @@ exports.articleList = async ctx => {
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .select(
-        'title createDate subTitle category cover tags author authorName viewNum commentNum original'
+        'title createDate subTitle category cover tags author authorName viewNum commentNum original',
       )
       .populate('category', 'name path')
       .populate('author')
@@ -332,7 +332,7 @@ exports.articleList = async ctx => {
 /**
  * 查询文章
  */
-exports.articleItem = async ctx => {
+exports.articleItem = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {

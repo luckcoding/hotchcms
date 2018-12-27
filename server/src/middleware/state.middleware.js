@@ -2,12 +2,11 @@ const jwt = require('jsonwebtoken')
 const settings = require('../config/settings')
 
 // decode jwt
-const verify = (token, secretStr) =>
-  new Promise(resolve => {
-    jwt.verify(token, secretStr, (err, decoded) => {
-      err ? resolve({}) : resolve(decoded)
-    })
+const verify = (token, secretStr) => new Promise((resolve) => {
+  jwt.verify(token, secretStr, (err, decoded) => {
+    err ? resolve({}) : resolve(decoded)
   })
+})
 
 module.exports = () => async (ctx, next) => {
   let decoded = {}

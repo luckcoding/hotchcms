@@ -6,7 +6,7 @@ const installLib = require('../lib/install.lib')
 /**
  * 查询安装状态
  */
-exports.status = async ctx => {
+exports.status = async (ctx) => {
   try {
     const hasInstall = await installLib.status()
     hasInstall ? ctx.pipeFail('已安装') : ctx.pipeDone('可安装')
@@ -18,7 +18,7 @@ exports.status = async ctx => {
 /**
  * 检测数据库
  */
-exports.testDatabase = async ctx => {
+exports.testDatabase = async (ctx) => {
   ctx.checkBody({
     host: {
       notEmpty: {
@@ -66,7 +66,7 @@ exports.testDatabase = async ctx => {
 /**
  * 检测redis
  */
-exports.testRedis = async ctx => {
+exports.testRedis = async (ctx) => {
   ctx.checkBody({
     host: {
       notEmpty: {
@@ -122,7 +122,7 @@ exports.testRedis = async ctx => {
 /**
  * 安装
  */
-exports.install = async ctx => {
+exports.install = async (ctx) => {
   ctx.checkBody({
     dbHost: {
       notEmpty: {

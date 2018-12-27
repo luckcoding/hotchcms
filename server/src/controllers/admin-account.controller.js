@@ -10,7 +10,7 @@ const { secret, expiresIn, expiresInLong } = settings.system
 /**
  * 登陆
  */
-exports.signIn = async ctx => {
+exports.signIn = async (ctx) => {
   ctx.checkBody({
     email: {
       optional: true,
@@ -56,7 +56,7 @@ exports.signIn = async ctx => {
 /**
  * 注销
  */
-exports.signOut = async ctx => {
+exports.signOut = async (ctx) => {
   try {
     const { _id, exp } = ctx.state.user
     const expires = exp * 1000 - Date.now()
@@ -74,7 +74,7 @@ exports.signOut = async ctx => {
 /**
  * 查询当前账号
  */
-exports.current = async ctx => {
+exports.current = async (ctx) => {
   try {
     const { _id } = ctx.state.user
     const user = await AdminUser.findById(_id).populate('group')
@@ -87,7 +87,7 @@ exports.current = async ctx => {
 /**
  * 更新当前账号
  */
-exports.update = async ctx => {
+exports.update = async (ctx) => {
   ctx.checkBody({
     email: {
       optional: true,

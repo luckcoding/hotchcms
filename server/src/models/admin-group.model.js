@@ -28,7 +28,7 @@ const AdminGroupSchema = new mongoose.Schema(
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
     id: false,
-  }
+  },
 )
 
 AdminGroupSchema.virtual('authority').get(() => parse(this.authorities))

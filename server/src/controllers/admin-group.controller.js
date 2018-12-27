@@ -3,7 +3,7 @@ const { AdminGroup, AdminUser } = require('../models')
 /**
  * 创建管理组
  */
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   ctx.checkBody({
     name: {
       notEmpty: {
@@ -44,7 +44,7 @@ exports.create = async ctx => {
 /**
  * 更新管理组
  */
-exports.update = async ctx => {
+exports.update = async (ctx) => {
   ctx.checkBody({
     name: {
       optional: true,
@@ -97,7 +97,7 @@ exports.update = async ctx => {
 /**
  * 查询单个管理组
  */
-exports.one = async ctx => {
+exports.one = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -123,7 +123,7 @@ exports.one = async ctx => {
 /**
  * 查询管理组列表
  */
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   ctx.sanitizeQuery('page').toInt()
   ctx.sanitizeQuery('pageSize').toInt()
   ctx.checkQuery({
@@ -164,7 +164,7 @@ exports.list = async ctx => {
 /**
  * 查询可操作
  */
-exports.operated = async ctx => {
+exports.operated = async (ctx) => {
   try {
     const { group } = ctx.state.user
     const list = await AdminGroup.find({ gradation: { $lt: group.gradation } })
@@ -180,7 +180,7 @@ exports.operated = async ctx => {
 /**
  * 所有
  */
-exports.all = async ctx => {
+exports.all = async (ctx) => {
   try {
     const list = await AdminGroup.find({})
       .sort('-gradation')
@@ -195,7 +195,7 @@ exports.all = async ctx => {
 /**
  * 删除管理组
  */
-exports.delete = async ctx => {
+exports.delete = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {

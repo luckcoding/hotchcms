@@ -3,7 +3,7 @@ const { Category } = require('../models')
 /**
  * 创建分类
  */
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   ctx.checkBody({
     name: {
       notEmpty: {
@@ -56,7 +56,7 @@ exports.create = async ctx => {
 /**
  * 更新分类
  */
-exports.update = async ctx => {
+exports.update = async (ctx) => {
   ctx.checkBody({
     name: {
       optional: true,
@@ -106,7 +106,7 @@ exports.update = async ctx => {
 /**
  * 查询单个分类
  */
-exports.one = async ctx => {
+exports.one = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -132,7 +132,7 @@ exports.one = async ctx => {
 /**
  * 查询分类列表
  */
-exports.list = async ctx => {
+exports.list = async (ctx) => {
   try {
     const call = await Category._list()
     ctx.pipeDone(call)
@@ -144,7 +144,7 @@ exports.list = async ctx => {
 /**
  * 删除分类
  */
-exports.delete = async ctx => {
+exports.delete = async (ctx) => {
   ctx.checkParams({
     _id: {
       notEmpty: {
@@ -168,7 +168,7 @@ exports.delete = async ctx => {
 /**
  * 多选操作
  */
-exports.multi = async ctx => {
+exports.multi = async (ctx) => {
   ctx.checkBody({
     type: {
       notEmpty: {

@@ -6,51 +6,52 @@ const configFile = () => path.join(__dirname, '../config/redis.config')
 
 let redisClient
 
-exports.test = ({ host, port, family, db, pass }) =>
-  new Promise((resolve, reject) => {
-    const client = redis.createClient({
-      host,
-      port,
-      family,
-      db,
-    })
-    pass && client.auth(pass)
-    client.on('connect', () => resolve())
-    client.on('end', () => reject())
-    client.on('error', err => reject(err))
+exports.test = ({
+  host, port, family, db, pass,
+}) => new Promise((resolve, reject) => {
+  const client = redis.createClient({
+    host,
+    port,
+    family,
+    db,
   })
+  pass && client.auth(pass)
+  client.on('connect', () => resolve())
+  client.on('end', () => reject())
+  client.on('error', err => reject(err))
+})
 
-exports.init = options =>
-  new Promise((resolve, reject) => {
-    fs.writeFile(configFile(), JSON.stringify(options, null, 2), err => {
-      err ? reject(err) : resolve(true)
-    })
+exports.init = options => new Promise((resolve, reject) => {
+  fs.writeFile(configFile(), JSON.stringify(options, null, 2), (err) => {
+    err ? reject(err) : resolve(true)
   })
+})
 
-exports.connect = () =>
-  new Promise((resolve, reject) => {
-    if (redisClient) return resolve(redisClient)
+exports.connect = () => new Promise((resolve, reject) => {
+  if (redisClient) return resolve(redisClient)
 
-    fs.readFile(configFile(), async (err, file) => {
-      if (err) return reject(err)
+  fs.readFile(configFile(), async (err, file) => {
+    if (err) return reject(err)
 
-      try {
-        const { host, port, db, family, pass } = JSON.parse(file)
+    try {
+      const {
+        host, port, db, family, pass,
+      } = JSON.parse(file)
 
-        const client = redis.createClient({
-          host,
-          port,
-          family,
-          db,
-        })
-        pass && client.auth(pass)
-        client.on('connect', () => {
-          redisClient = client
-          resolve(client)
-        })
-        client.on('error', e => reject(e))
-      } catch (e) {
-        reject(e)
-      }
-    })
+      const client = redis.createClient({
+        host,
+        port,
+        family,
+        db,
+      })
+      pass && client.auth(pass)
+      client.on('connect', () => {
+        redisClient = client
+        resolve(client)
+      })
+      client.on('error', e => reject(e))
+    } catch (e) {
+      reject(e)
+    }
   })
+})

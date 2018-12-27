@@ -43,7 +43,7 @@ const CategorySchema = new mongoose.Schema(
   {
     collection: 'category',
     id: false,
-  }
+  },
 )
 
 CategorySchema.statics = {
@@ -63,7 +63,7 @@ CategorySchema.statics = {
       await this.update(
         { isHome: true },
         { $set: { isHome: false } },
-        { multi: true }
+        { multi: true },
       )
     }
     if (_id) {
@@ -83,7 +83,7 @@ CategorySchema.statics = {
       await this.findByIdAndUpdate(
         { _id },
         { $set: input },
-        { runValidators: true }
+        { runValidators: true },
       )
     } else {
       await this.create(input)

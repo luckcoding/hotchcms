@@ -47,7 +47,7 @@ const AdminUserSchema = new mongoose.Schema(
   {
     collection: 'adminUser',
     id: false,
-  }
+  },
 )
 
 module.exports = mongoose.model('AdminUser', AdminUserSchema)

@@ -5,7 +5,7 @@ const crypto = require('crypto')
  * @param {String} value 原值
  * @return {String} SHA1 值
  */
-module.exports = value => {
+module.exports = (value) => {
   const sha1 = crypto.createHash('sha1')
   sha1.update(value)
   return sha1.digest('hex')

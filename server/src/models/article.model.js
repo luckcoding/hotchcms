@@ -47,7 +47,7 @@ const ArticleSchema = new mongoose.Schema(
   },
   {
     collection: 'article',
-  }
+  },
 )
 
 module.exports = mongoose.model('Article', ArticleSchema)

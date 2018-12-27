@@ -10,12 +10,12 @@ module.exports = () => {
 
   const portIndex = _.findIndex(
     process.argv,
-    arg => arg === '--port' || arg === '-p'
+    arg => arg === '--port' || arg === '-p',
   )
 
   if (
-    portIndex !== -1 &&
-    _.isNumber(parseInt(process.argv[portIndex + 1], 10))
+    portIndex !== -1
+    && _.isNumber(parseInt(process.argv[portIndex + 1], 10))
   ) {
     PORT = process.argv[portIndex + 1]
   }
