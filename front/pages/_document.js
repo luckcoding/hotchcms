@@ -25,14 +25,13 @@ export default class MyDocument extends Document {
           <link rel="stylesheet" type="text/css" href="/static/normalize.css" />
 
           {/* global */}
-          <link
-            rel="stylesheet"
-            type="text/css"
-            href="/static/global-styles.css"
-          />
+          <link rel="stylesheet" type="text/css" href="/static/global-styles.css" />
 
           {/* Import CSS for nprogress */}
           <link rel="stylesheet" type="text/css" href="/static/nprogress.css" />
+
+          {/* Latest compiled and minified CSS */}
+          <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
 
           {this.props.styleTags}
         </Head>

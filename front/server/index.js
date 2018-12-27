@@ -32,7 +32,7 @@ app.prepare().then(() => {
     languages: ['en', 'zh'],
     defaultLanguage: 'zh',
     routes: [
-      { route: '/', useCache: true },
+      { route: '/', useCache: false },
       { route: '/about' },
       { route: '/p/:_id' },
     ],

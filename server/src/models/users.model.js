@@ -13,7 +13,12 @@ const sha1 = require('../lib/sha1.lib')
 const usersSchema = new mongoose.Schema(
   {
     // 手机
-    mobile: { type: Number, unique: true },
+    mobile: {
+      type: Number,
+      unique: true,
+      sparse: true,
+      match: /^1[3|4|5|7|8]\d{9}$/,
+    },
 
     // 邮箱
     email: {
@@ -21,7 +26,8 @@ const usersSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      required: true,
+      sparse: true,
+      // required: true,
       match: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
     },
 
@@ -55,23 +61,8 @@ const usersSchema = new mongoose.Schema(
     // 积分
     integral: { type: Number, default: 0 },
 
-    // 注册信息
-    create: {
-      // 时间
-      date: { type: Date, default: Date.now },
-      // 地点
-      address: { type: String, trim: true },
-      // IP
-      ip: {
-        type: String,
-        trim: true,
-        match: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
-      },
-      // 平台
-      platform: { type: String, trim: true },
-      // 其他
-      collection: { type: Object },
-    },
+    // 注册日期
+    createDate: { type: Date, default: Date.now },
 
     // 权限
     role: { type: mongoose.Schema.Types.ObjectId, ref: 'Roles' },
@@ -79,7 +70,7 @@ const usersSchema = new mongoose.Schema(
   {
     collection: 'users',
     id: false,
-  }
+  },
 )
 
 module.exports = mongoose.model('Users', usersSchema)

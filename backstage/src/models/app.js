@@ -5,6 +5,7 @@ import { stringify } from 'qs'
 import store from 'store'
 import { queryLayout, pathMatchRegexp } from 'utils'
 import { queryRouteList, logoutUser, queryUserInfo } from 'api'
+import isObject from 'lodash/isObject'
 import config from 'config'
 
 const { constant, layouts } = config
@@ -72,9 +73,10 @@ export default {
   },
   effects: {
     *query({ payload }, { call, put, select }) {
-      const { code, result: user } = yield call(queryUserInfo, payload)
+      const { code, result } = yield call(queryUserInfo, payload)
       const { locationPathname } = yield select(_ => _.app)
       if (code === '0000') {
+        const user = isObject(result) ? result : {}
         // const { list } = yield call(queryRouteList)
         // const { permissions } = user
         // let routeList = list

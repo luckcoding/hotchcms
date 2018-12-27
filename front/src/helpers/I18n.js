@@ -15,9 +15,11 @@ export const defaultLocale = {
 export const defaultTranslations = {
   zh: {
     'latest articles': '最新文章',
+    'popular articles': '热门文章',
   },
   en: {
     'latest articles': 'latest articles',
+    'popular articles': 'popular articles',
   },
 }
 

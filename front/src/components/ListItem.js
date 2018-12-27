@@ -112,13 +112,13 @@ function ArticleListItem({
 }) {
   return (
     <Wrapper>
-      <Link href="/categories" passHref>
+      <Link href={url} passHref>
         <Cover>
           <img src={getMediaUrl(cover)} alt="Hotchcms" />
         </Cover>
       </Link>
       <Main>
-        <Link href="/categories" passHref>
+        <Link href={url} passHref>
           <Tag>{tag}</Tag>
         </Link>
         <Link href={url} passHref>

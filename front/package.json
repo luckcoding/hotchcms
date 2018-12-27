@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^4.2.1",
     "compression": "^1.7.3",
     "express": "^4.16.4",
     "immutable": "^4.0.0-rc.12",
@@ -27,6 +28,7 @@
     "prop-types": "^15.6.2",
     "qs": "^6.6.0",
     "react": "^16.6.3",
+    "react-bootstrap": "^1.0.0-beta.3",
     "react-dom": "^16.6.3",
     "react-loadable": "^5.5.0",
     "react-redux": "^6.0.0",
@@ -64,7 +66,6 @@
   "lint-staged": {
     "**/*.js": [
       "eslint --ext .js --fix",
-      "npm run lint",
       "git add"
     ]
   }

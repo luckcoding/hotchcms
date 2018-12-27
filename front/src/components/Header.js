@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Container } from 'react-bootstrap'
 import LogoPNG from 'static/logo.png'
 import Link from './Link'
 
@@ -11,12 +12,14 @@ const Wrapper = styled.header`
   top: 0;
   z-index: 1020;
 
-  height: 48px;
-  overflow: hidden;
+  .container {
+    height: 48px;
+    overflow: hidden;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 `
 
 const Logo = styled.img`
@@ -40,19 +43,21 @@ const Nav = styled.nav`
 function Header() {
   return (
     <Wrapper>
-      <Link href="/">
-        <a>
-          <Logo src={LogoPNG} />
-        </a>
-      </Link>
-      <Nav>
-        <Link activeClassName="active" href="/">
-          <a>Home</a>
+      <Container>
+        <Link href="/">
+          <a>
+            <Logo src={LogoPNG} />
+          </a>
         </Link>
-        <Link activeClassName="active" href="/about">
-          <a>About</a>
-        </Link>
-      </Nav>
+        <Nav>
+          <Link activeClassName="active" href="/">
+            <a>Home</a>
+          </Link>
+          <Link activeClassName="active" href="/about">
+            <a>About</a>
+          </Link>
+        </Nav>
+      </Container>
     </Wrapper>
   )
 }
