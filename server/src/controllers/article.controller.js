@@ -173,7 +173,7 @@ exports.list = async (ctx) => {
       .sort('-create.date')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select({})
+      .select('-content -commentId -likes')
       .populate('category', 'name path')
       .lean()
 
@@ -311,9 +311,7 @@ exports.articleList = async (ctx) => {
       .sort('-create.date')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .select(
-        'title createDate subTitle category cover tags author authorName viewNum commentNum original',
-      )
+      .select('-content -commentId -likes')
       .populate('category', 'name path')
       .populate('author')
       .lean()
