@@ -276,12 +276,14 @@ class ArticleDetail extends PureComponent {
           })(<TextArea autosize={textAreaSize} />)}
         </FormItem>
         <Card label={i18n.t`Content`}>
-          <BraftEditor
-            ref={instance => this.editorInstance = instance}
-            value={BraftEditor.createEditorState(detail.content)}
-            contentId={detail._id}
-            language={i18n._language === 'en' ? 'en' : 'zh'}
-          />
+          {detail._id && (
+            <BraftEditor
+              ref={instance => this.editorInstance = instance}
+              defaultValue={BraftEditor.createEditorState(detail.content)}
+              contentId={detail._id}
+              language={i18n._language === 'en' ? 'en' : 'zh'}
+            />
+          )}
         </Card>
         <ButtonGroup style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', position: 'sticky', bottom: '20px', zIndex: '2' }}>
           <Button type="primary" icon="upload" onClick={() => this.handleOk(EnumPostStatus.PUBLISHED)}><Trans>Publish</Trans></Button>
