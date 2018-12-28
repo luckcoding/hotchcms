@@ -58,7 +58,7 @@ class Filter extends PureComponent {
   }
 
   render() {
-    const { onAdd, filter, form, i18n } = this.props
+    const { filter, form, i18n } = this.props
     const { getFieldDecorator } = form
     const { nickname } = filter
 
@@ -91,9 +91,9 @@ class Filter extends PureComponent {
                 <Trans>Reset</Trans>
               </Button>
             </div>
-            <Button type="ghost" onClick={onAdd}>
+            {/*<Button type="ghost" onClick={onAdd}>
               <Trans>Create</Trans>
-            </Button>
+            </Button>*/}
           </Row>
         </Col>
       </Row>
@@ -102,7 +102,6 @@ class Filter extends PureComponent {
 }
 
 Filter.propTypes = {
-  onAdd: PropTypes.func,
   form: PropTypes.object,
   filter: PropTypes.object,
   onFilterChange: PropTypes.func,
