@@ -31,6 +31,8 @@ const AdminGroupSchema = new mongoose.Schema(
   },
 )
 
-AdminGroupSchema.virtual('authority').get(() => parse(this.authorities))
+AdminGroupSchema.virtual('authority').get(function () {
+  return parse(this.authorities)
+})
 
 module.exports = mongoose.model('AdminGroup', AdminGroupSchema)

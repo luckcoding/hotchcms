@@ -46,11 +46,11 @@ module.exports = authRoutes => koaAuthority({
        * @param  {Number , MongoId} gradation [需要校验的权限等级]
        * @return {Boolean}
        */
-    ctx.checkGradation = async (gradation = '') => {
+    ctx.checkGradation = async (gradation) => {
       const hasGradation = group.gradation || 0
       let checkedGradation = gradation
 
-      if (validator.isMongoId(gradation)) {
+      if (typeof gradation === 'string' && validator.isMongoId(gradation)) {
         const call = await AdminGroup.findById(gradation)
         if (call) {
           checkedGradation = call.gradation
