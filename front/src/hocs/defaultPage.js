@@ -45,10 +45,7 @@ export default (Page) => {
       return [
         <Head key="head">
           <title>
-            {title}
-            {' '}
--
-            {seo.title}
+            {`${title} - ${seo.title}`}
           </title>
           <meta name="keywords" content={keywords || seo.keywords} />
           <meta name="description" content={description || seo.description} />

@@ -14,4 +14,8 @@ function About() {
   )
 }
 
+About.getSettings = () => ({
+  title: '关于',
+})
+
 export default defaultPage(About)

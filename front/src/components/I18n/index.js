@@ -25,6 +25,7 @@ class I18nProvider extends React.Component {
   static childContextTypes = {
     locale: PropTypes.string,
     translations: PropTypes.object,
+    languages: PropTypes.array,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -55,6 +56,7 @@ class I18nProvider extends React.Component {
     return {
       locale: this.state.locale,
       translations: this.state.translations,
+      languages: Object.keys(this.state.translations),
     }
   }
 
@@ -101,12 +103,14 @@ class I18n extends React.PureComponent {
   render() {
     const { locale, translations } = this.context
 
-    const { wrapper, format } = this.props
+    const {
+      wrapper, format, value, ...props
+    } = this.props
 
-    let text = t(this.props, locale, translations)
+    let text = t(props, locale, translations)
 
     if (typeof format === 'function') {
-      text = format(text, locale)
+      text = format(value, locale)
     } else if (format && typeof format[locale] === 'function') {
       text = format[locale](text, locale)
     }
@@ -118,6 +122,7 @@ class I18n extends React.PureComponent {
 }
 
 I18n.propTypes = {
+  value: PropTypes.any,
   wrapper: PropTypes.func,
   format: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 }

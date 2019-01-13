@@ -1,0 +1,14 @@
+{
+  "home": {
+    "zh": {
+      "title": "Hotchcms",
+      "keywords": "cms",
+      "description": "建站系统"
+    },
+    "en": {
+      "title": "Hotchcms",
+      "keywords": "cms",
+      "description": "cms system"
+    }
+  }
+}

@@ -69,6 +69,7 @@ module.exports = {
     'no-restricted-syntax': 0,
     'no-plusplus': 0,
     'no-nested-ternary': 0,
+    'no-useless-escape': 0,
     'prefer-destructuring': 0,
     'prefer-template': 2,
     'react/destructuring-assignment': 0,

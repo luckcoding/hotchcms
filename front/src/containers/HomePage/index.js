@@ -17,9 +17,10 @@ class Index extends React.Component {
   static async getInitialProps({ search }) {
     const {
       list, total, pageSize, page,
-    } = await request('article', search)
+    } = await request('article', search).then(res => res.toPage())
+
     return {
-      list: list || [],
+      list,
       pageInfo: {
         total,
         pageSize,

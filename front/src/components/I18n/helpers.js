@@ -8,11 +8,9 @@ import { isObject, isEmpty } from 'lodash'
  * @return {String}              "result"
  */
 function t(params, locale, translations) {
-  if (!isObject(params)
-    || typeof locale !== 'string'
-    || !isObject(translations)) {
-    throw TypeError('arguments type error')
-  }
+  params = isObject(params) ? params : {}
+  locale = typeof locale === 'string' ? locale : ''
+  translations = isObject(translations) ? translations : {}
 
   const { id, value, ...other } = params
 
