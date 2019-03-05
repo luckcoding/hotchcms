@@ -13,8 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "blueimp-md5": "^2.10.0",
     "bootstrap": "^4.2.1",
     "compression": "^1.7.3",
+    "cookie": "^0.3.1",
     "express": "^4.16.4",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
@@ -38,6 +40,7 @@
     "redux-saga": "^0.16.2",
     "reduxsauce": "^1.0.1",
     "reselect": "^4.0.0",
+    "sitemap": "^2.1.0",
     "styled-components": "^4.1.1"
   },
   "devDependencies": {

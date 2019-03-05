@@ -5,7 +5,7 @@ export default {
   BASE_URL,
   API_URL,
   getApiUrl(url) {
-    return (API_URL + url).replace(/(^:)\/\//g, '/')
+    return /[a-zA-z]+:\/\/[^/]*/.test(url) ? url : `${BASE_URL}/${url}`
   },
   secret: 'hotchcms', // api password secret
   prefix: 'hotchcms', // storage key

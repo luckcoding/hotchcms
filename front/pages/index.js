@@ -1,2 +1,2 @@
-import Index from 'containers/HomePage'
-export default Index
+import Page from 'containers/HomePage'
+export default Page

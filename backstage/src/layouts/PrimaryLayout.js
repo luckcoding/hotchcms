@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import withRouter from 'umi/withRouter'
 import { connect } from 'dva'
 import { MyLayout } from 'components'
-import { BackTop, Layout, Drawer } from 'antd'
+import { Layout, Drawer } from 'antd'
 import { GlobalFooter } from 'ant-design-pro'
 import { enquireScreen, unenquireScreen } from 'enquire-js'
 import { config, langFromPath } from 'utils'
@@ -145,10 +145,6 @@ class PrimaryLayout extends PureComponent {
               <Bread routeList={newRouteList} />
               {hasPermission ? children : <Error />}
             </Content>
-            <BackTop
-              className={styles.backTop}
-              target={() => document.querySelector('#primaryLayout>div')}
-            />
             <GlobalFooter
               className={styles.footer}
               copyright={config.copyright}

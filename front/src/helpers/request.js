@@ -5,6 +5,8 @@ import {
 } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
 import config from './config'
+import API from './api'
+import { getToken } from './auth'
 
 const { getApiUrl } = config
 
@@ -38,6 +40,10 @@ export function proto(who) {
       }
     },
 
+    toJson(path) {
+      return toJson(this._result(path))
+    },
+
     _result(path) {
       let data = cloneDeep(this[who])
       if (path && typeof path === 'string') {
@@ -65,11 +71,7 @@ export function response(body, path) {
     }
   })
 
-  const test = Object.create(proto(path), result)
-
-  console.log(test, result)
-
-  return test
+  return Object.create(proto(path), result)
 }
 
 /**
@@ -86,9 +88,14 @@ export function response(body, path) {
  * request('put user/:_id', {_id: '1234'}).then(res => res.toArray('list'))
  *
  */
-export default async function request(params, data, options = {}) {
-  if (typeof params !== 'string') {
-    throw TypeError('Request params is error !')
+export default async function request(name, data, options = {}) {
+  if (typeof name !== 'string') {
+    throw TypeError('Request api name is error !')
+  }
+
+  const params = API[name]
+  if (!params) {
+    throw TypeError('Request api name is missing !')
   }
 
   let url
@@ -130,6 +137,7 @@ export default async function request(params, data, options = {}) {
     method,
     headers: {
       'Content-Type': 'application/json',
+      authorization: `Bearer ${getToken()}`,
     },
   }
 
