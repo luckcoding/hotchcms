@@ -6,7 +6,7 @@ const { host, port, user, pass } = EMAIL
 
 const Types = {
   [CodeType.register]: (text: string) => ({
-    from: `lansebiji.com(蓝色笔记) <${user}>`,
+    from: `Hotchcms <${user}>`,
     text: `验证码[${text}]`,
     html: `<p>验证码：<span style="font-size: 34px;font-weight: 600;color: #4090F5">${text}</span></p>`
   }),

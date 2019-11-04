@@ -31,6 +31,7 @@
     "kcors": "^2.2.1",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
+    "koa-ejs": "^4.2.0",
     "koa-jwt": "^3.6.0",
     "koa-middle-validator": "^1.2.0",
     "koa-router": "^7.4.0",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^8.3.5",
     "@types/koa": "^2.0.50",
+    "@types/koa-ejs": "^4.2.0",
     "@types/koa-jwt": "^3.3.0",
     "@types/koa-router": "^7.0.42",
     "@types/mongoose": "^5.5.28",

@@ -4,7 +4,6 @@ import { ArticleModel } from '../models'
 import Utils from './_utils'
 import { Group, Request, Query, Params, Body, Summary } from '../utils/decorator'
 
-
 @Group('文章')
 export default class Article extends Utils {
   @Request('POST', '/article')

@@ -1,0 +1,30 @@
+<div>
+  <% for (let key in docs) { %>
+    <div>
+      <h2><%= key %></h2>
+      <% docs[key].map(_ => { %>
+        <div class="part" onsubmit="onsubmit()">
+          <div class="URL">
+            <span class="URL-method"><%= _.method.toUpperCase() %></span>
+            <span class="URL-route"><%= _.route %></span>
+            <span class="URL-summary"><%= _.summary %></span>
+          </div>
+          <div class="PARAM">参数<button type="submit">发送</button></div>
+          <% if (_.query) { %>
+            <% for (let p in _.query){ %>
+              <% const d =  _.query[p]; %>
+              <div class="PARAM-item">
+                <span class="PARAM-name">
+                  <i><%= d.notEmpty ? '*' : '' %></i>
+                  <%= p %>
+                </span>
+                <input id="<%= p %>" type="text" placeholder="<%= d.description %>" />
+                <% const dk = Object.keys(d).filter(_ => !['notEmpty', 'description'].includes(_)) %>
+              </div>
+            <% } %>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>

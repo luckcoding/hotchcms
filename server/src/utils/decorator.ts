@@ -176,6 +176,7 @@ export class TRouter extends Router {
         headers,
       }))
     })
+
     return this
   }
 }

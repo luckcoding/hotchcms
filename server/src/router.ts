@@ -1,3 +1,6 @@
+import Koa from 'koa'
+import { mergeDeepLeft } from 'ramda'
+import pathToRegexp from 'path-to-regexp'
 import Base from './controllers/base'
 import Article from './controllers/article'
 
@@ -11,7 +14,6 @@ const router = new TRouter()
 router
   .controllers([ Base ])
   .get('/', ctx => { ctx.body = 'Bluebook Services' })
-
 
 // /**
 //  * V1
@@ -39,6 +41,11 @@ routerAdmin
     Article,
   ])
   .get('/', ctx => { ctx.body = 'API ADMIN' })
+  .get('/apidocs', async (ctx: Koa.ParameterizedContext) => {
+    await ctx.render('api', {
+      docs: mergeDeepLeft(router.docs, routerAdmin.docs)
+    })
+  })
 
 export default {
   base: router.routes(),

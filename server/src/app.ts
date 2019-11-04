@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import Koa from 'koa'
 import http from 'http'
+import path from 'path'
 import cors from '@koa/cors'
 import koaBody from 'koa-body'
 import koaJwt from 'koa-jwt'
@@ -9,9 +10,18 @@ import pipe from './middleware/pipe'
 import logger from './utils/logger'
 import { SYSTEM, JWT } from './config'
 import router from './router'
+import render from 'koa-ejs'
 import './db/mongodb'
 
 const app = new Koa()
+
+render(app, {
+  root: path.join(__dirname, './static'),
+  layout: 'template',
+  viewExt: 'html',
+  cache: false,
+  debug: true,
+})
 
 // 跨域
 app.use(cors())
@@ -24,7 +34,7 @@ app.use(koaJwt({
   secret: JWT.secret,
   passthrough: true
 }).unless({
-  path: [/^\/swagger-/]
+  path: [/^\/apidocs/]
 }))
 
 app.use(valid()) // 参数验证
