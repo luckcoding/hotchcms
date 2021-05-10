@@ -18,3 +18,5 @@ export const isId = (value: any): boolean => shortid.isValid(value)
 export const isEmail = (value: any): boolean => regx.email.test(value)
 
 export const isPhone = (value: any): boolean => regx.phone.test(value)
+
+export const isPath = (value: any): boolean => /^[A-z0-9\-\_\/]+$/.test(value)

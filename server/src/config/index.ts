@@ -1,6 +1,17 @@
 // mongodb
 export const DB_PATH = 'mongodb://localhost:27017/hotchcms'
 
+/**
+ * mysql
+ */
+ export const MYSQL = {
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: '123456..',
+  database: 'hotchcms',
+}
+
 export const REDIS = {
   host: 'localhost',
   port: 6379,

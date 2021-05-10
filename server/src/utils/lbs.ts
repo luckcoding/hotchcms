@@ -4,7 +4,7 @@ import { LBS } from '../config'
 
 const { key, secret, url } = LBS
 
-class Lbs {
+export class Lbs {
   // get_poi 是否返回周边POI列表：1.返回；0不返回(默认)
   static async geocoder (lat, lng) {
     return new Promise((resolve, reject) => {
@@ -24,5 +24,3 @@ class Lbs {
     })
   }
 }
-
-export default Lbs

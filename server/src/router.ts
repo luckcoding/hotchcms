@@ -1,54 +1,35 @@
-import Koa from 'koa'
-import { mergeDeepLeft } from 'ramda'
-import pathToRegexp from 'path-to-regexp'
-import Base from './controllers/base'
-import Article from './controllers/article'
-
-import { TRouter } from './utils/decorator'
+import { Controller, InjectHandle } from '@koa-lite/controller'
+import * as controllers from './controllers'
+import { transaction } from './db/typeorm'
 
 /**
- * Base
- * ----------------------------------
+ * 事务处理
  */
-const router = new TRouter()
-router
-  .controllers([ Base ])
-  .get('/', ctx => { ctx.body = 'Bluebook Services' })
+ InjectHandle(({ fn }) => transaction(fn))
 
-// /**
-//  * V1
-//  * ----------------------------------
-//  */
-// const routerV1 = new TRouter({ prefix: '/v1' })
-// routerV1
-//   .controllers([
-//     User,
-//     Oauth,
-//     Product,
-//     ProductApply,
-//     EvaluationShort,
-//     ProductCategory
-//   ])
-//   .get('/', ctx => { ctx.body = 'API V1' })
-
-/**
- * Admin
- * ----------------------------------
- */
-const routerAdmin = new TRouter({ prefix: '/admin' })
-routerAdmin
+export const router = new Controller({
+  prefix: '/v2',
+  docs: {
+    title: '接口文档 - 客户端',
+    version: 'v2',
+    description: '业务接口文档 - by Hotchcms',
+    securities: [{
+      type: 'headers',
+      key: 'Authorization',
+      value: function (data) {
+        var ret = (data instanceof Object) && data.ret
+        return /^Bearer\s/.test(ret) ? ret : ''
+      },
+    }, {
+      type: 'headers',
+      key: 'x-device-id',
+      value: '1234',
+    }],
+  },
+})
   .controllers([
-    Article,
+    controllers.Article,
+    controllers.Common,
+    controllers.Dashboard,
   ])
-  .get('/', ctx => { ctx.body = 'API ADMIN' })
-  .get('/apidocs', async (ctx: Koa.ParameterizedContext) => {
-    await ctx.render('api', {
-      docs: mergeDeepLeft(router.docs, routerAdmin.docs)
-    })
-  })
-
-export default {
-  base: router.routes(),
-  // v1: routerV1.routes(),
-  admin: routerAdmin.routes(),
-}
+  .get('/', ctx => { ctx.body = 'Hotchcms' })

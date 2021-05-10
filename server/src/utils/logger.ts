@@ -13,7 +13,7 @@ const dailyfile = tracer.dailyfile({
 const colorConsole = tracer.colorConsole()
 
 // 绑定
-export default {
+export const logger = {
   log: colorConsole.log,
   trace: colorConsole.trace,
   debug: colorConsole.debug,

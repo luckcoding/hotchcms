@@ -1,27 +1,16 @@
 import 'reflect-metadata'
 import Koa from 'koa'
 import http from 'http'
-import path from 'path'
 import cors from '@koa/cors'
 import koaBody from 'koa-body'
 import koaJwt from 'koa-jwt'
-import valid from './middleware/valid'
-import pipe from './middleware/pipe'
-import logger from './utils/logger'
+import pipe from './middlewares/pipe'
+import { logger } from './utils'
 import { SYSTEM, JWT } from './config'
-import router from './router'
-import render from 'koa-ejs'
+import { router } from './router'
 import './db/mongodb'
 
 const app = new Koa()
-
-render(app, {
-  root: path.join(__dirname, './static'),
-  layout: 'template',
-  viewExt: 'html',
-  cache: false,
-  debug: true,
-})
 
 // 跨域
 app.use(cors())
@@ -34,17 +23,13 @@ app.use(koaJwt({
   secret: JWT.secret,
   passthrough: true
 }).unless({
-  path: [/^\/apidocs/]
+  path: [/^\/docs/]
 }))
 
-app.use(valid()) // 参数验证
 app.use(pipe()) // 通讯
 
 // 路由
-app
-  .use(router.base)
-  // .use(router.v1)
-  .use(router.admin)
+app.use(router.routes())
 
 // 404
 app.use(ctx => {

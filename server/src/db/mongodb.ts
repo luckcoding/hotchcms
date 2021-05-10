@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { DB_PATH  } from '../config'
-import logger from '../utils/logger'
+import { logger } from '../utils'
 
 mongoose.set('useCreateIndex', true)
 mongoose.connect(DB_PATH, {

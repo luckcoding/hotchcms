@@ -6,7 +6,7 @@ const { host, port, user, pass } = EMAIL
 
 const Types = {
   [CodeType.register]: (text: string) => ({
-    from: `Hotchcms <${user}>`,
+    from: `lansebiji.com(蓝色笔记) <${user}>`,
     text: `验证码[${text}]`,
     html: `<p>验证码：<span style="font-size: 34px;font-weight: 600;color: #4090F5">${text}</span></p>`
   }),
@@ -33,4 +33,4 @@ class Email {
   }
 }
 
-export default new Email()
+export const email = new Email()

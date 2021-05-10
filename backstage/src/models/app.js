@@ -73,6 +73,7 @@ export default {
   },
   effects: {
     *query({ payload }, { call, put, select }) {
+      debugger
       const { code, result } = yield call(queryUserInfo, payload)
       const { locationPathname } = yield select(_ => _.app)
       if (code === '0000') {

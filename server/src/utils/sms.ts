@@ -51,5 +51,5 @@ class Sms {
   }
 }
 
-export default new Sms()
+export const sms = new Sms()
 

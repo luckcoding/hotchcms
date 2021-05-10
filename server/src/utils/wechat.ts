@@ -3,7 +3,7 @@ import { WECHAT } from '../config'
 
 const { appid, secret, url } = WECHAT.APPLETS
 
-class Wechat {
+export class Wechat {
   /**
    * 换取 opendid
    * @param {String} code
@@ -24,5 +24,3 @@ class Wechat {
     })
   }
 }
-
-export default Wechat
