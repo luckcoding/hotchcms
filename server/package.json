@@ -47,7 +47,7 @@
     "shortid": "^2.2.16",
     "tracer": "^1.1.4",
     "typeorm": "^0.2.32",
-    "validator": "^13.5.2"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.1",
